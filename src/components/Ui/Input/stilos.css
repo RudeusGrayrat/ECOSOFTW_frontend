@@ -1,0 +1,24 @@
+.phone-input-hidden-number input {
+  pointer-events: none;
+}
+
+.p-password-input {
+  width: 210px;
+}
+
+.p-password.p-component .p-password-input:focus {
+  border-color: #f4f4f4 !important;
+  box-shadow: none !important;
+}
+
+.p-password.p-component .p-inputwrapper-focus {
+  border-color: #f4f4f4 !important;
+  box-shadow: none !important;
+}
+
+.p-password.p-component {
+  box-shadow: none !important;
+}
+.MuiPickersPopper-root {
+  z-index: 1050; /* Ajusta este valor según el z-index de tu modal o contenedores */
+}
