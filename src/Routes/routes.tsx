@@ -3,10 +3,11 @@ import Login from "../components/Login";
 import Home from "../components/Home";
 import Error from "../components/Error";
 import SideBar from "../components/SideBar/SideBar";
-import Nav from "../components/Nav/Nav";
 import ModulesRoutes from "./modulesRoutes";
 import FormClientes from "../modules/Comercial/Clientes/FormClientes";
 import ProtectedRoute from "../ProtecteRoute";
+import Nav from "../components/Nav/Nav";
+import ModuleRoute from "./ModuleRoute";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -15,7 +16,7 @@ export const AppRoutes = () => {
     <div className="flex w-screen h-screen overflow-hidden">
       {!paths && <SideBar />}
 
-      <div className="w-full ">
+      <div className="w-full h-full overflow-y-auto ">
         {!paths && <Nav notifications={[]} />}
         <Routes>
           <Route path="/" element={<Login />} />
@@ -23,6 +24,7 @@ export const AppRoutes = () => {
           <Route path="/formulario/clientes" element={<FormClientes />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/:module/:submodule" element={<ModulesRoutes />} />
+            <Route path="/:module" element={<ModuleRoute />} />
             <Route path="/home" element={<Home />} />
           </Route>
         </Routes>

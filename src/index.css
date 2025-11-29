@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo:wght@300;400;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-family-exo: 'Exo', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-family-exo);
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -10,6 +12,68 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* aplicar a todo */
+html,
+body {
+  font-family: var(--font-family-exo);
+}
+
+/* si quieres forzar absolutamente todo (incluye pseudoelementos) usa esto en su lugar:
+*,
+*::before,
+*::after {
+  font-family: var(--font-family-exo) !important;
+}
+*/
+
+body {
+  /* redundante pero seguro */
+  font-family: var(--font-family-exo);
+}
+
 button {
   cursor: pointer;
+}
+
+/* styles.css */
+.PhoneInput {
+  border: 1px solid #ccc;
+  padding: 6px;
+  padding-right: 15px;
+  padding-left: 15px;
+
+}
+
+.PhoneInputInput {
+  border: none;
+  outline: none;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.PhoneInputCountry {
+  margin-right: 0;
+  color: #007bff;
+}
+
+input:disabled {
+  cursor: not-allowed;
+}
+
+/* input:-webkit-autofill {
+  -webkit-text-fill-color: #ffff !important;
+  -webkit-box-shadow: 0 0 0px 1000px #81A38B inset !important;
+} */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: white !important;
+
+  /* Reemplaza #81A38B por el color REAL de tu input */
+  box-shadow: 0 0 0 1000px #81A38B inset !important;
+
+  transition: background-color 9999s ease-in-out 0s !important;
+  background-color: transparent !important;
 }

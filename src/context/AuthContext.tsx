@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }) => {
                 throw new Error("Token no recibido");
             }
         } catch (error) {
+            console.error("Signin error:", error);
             setErrors(error?.response?.data?.message);
         }
     };
@@ -78,10 +79,11 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         if (errors) {
+            console.error("AuthContext error:", errors);
             dispatch(setMessage(errors, "Error"));
         }
         if (response) {
-            dispatch(setMessage(response, "Bien"));
+            dispatch(setMessage(response, "Correcto"));
         }
     }, [errors, response]);
 

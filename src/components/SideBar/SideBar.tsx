@@ -31,7 +31,6 @@ const SideBar = () => {
             >
                 {userOptions.length > 0 && userOptions[0].module !== ""
                     ? userOptions?.map((options, index) => {
-                        console.log(`Option ${index}:`, options)
                         return (
                             <OptionSideBar
                                 key={index}

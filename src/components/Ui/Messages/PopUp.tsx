@@ -6,7 +6,7 @@ import { setMessage } from "../../../redux/actionError";
 const PopUp = ({ deshabilitar, ...OtherProps }) => {
     const { setResponse, setErrors } = useAuth();
     const [showPopUp, setShowPopUp] = useState(false);
-    const errorForms = useSelector((state) => state.error);
+    const errorForms = useSelector((state) => state?.errorAndResponse);
     const dispatch = useDispatch();
     const handleClosePopUp = () => {
         dispatch(setMessage("", ""));
@@ -14,7 +14,6 @@ const PopUp = ({ deshabilitar, ...OtherProps }) => {
         if (setResponse) setResponse(null);
         if (setErrors) setErrors(null);
     };
-
     useEffect(() => {
         if (errorForms?.message) {
             setShowPopUp(true);
@@ -27,16 +26,16 @@ const PopUp = ({ deshabilitar, ...OtherProps }) => {
     return (
         showPopUp && (
             <div
-                className="fixed top-0 z-[100] left-0 right-0 bottom-0 flex 
-    justify-center items-center bg-black bg-opacity-50 "
+                className="fixed top-0 z-100 left-0 right-0 bottom-0 flex 
+    justify-center items-center bg-[rgba(0,0,0,0.5)] "
             >
                 <div className="flex flex-col  bg-white p-8  rounded-lg shadow-lg max-w-sm w-full">
-                    <h1 className="text-center font-medium text-red-500 p-5  pt-5 text-6xl">
-                        {errorForms.type}
+                    <h1 className={`text-center font-medium pt-5 text-6xl ${errorForms?.type === "Correcto" && "text-green-500!"} ${errorForms?.type === "Error" && "text-red-500!"}  text-blue-500 `}>
+                        {errorForms?.type}
                     </h1>
-                    <p className="text-center mb-8  font-medium">
-                        {typeof errorForms.message === "string"
-                            ? errorForms.message
+                    <p className="text-center mb-6 mt-4 font-medium">
+                        {typeof errorForms?.message === "string"
+                            ? errorForms?.message
                             : "Error desconocido"}
                     </p>
                     {deshabilitar === true ? null : (

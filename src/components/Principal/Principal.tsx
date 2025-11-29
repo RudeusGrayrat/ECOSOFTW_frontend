@@ -5,8 +5,6 @@ import { useAuth } from "../../context/AuthContext";
 
 const ReadOrCreate = ({ ItemRegister, ItemList, ItemReporte, submodule }) => {
     const { user } = useAuth();
-    console.log("User:", user);
-
 
     const hasPermission = () => {
         if (user) {

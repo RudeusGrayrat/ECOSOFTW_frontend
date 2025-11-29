@@ -1,11 +1,12 @@
 import ReadOrCreate from "../../../components/Principal/Principal";
 import ListClientesComercial from "./List/List";
+import RegisterClientesComercial from "./Register/Register";
 
 const Clientes = () => {
     return (
         <ReadOrCreate
             ItemList={ListClientesComercial}
-            // ItemRegister={RegisterAsistenciaColaborador}
+            ItemRegister={RegisterClientesComercial}
             // ItemReporte={ReporteAsistenciaColaborador}
             submodule="CLIENTES"
         />

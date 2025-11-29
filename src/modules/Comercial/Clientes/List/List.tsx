@@ -10,30 +10,34 @@ const ListClientesComercial = ({
 }) => {
     const sendMessage = useSendMessage();
 
-    const fetchBoletas = async (page, limit, search) => {
+    const fetchClientesComercial = async (page, limit, search) => {
         try {
             const response = {
                 data: {
                     data: [{
                         id: 1,
-                        colaborador: { name: "Juan", lastname: "Perez" },
-                        fecha: "2024-06-01",
-                        ingreso: "08:00",
-                        inicioAlmuerzo: "12:00",
-                        finAlmuerzo: "13:00",
-                        salida: "17:00",
-                        estado: "PRESENTE",
-                    },
-                    {
+                        tipoCliente: "EMPRESA",
+                        razonSocial: "Tech Solutions S.A.",
+                        rucEmpresa: "20123456789",
+                        telefono: "+51 987654321",
+                        correo: "juan.perez@techsolutions.com",
+                        servicio: "Desarrollo de Software",
+                        cantidadPuntosParametros: 5,
+                        lugarMuestreo: "Lima, Perú",
+                        fechaServicio: "2024-06-15",
+                        direccionLegal: "Av. Principal 123, Lima",
+                    }, {
                         id: 2,
-                        colaborador: { name: "Maria", lastname: "Gomez" },
-                        fecha: "2024-06-01",
-                        ingreso: "08:15",
-                        inicioAlmuerzo: "12:15",
-                        finAlmuerzo: "13:15",
-                        salida: "17:15",
-                        estado: "TARDANZA",
-
+                        tipoCliente: "PERSONA NATURAL",
+                        dniCliente: "87654321",
+                        nombreCliente: "Maria Lopez",
+                        telefono: "+51 912345678",
+                        correo: "maria.lopez@gmail.com",
+                        servicio: "Consultoría",
+                        cantidadPuntosParametros: 3,
+                        lugarMuestreo: "Lima, Perú",
+                        fechaServicio: "2024-07-20",
+                        direccionLegal: "Av. Secundaria 456, Lima",
                     }],
                     total: 2,
                 },
@@ -56,57 +60,37 @@ const ListClientesComercial = ({
             permissionEdit={permissionEdit}
             permissionDelete={permissionDelete}
             permissionRead={permissionRead}
-            fetchData={fetchBoletas}
-            reload={fetchBoletas}
+            fetchData={fetchClientesComercial}
+            reload={fetchClientesComercial}
         >
             <Column
-                field="colaborador.lastname"
-                header="Apellidos del Colaborador"
+                field="tipoCliente"
+                header="Tipo de Cliente"
                 style={{ paddingLeft: "60px" }}
-            />
-            <Column field="colaborador.name" header="Nombres del Colaborador" />
-
-            <Column field="fecha" header="Fecha" />
-            <Column field="ingreso" header="Hora de Ingreso" />
-            <Column field="inicioAlmuerzo" header="Inicio de Almuerzo" />
-            <Column field="finAlmuerzo" header="Fin de Almuerzo" />
-            <Column field="salida" header="Hora de Salida" />
-            <Column
-                field="state"
-                header="Estado"
-                style={{ justifyItems: "center" }}
-                body={(rowData) => {
-                    let color;
-                    "PRESENTE", "FALTA", "TARDANZA", "PERMISO", "VACACIONES";
-                    switch (rowData.estado) {
-                        case "PRESENTE":
-                            color = " text-green-500 ";
-                            break;
-                        case "TARDANZA":
-                            color = " text-orange-500 ";
-                            break;
-                        case "FALTA":
-                            color = "text-red-500 ";
-                            break;
-                        case "PERMISO":
-                            color = " text-blue-500 ";
-                            break;
-                        case "VACACIONES":
-                            color = " text-yellow-500 ";
-                            break;
-                        default:
-                            color = " text-gray-500 ";
-                    }
-                    return (
-                        <div
-                            className={`text-center bg-gradient-to-tr from-white to-gray-100 
-                shadow-inner rounded-xl font-semibold  px-5 py-1  ${color} `}
-                        >
-                            {rowData.estado}
-                        </div>
-                    );
-                }}
             ></Column>
+            <Column
+                field={
+                    (rowData) =>
+                        rowData.tipoCliente === "EMPRESA"
+                            ? (rowData.rucEmpresa)
+                            : (rowData.dniCliente)
+                }
+                header="RUC / DNI"
+            ></Column>
+            <Column
+                field={
+                    (rowData) =>
+                        rowData.tipoCliente === "EMPRESA"
+                            ? (rowData.razonSocial)
+                            : (rowData.nombreCliente)
+                }
+                header="Razón Social / Nombre"
+            ></Column>
+            <Column
+                field="servicio"
+                header="Servicio"
+            ></Column>
+
         </ListPrincipal>
     );
 };

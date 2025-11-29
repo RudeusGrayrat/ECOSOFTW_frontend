@@ -11,7 +11,7 @@ function Login() {
     const [deshabilitar, setDeshabilitar] = useState(false);
     const { signin, isAuthenticated, errors, setErrors } = useAuth();
     const sendMessage = useSendMessage();
-    const errorForms = useSelector((state) => state.error);
+    const errorForms = useSelector((state) => state.errorAndResponse);
 
     const {
         register,
@@ -31,6 +31,7 @@ function Login() {
         setDeshabilitar(true);
         sendMessage("Cargando...", "Espere");
         try {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             await signin(data);
             if (errors) {
                 sendMessage(errors, "Error");
@@ -49,91 +50,112 @@ function Login() {
     return (
         <div className="min-h-screen h-screen flex justify-center items-center w-screen"
             style={{
-                backgroundImage: "url('PRUEBA2.svg')",
-                backgroundSize: "contain",
+                backgroundImage: "url('FONDO_ECOSOFTW.svg')",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
                 backgroundPositionY: "center",
                 backgroundPositionX: "center",
             }}
         >
             <PopUp deshabilitar={deshabilitar} />
             <div
-                className="flex flex-col max-sm:w-[90%] items-center h-[95%] w-[40%] rounded-4xl shadow-lg overflow-hidden"
-                style={{
-                    backgroundColor: "rgba(255,255,255,0.64)",
-                    backdropFilter: "blur(5px) saturate(120%)",
-                    WebkitBackdropFilter: "blur(5px) saturate(120%)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                }}
+                className="flex flex-col max-lg:w-[90%]  items-center h-[95%] w-[40%] rounded-4xl shadow-lg overflow-hidden"
+
             >
+
                 <div
-                    className="w-full h-[30%]"
+                    className="w-full h-[50%] relative items-center flex justify-center"
                     style={{
-                        backgroundImage: "url('PRUEBA1.png')",
+                        backgroundImage: "url('FONDO_ECOSOFTW.svg')",
                         backgroundSize: "cover",
                         backgroundRepeat: "no-repeat",
                         backgroundPosition: "center",
                     }}
-                />
-                <div
-                    className="w-[75%] h-[15%] mt-4"
+                >
+                    <div
+                        className="w-[75%] absolute -bottom-2 z-50 h-[15%] mt-4"
+                        style={{
+                            backgroundImage: "url('ECOSOFTW_NAME.png')",
+                            backgroundSize: "contain",
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "bottom",
+                        }}
+                    />
+                </div>
+
+                <div className=" w-full  max-sm:w-[120%]   flex flex-col items-center h-[50%] justify-evenly"
                     style={{
-                        backgroundImage: "url('LOGIN_LOGO.svg')",
-                        backgroundSize: "center",
-                        backgroundRepeat: "no-repeat",
-                        backgroundPosition: "center",
+                        backgroundColor: "rgba(60,90,78,0.74)",
+                        backdropFilter: "blur(5px) saturate(120%)",
+                        WebkitBackdropFilter: "blur(5px) saturate(120%)",
                     }}
-                />
-
-                <div className=" w-[80%] max-sm:w-[120%] rounded-xl  flex flex-col items-center h-[50%] justify-evenly">
-
-
-                    <h2 style={{
-                        fontFamily: "'Exo', sans-serif",
-                        fontWeight: 700,
-                        WebkitFontSmoothing: "antialiased",
-                        MozOsxFontSmoothing: "grayscale",
-                    }} className="text-4xl font-bold mb- text-gray-500 text-center">
-                        Iniciar sesión
-                    </h2>
+                >
 
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         noValidate
                         className="flex flex-col  items-center space-y-5 w-full"
                     >
+
+
+                        <h2 style={{
+                            fontFamily: "'Exo', sans-serif",
+                            fontWeight: 700,
+                            WebkitFontSmoothing: "antialiased",
+                            MozOsxFontSmoothing: "grayscale",
+                        }} className="text-4xl font-bold  text-gray-50 text-center">
+                            Iniciar sesión
+                        </h2>
                         {/* USERNAME */}
-                        <div className="max-sm:w-[60%] w-[80%] ">
-                            <label htmlFor="userName" className="block text-sm text-gray-800 mb-2">
+                        <div className="max-sm:w-[60%] w-[50%] ">
+                            <label htmlFor="userName" className="block text-sm text-gray-50 mb-2">
                                 Usuario
                             </label>
-                            <input
-                                id="userName"
-                                type="text"
-                                autoComplete="username"
-                                className={`w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-green-500 ${formErrors.userName ? "border-red-500" : "border-gray-300"
-                                    }`}
-                                {...register("userName", {
-                                    required: "El usuario es requerido",
-                                })}
-                            />
-                            {formErrors.userName && (
-                                <p className="text-sm text-red-600 mt-1">
-                                    {formErrors.userName.message}
-                                </p>
-                            )}
+                            <div className="relative">
+                                <span >
+                                    <img
+                                        src="/ICON-LOGIN-1.png"
+                                        alt="Icon"
+                                        className="absolute top-1/2 -translate-y-1/2 h-5 flex items-center left-4"
+                                    />
+                                </span>
+                                <input
+                                    id="userName"
+                                    type="text"
+                                    autoComplete="username"
+                                    className={`w-full text-white bg-linear-to-tl from-[#81A38B] to-[#679173]  px-3 pl-13 py-2 border rounded-xl focus:outline-none  ${formErrors.userName ? "border-red-500" : "border-gray-300 focus:ring-1 focus:ring-green-500"
+                                        }`}
+                                    {...register("userName", {
+                                        required: "El usuario es requerido",
+                                    })}
+                                />
+                                {formErrors.userName && (
+                                    <p className="text-sm text-red-600 mt-1">
+                                        {formErrors.userName.message}
+                                    </p>
+                                )}
+                            </div>
                         </div>
 
                         {/* PASSWORD */}
-                        <div className="max-sm:w-[60%] w-[80%]">
-                            <label htmlFor="password" className="block text-sm text-gray-800 mb-1">
+                        <div className="max-sm:w-[60%] w-[50%]">
+                            <label htmlFor="password" className="block  text-sm text-white mb-1">
                                 Contraseña
                             </label>
                             <div className="relative">
+
+                                <span>
+                                    <img
+                                        src="/ICON-LOGIN-2.png"
+                                        alt="Icon"
+                                        className="absolute top-1/2 -translate-y-1/2 h-5 flex items-center left-4"
+                                    />
+                                </span>
                                 <input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     autoComplete="current-password"
-                                    className={`w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-green-500 ${formErrors.password ? "border-red-500" : "border-gray-300"
+                                    className={`w-full bg-linear-to-tl! from-[#81A38B]! to-[#679173]! px-3 text-white  pl-13 py-2 border rounded-xl focus:outline-none  ${formErrors.password ? "border-red-500" : "border-gray-300 focus:ring-1 focus:ring-green-500"
                                         }`}
                                     {...register("password", {
                                         required: "La contraseña es requerida",
@@ -146,7 +168,7 @@ function Login() {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword((s) => !s)}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-600 px-2 py-1 rounded hover:bg-gray-100"
+                                    className="absolute h-[90%] w-20 bg-[#3b8359] z-50 right-[1.9px] top-1/2 -translate-y-1/2 text-sm text-gray-50 px-2 py-1 rounded-r-lg hover:scale-95 hover:text-black hover:bg-[#54b97e] transition-all duration-300"
                                 >
                                     {showPassword ? "Ocultar" : "Mostrar"}
                                 </button>
@@ -158,7 +180,7 @@ function Login() {
                             )}
                         </div>
 
-                        <div className="flex justify-center w-[60%] ">
+                        <div className="flex justify-center w-[30%] ">
                             <button
                                 type="submit"
                                 className="bg-linear-to-r  from-[#7BCF9E] to-[#3B8359] hover:scale-105 transition-all duration-300 px-4 py-2 rounded-xl text-white w-90 max-sm:w-64 font-medium text-lg mt-4"
@@ -167,21 +189,9 @@ function Login() {
                             </button>
                         </div>
                     </form>
-
-                    <div className="flex items-center justify-center my-5">
-                        <button
-                            type="button"
-                            onClick={() => alert("Funcionalidad de 'Olvidé mi contraseña'")}
-                            className="text-sm text-[#32B32B] hover:underline"
-                        >
-                            ¿Olvidaste tu contraseña?
-                        </button>
-                    </div>
-
                 </div>
-                <div className=" h-[2%] w-full"></div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
 

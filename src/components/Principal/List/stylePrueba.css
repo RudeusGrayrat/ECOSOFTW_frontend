@@ -1,7 +1,7 @@
 .p-datatable .p-datatable-header {
     background: none;
+    border: none !important;
 }
-
 .p-paginator-current {
     display: none;
 }
@@ -60,3 +60,6 @@
     border: none !important;
 }
 
+.p-datatable .p-paginator-bottom {
+    border-radius: 10px !important;
+}

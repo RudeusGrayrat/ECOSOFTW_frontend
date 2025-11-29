@@ -29,6 +29,7 @@ const ListPrincipal = ({
     rowClick,
     onSearch,
     fetchData,
+    title,
     ...OtheProps
 }) => {
     const dt = useRef(null);
@@ -40,7 +41,7 @@ const ListPrincipal = ({
     const [showDisapprove, setShowDisapprove] = useState(false);
     const [showPopUp, setShowPopUp] = useState(false);
     const { setResponse, setErrors } = useAuth();
-    const errorForms = useSelector((state) => state.error);
+    const errorForms = useSelector((state) => state.errorAndResponse);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
@@ -235,7 +236,7 @@ const ListPrincipal = ({
     const header = (
         <div className="flex flex-wrap pr-20 justify-end gap-2 ">
             <IconField iconPosition="left">
-                <InputIcon className="pi pi-search pl-2" />
+                <InputIcon className="pi pi-search pl-2!" />
                 <InputText
                     type="search"
                     value={searchTerm}
@@ -244,13 +245,13 @@ const ListPrincipal = ({
                         setSearchTerm(e.target.value);
                     }}
                     placeholder="Buscar..."
-                    className="p-2 rounded-xl! pl-11 focus:shadow-inner focus:translate-x-px ease-in-out  shadow-lg bg-gradient-to-r from-gray-50 to-gray-100 "
+                    className="p-2! border-none! rounded-xl! pl-11! focus:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg bg-linear-to-r! from-gray-50! to-gray-100! "
                 />
             </IconField>
             {reload ? (
                 <Button
                     icon="pi pi-refresh"
-                    className="p-2!  rounded-xl!  active:shadow-inner focus:translate-x-px ease-in-out  shadow-lg bg-gradient-to-r from-gray-50 to-gray-100 "
+                    className=" w-16! text-green-600!  rounded-xl!  active:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg! bg-linear-to-r! from-gray-50! to-gray-100! "
                     onClick={() => {
                         reload();
                         useEffectAsync();
@@ -314,9 +315,10 @@ const ListPrincipal = ({
                     ref={dt}
                     value={content}
                     lazy
+                    key={title + "Table"}
                     selection={selectedProducts}
                     onSelectionChange={(e) => setSelectedProducts(e.value)}
-                    dataKey="_id"
+                    // dataKey="_id"
                     loading={loading}
                     paginator
                     onRowClick={rowClick}
