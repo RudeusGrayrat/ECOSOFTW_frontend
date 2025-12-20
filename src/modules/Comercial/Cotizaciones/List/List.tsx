@@ -3,6 +3,9 @@ import ListPrincipal from "../../../../components/Principal/List/List";
 import useSendMessage from "../../../../components/Ui/Messages/sendMessage";
 import axios from "../../../../api/axios";
 import ViewCotizacion from "../Permissions/View";
+import ApproveCotizacion from "../Permissions/Approve";
+import DisapproveCotizacion from "../Permissions/Disapprove";
+import EditCotizacion from "../Permissions/Edit";
 
 
 const ListCotizacionesComercial = ({
@@ -29,9 +32,12 @@ const ListCotizacionesComercial = ({
         <ListPrincipal
             permissionEdit={permissionEdit}
             permissionRead={permissionRead}
-            DetailItem={ViewCotizacion}
             permissionApprove={permissionApprove}
             permissionDisapprove={permissionDisapprove}
+            DetailItem={ViewCotizacion}
+            ApproveItem={ApproveCotizacion}
+            DisapproveItem={DisapproveCotizacion}
+            EditItem={EditCotizacion}
             fetchData={fetchCotizacionesComercial}
             reload={fetchCotizacionesComercial}
             title={"comercial_cotizaciones"}
@@ -48,6 +54,10 @@ const ListCotizacionesComercial = ({
             <Column
                 field="proyecto_id.cliente_id.cliente"
                 header="Cliente"
+            ></Column>
+            <Column
+                field="proyecto_id.cliente_id.numeroDocumento"
+                header="RUC / DNI"
             ></Column>
             <Column
                 field="totalSinIgv"

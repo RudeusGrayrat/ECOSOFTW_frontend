@@ -105,8 +105,8 @@ const renderDoc = async (Cotizacion) => {
         total_gastos_generales: "data",
 
         total_sin_igv: `S/. ${data.totalSinIgv}`,
-        direccion_legal: data.proyecto_id.cliente_id.direccionLegal || "PRUEBA DIRECCION 123",
-        lugar_muestreo: "data",
+        direccion_legal: data.proyecto_id.cliente_id.direccionLegal,
+        lugar_muestreo: data.proyecto_id.lugarMuestreo,
       };
 
       return formattedData;
