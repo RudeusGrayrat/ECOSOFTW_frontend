@@ -136,8 +136,8 @@ const ListPrincipal = ({
                         rounded
                         title="Desaprobar o Desactivar"
                         outlined
-                        className={`text-orange-600 rounded-full
-              ${!isApproved ? "cursor-not-allowed opacity-30" : ""}
+                        className={`text-orange-600! rounded-full
+              ${rowData.estado === "RECHAZADO" || rowData.state === "INACTIVO" ? "cursor-not-allowed opacity-30" : ""}
               mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out 
               ${selectedRowId === rowData._id && showDisapprove
                                 ? "shadow-inner translate-y-[2px]"
@@ -145,7 +145,7 @@ const ListPrincipal = ({
                             }
               `}
                         onClick={() => handleShowDisapprove(rowData)}
-                        disabled={!isApproved}
+                        disabled={rowData.estado === "RECHAZADO" || rowData.state === "INACTIVO"}
                     />
                 )}
                 {permissionEdit && (

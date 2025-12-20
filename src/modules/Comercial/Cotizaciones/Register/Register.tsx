@@ -63,10 +63,40 @@ const RegisterCotizacionesComercial = ({ }) => {
             tiempoDeEntrega: [],
             tipoDeServicio: "",
             proyecto_id: "",
-            analisis: [],
-            gastosOperativos: [],
-            gastosAdministrativos: [],
-            gastosGenerales: [],
+            analisis: [
+                {
+                    descripcion: "",
+                    parametro_id: "",
+                    cantidad: 0,
+                    precio: 0,
+                    subtotal: 0,
+                }
+            ],
+            gastosOperativos: [
+                {
+                    descripcion: "",
+                    tipoDeGasto_id: "",
+                    precio: 0,
+                    cantidad: 0,
+                    dias: 0,
+                    subtotal: 0,
+                }
+            ],
+            gastosAdministrativos: [
+                {
+                    descripcion: "",
+                    tipoDeGasto_id: "",
+                    precio: 0,
+                    cantidad: 0,
+                    subtotal: 0,
+                }
+            ],
+            gastosGenerales: [
+                {
+                    descripcion: "",
+                    subtotal: 0,
+                },
+            ],
             totalSinIgv: 0,
             igv: 0,
             totalConIgv: 0,
@@ -107,15 +137,15 @@ const RegisterCotizacionesComercial = ({ }) => {
     const register = async () => {
         setHabilitar(true);
         try {
-            console.log("FORMULARIO A ENVIAR:", form);
             const response = await axios.post("/comercial/postCotizacion", form);
-            console.log("Respuesta del servidor:", response);
+            const data = response.data;
+            if (data.message)
+                sendMessage(data.message, "Correcto");
+            resetForm();
         } catch (error) {
-            console.error("Error al registrar la cotización:", error);
             sendMessage(error, "Error");
         } finally {
             setHabilitar(false);
-            // resetForm();
         }
     }
     return (

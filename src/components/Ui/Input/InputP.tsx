@@ -22,6 +22,8 @@ const InputP = ({
     mayus = true,
     fetchData,
     setOptions,
+    otro = true,
+    extraParams = {},
     ...OtherProps
 }) => {
     if (setForm === undefined) {
@@ -69,14 +71,16 @@ const InputP = ({
         const { value } = e.target;
         let newValue = value;
 
-        if (name === "email") {
+        if (name === "email" || name === "correoElectronico" || name === "username" || name === "correo") {
             newValue = value.toLowerCase();
         } else if (name === "password" || name === "permissions") {
             newValue = value;
         } else if (type === "autocomplete") {
             newValue = value;
+        } else if (typeof value === "object") {
+            newValue = value;
         } else {
-            newValue = value;  // ← AQUÍ EL CAMBIO
+            newValue = mayus ? value.toUpperCase() : value;
         }
 
         if (type === "multiSelect") {
@@ -139,10 +143,16 @@ const InputP = ({
             );
             break;
         case "autocomplete":
-            const opcionesConOtro = [
-                ...OtherProps?.options,
-                { [name]: "OTRO", value: "OTRO" }
-            ];
+            let opcionesConOtro = [];
+            if (otro) {
+                opcionesConOtro = [
+                    ...OtherProps?.options,
+                    { [name]: "OTRO", value: "OTRO" }
+                ];
+            } else {
+                opcionesConOtro = [...OtherProps?.options];
+            }
+
 
             content = (
                 <div className="flex items-center gap-2">
@@ -155,10 +165,20 @@ const InputP = ({
 
                                 debounceRef.current = setTimeout(() => {
                                     if (e.query === "OTRO") return;
-
+                                    let allParams = {
+                                        page: 0,
+                                        limit: 10,
+                                        search: e.query,
+                                    }
+                                    if (OtherProps.extraParams) {
+                                        allParams = {
+                                            ...allParams,
+                                            ...extraParams
+                                        }
+                                    }
                                     axios
                                         .get(fetchData, {
-                                            params: { page: 0, limit: 10, search: e.query },
+                                            params: allParams
                                         })
                                         .then((res) => setOptions(res.data.data));
                                 }, 500);

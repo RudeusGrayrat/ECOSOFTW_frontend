@@ -1,6 +1,6 @@
 import ButtonOk from "../../Ui/Button/Buttons";
 import PopUp from "../../Ui/Messages/PopUp";
-import useref from "../../useRef";
+import useref from "../../Otros/useRef";
 
 const Delete = ({ setShowDelete, onclick }) => {
   const ref = useref(setShowDelete);

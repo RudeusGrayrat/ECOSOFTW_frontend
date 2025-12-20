@@ -1,5 +1,6 @@
 import { Column } from "primereact/column";
 import ListPrincipal from "../../../../components/Principal/List/List";
+import axios from "../../../../api/axios";
 
 const ListProyectos = ({
     permissionEdit,
@@ -7,10 +8,16 @@ const ListProyectos = ({
     permissionRead,
 }) => {
     const fetchData = async (limit: Number, page: Number, search: String) => {
-        console.log("Fetch Proyectos", { limit, page, search });
+        const response = await axios.get("/comercial/getProyectosPaginacion", {
+            params: {
+                limit,
+                page,
+                search,
+            },
+        });
         return {
-            data: [],
-            total: 0
+            data: response.data?.data,
+            total: response.data?.total
         }
     }
     return (
@@ -22,13 +29,35 @@ const ListProyectos = ({
             reload={fetchData}
             title={"comercial_proyectos"}
         >
-            <Column field="proyecto" header="Proyecto"></Column>
-            <Column field="cliente.tipoCliente" header="Tipo de Cliente"></Column>
-            <Column field={(rowData) => rowData.cliente.tipoCliente === "EMPRESA" ? rowData.cliente.rucEmpresa : rowData.cliente.dniCliente} header="RUC / DNI"></Column>
-            <Column field={(rowData) => rowData.cliente.tipoCliente === "EMPRESA" ? rowData.cliente.razonSocial : rowData.cliente.nombreCliente} header="Razón Social / Nombre"></Column>
-            <Column field="fechaInicio" header="Fecha de Inicio"></Column>
-            <Column field="estado" header="Estado"></Column>
+            <Column field="cliente_id.tipoCliente" header="Tipo de Cliente"
+                style={{ paddingLeft: "60px" }}
+            ></Column>
+            <Column field="nombre" header="Proyecto"></Column>
+            <Column field="cliente_id.numeroDocumento" header="RUC / DNI"></Column>
+            <Column field="cliente_id.cliente" header="Cliente"></Column>
+            <Column field="servicio" header="Servicio"></Column>
+            <Column field="fechaServicio" header="Fecha de Servicio"></Column>
+            <Column field="estado" header="Estado"
+                style={{
+                    justifyItems: "center",
+                    // display: window.innerWidth <= 1250 ? "none" : "table-cell",
+                }}
+                body={(rowData) => {
+                    const color =
+                        rowData.estado === "ACTIVO"
+                            ? " text-green-500 "
+                            : " text-red-500 ";
 
+                    return (
+                        <div
+                            className={`text-center bg-linear-to-tr from-white to-gray-100 
+                shadow-inner rounded-xl font-semibold  px-5 py-1  ${color} `}
+                        >
+                            {rowData.estado}
+                        </div>
+                    );
+                }}
+            />
         </ListPrincipal>
     )
 }

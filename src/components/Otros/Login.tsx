@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import PopUp from "./Ui/Messages/PopUp";
-import { useAuth } from "../context/AuthContext";
-import useSendMessage from "./Ui/Messages/sendMessage";
+import useSendMessage from "../Ui/Messages/sendMessage";
+import { useAuth } from "../../context/AuthContext";
+import PopUp from "../Ui/Messages/PopUp";
+
 
 function Login() {
     const navigate = useNavigate();
@@ -131,7 +132,7 @@ function Login() {
                                 />
                                 {formErrors.userName && (
                                     <p className="text-sm text-red-600 mt-1">
-                                        {formErrors.userName.message}
+                                        {formErrors?.userName?.message}
                                     </p>
                                 )}
                             </div>

@@ -21,8 +21,6 @@ const PopUp = ({ deshabilitar, ...OtherProps }) => {
             setShowPopUp(false);
         }
     }, [errorForms]);
-
-
     return (
         showPopUp && (
             <div
@@ -43,7 +41,7 @@ const PopUp = ({ deshabilitar, ...OtherProps }) => {
                             <button
                                 onClick={handleClosePopUp}
                                 {...OtherProps}
-                                className="text-white font-medium bg-blue-500 w-10/12 rounded-lg p-3  "
+                                className="text-white font-medium bg-blue-500 w-8/12 rounded-lg p-3  "
                             >
                                 Ok
                             </button>

@@ -10,6 +10,7 @@ const RegisterParametrosComercial = () => {
     const [habilitar, setHabilitar] = useState(false);
     const [form, setForm] = useState({
         tipoDeAnalisis: "",
+        categoria: "",
         parametro: "",
         metodo: "",
         acreditadoPor: "",
@@ -22,6 +23,7 @@ const RegisterParametrosComercial = () => {
     const resetForm = () => {
         setForm({
             tipoDeAnalisis: "",
+            categoria: "",
             parametro: "",
             metodo: "",
             acreditadoPor: "-",

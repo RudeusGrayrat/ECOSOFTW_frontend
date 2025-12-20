@@ -1,13 +1,13 @@
 import { Route, Routes, useLocation } from "react-router-dom";
-import Login from "../components/Login";
-import Home from "../components/Home";
-import Error from "../components/Error";
+import Home from "../components/Otros/Home";
+import Error from "../components/Otros/Error";
 import SideBar from "../components/SideBar/SideBar";
 import ModulesRoutes from "./modulesRoutes";
 import FormClientes from "../modules/Comercial/Clientes/FormClientes";
 import ProtectedRoute from "../ProtecteRoute";
 import Nav from "../components/Nav/Nav";
 import ModuleRoute from "./ModuleRoute";
+import Login from "../components/Otros/Login";
 
 export const AppRoutes = () => {
   const location = useLocation();

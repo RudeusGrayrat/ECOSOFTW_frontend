@@ -9,7 +9,6 @@ import InputP from "../../../../components/Ui/Input/InputP";
  */
 const Analisis = ({ set, initialData }) => {
     const [analisisDeCotizacion, setAnalisisDeCotizacion] = useState({
-        categoria: "",
         parametro: null, // guarda el objeto parámetro completo o null
         precio: "",      // valor editable (puede venir del parametro)
         cantidad: 0,
@@ -59,10 +58,6 @@ const Analisis = ({ set, initialData }) => {
             cantidad: analisisDeCotizacion.cantidad,
             subtotal: subtotal,
             descripcion: analisisDeCotizacion.parametro?.tipoDeAnalisis ?? null,
-            // categoria solo si tiene texto no vacío
-            ...(String(analisisDeCotizacion.categoria || "").trim().length > 0 && {
-                categoria: analisisDeCotizacion.categoria.trim(),
-            }),
         };
 
         // compara con el último enviado para evitar reenvíos innecesarios
@@ -73,8 +68,7 @@ const Analisis = ({ set, initialData }) => {
             String(last.precio) === String(payload.precio) &&
             String(last.cantidad) === String(payload.cantidad) &&
             String(last.subtotal) === String(payload.subtotal) &&
-            last.tipoDeAnalisis === payload.tipoDeAnalisis &&
-            (last.categoria ?? "") === (payload.categoria ?? "");
+            last.tipoDeAnalisis === payload.tipoDeAnalisis
 
         if (!same) {
             // manda al padre
@@ -93,28 +87,9 @@ const Analisis = ({ set, initialData }) => {
         analisisDeCotizacion.precio,
         analisisDeCotizacion.cantidad,
         subtotal,
-        analisisDeCotizacion.categoria,
         set, // asumimos que set es estable; si no lo es, el padre debería memoizarlo
     ]);
 
-    // -- Categoría: si el tipo de análisis no es AGUA, la limpiamos (una sola vez cuando cambia el tipo)
-    useEffect(() => {
-        const tipo = analisisDeCotizacion.parametro?.tipoDeAnalisis;
-        if (tipo && tipo !== "AGUA" && analisisDeCotizacion.categoria !== "") {
-            setAnalisisDeCotizacion((prev) => ({ ...prev, categoria: "" }));
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [analisisDeCotizacion.parametro?.tipoDeAnalisis]);
-
-    // Opciones para select Categoría
-    const categoriaAgua = [
-        "AGUA PARA USO Y CONSUMO HUMANO",
-        "AGUA RESIDUAL",
-        "AGUA NATURAL",
-        "AGUA SALINA",
-    ];
-
-    // Render
     return (
         <div className="flex flex-wrap justify-center items-center pt-2">
             <InputP
@@ -128,11 +103,9 @@ const Analisis = ({ set, initialData }) => {
             {analisisDeCotizacion.parametro?.tipoDeAnalisis === "AGUA" && (
                 <InputP
                     label="Categoría"
-                    type="select"
                     name="categoria"
-                    options={categoriaAgua}
-                    value={analisisDeCotizacion.categoria}
-                    setForm={setAnalisisDeCotizacion}
+                    disabled={true}
+                    value={analisisDeCotizacion.parametro?.categoria}
                 />
             )}
 

@@ -18,6 +18,22 @@ const DatosDelParametro = ({ form, setForm }) => {
                 value={form.tipoDeAnalisis || ""}
                 setForm={setForm}
             />
+            {
+                form.tipoDeAnalisis === "AGUA" &&
+                <InputP
+                    label="Categoria"
+                    name="categoria"
+                    type="select"
+                    options={[
+                        "AGUA PARA USO Y CONSUMO HUMANO",
+                        "AGUA RESIDUAL",
+                        "AGUA NATURAL",
+                        "AGUA SALINA",
+                    ]}
+                    value={form.categoria}
+                    setForm={setForm}
+                />
+            }
             <InputP
                 label="Parametro"
                 name="parametro"

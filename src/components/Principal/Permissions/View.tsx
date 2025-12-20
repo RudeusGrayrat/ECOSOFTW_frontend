@@ -1,6 +1,8 @@
-import ButtonOk from "../../../recicle/Buttons/Buttons";
-import PopUp from "../../../recicle/popUps";
 import { useLocation, useNavigate } from "react-router-dom";
+import ButtonOk from "../../Ui/Button/Buttons";
+import PopUp from "../../Ui/Messages/PopUp";
+
+
 const Details = (props) => {
   const { setShowDetail, children } = props;
   const navigate = useNavigate();

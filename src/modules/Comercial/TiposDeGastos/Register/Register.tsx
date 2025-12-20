@@ -10,14 +10,19 @@ const RegisterTiposDeGastos = () => {
     const [form, setForm] = useState({});
     const [deshabilitar, setDeshabilitar] = useState(false);
     const sendMessage = useSendMessage();
+    const resetForm = () => {
+        setForm({});
+    }
     const registrar = async () => {
         setDeshabilitar(true);
         try {
             const response = await axios.post("/comercial/postTiposDeGastos", form)
             if (response.status > 200 && response.status < 300) {
+                resetForm();
                 return sendMessage("Tipo de Gasto registrado con éxito", "Correcto");
+            } else {
+                sendMessage("Error al registrar el Tipo de Gasto", "Error");
             }
-            // sendMessage(response.data.message, "Aviso");
         } catch (error) {
             sendMessage(error, "Error");
         } finally {

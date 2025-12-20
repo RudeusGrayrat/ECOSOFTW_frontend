@@ -1,16 +1,21 @@
+import { useState } from "react";
 import InputP from "../../../../components/Ui/Input/InputP";
 
 const ProyectosRegister = ({ form, setForm }) => {
+    const [clientesForAutoComplete, setClientesForAutoComplete] = useState([]);
     return (
         <div className="flex flex-wrap">
             <InputP
                 label="Cliente"
                 name="cliente"
-                type="select"
-                options={["EMPRESA A", "EMPRESA B", "EMPRESA C"]}
-                value={form.cliente}
+                type="autocomplete"
+                otro={false}
+                ancho={"w-96!"}
+                setOptions={setClientesForAutoComplete}
+                options={clientesForAutoComplete}
+                fetchData={"/comercial/getClientesPaginacion"}
                 setForm={setForm}
-                ancho="bg-white w-96!"
+                value={form.cliente}
             />
             <InputP
                 label="Servicio"
@@ -19,43 +24,34 @@ const ProyectosRegister = ({ form, setForm }) => {
                 options={["ANALISIS", "MONITOREO AMBIENTAL"]}
                 value={form.servicio}
                 setForm={setForm}
-                ancho="bg-white w-96!"
             />
             <InputP
                 label="Proyecto"
                 name="proyecto"
                 value={form.proyecto}
                 setForm={setForm}
-                ancho="bg-white w-96!"
+                ancho={"w-96!"}
             />
             <InputP
                 label="Cantidad de Puntos / Parámetros"
                 name="cantidadPuntosParametros"
+                type="number"
                 value={form.cantidadPuntosParametros}
                 setForm={setForm}
-                ancho="bg-white w-96!"
             />
             <InputP
                 label="Lugar de Muestreo"
                 name="lugarMuestreo"
                 value={form.lugarMuestreo}
                 setForm={setForm}
-                ancho="bg-white w-96! "
+                ancho={"w-96!"}
             />
             <InputP
+                type="date"
                 label="Fecha de Servicio"
                 name="fechaServicio"
-                type="date"
                 value={form.fechaServicio}
                 setForm={setForm}
-                ancho="bg-white w-96! "
-            />
-            <InputP
-                label="Dirección Legal"
-                name="direccionLegal"
-                value={form.direccionLegal}
-                setForm={setForm}
-                ancho="bg-white w-96! "
             />
         </div>
     )

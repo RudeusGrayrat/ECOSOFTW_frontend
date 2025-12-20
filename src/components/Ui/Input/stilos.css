@@ -19,6 +19,14 @@
 .p-password.p-component {
   box-shadow: none !important;
 }
+
 .MuiPickersPopper-root {
-  z-index: 1050; /* Ajusta este valor según el z-index de tu modal o contenedores */
+  z-index: 1050;
+  /* Ajusta este valor según el z-index de tu modal o contenedores */
 }
+
+.css-10o2lyd-MuiStack-root {
+  overflow: hidden !important;
+  padding-top: 4px !important;
+}
+

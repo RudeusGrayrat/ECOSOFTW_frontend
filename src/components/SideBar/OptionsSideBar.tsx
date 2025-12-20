@@ -1,6 +1,6 @@
 import { useState } from "react";
 import LeftSideBar from "./LeftSideBar";
-import useref from "../useRef";
+import useref from "../Otros/useRef";
 
 const OptionSideBar = ({ icon, options, module }) => {
     const [mostrar, setMostrar] = useState(false);

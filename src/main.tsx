@@ -8,7 +8,6 @@ import { PrimeReactProvider } from "primereact/api";
 import { StrictMode } from "react";
 import { AuthProvider } from "./context/AuthContext";
 
-
 import "primereact/resources/themes/saga-green/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
