@@ -18,15 +18,27 @@ const RegisterClientesComercial = ({ }) => {
     const [deshabilitar, setDeshabilitar] = useState(false);
 
     const sendMessage = useSendMessage();
+    const resetForm = () => {
+        setForm({
+            tipoCliente: "EMPRESA",
+            cliente: "",
+            numeroDocumento: "",
+            telefono: "",
+            correoElectronico: "",
+            direccionLegal: "",
+        });
+    }
     const register = async () => {
         setDeshabilitar(true);
         try {
             console.log("Register form data:", form);
             const response = await axios.post("/comercial/postCliente", form);
-            console.log("Client registered successfully:", response.data);
-            sendMessage("Cliente registrado con éxito", "Correcto")
+            if (response.data) {
+                sendMessage(response.data.message, "Correcto")
+                resetForm();
+            }
+
         } catch (error) {
-            console.error("Error registering client:", error);
             sendMessage(error, "Error")
         } finally {
             setDeshabilitar(false);

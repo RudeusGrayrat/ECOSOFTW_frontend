@@ -27,7 +27,6 @@ const ListTiposDeGastos = ({
             permissionRead={permissionRead}
             title={"comercial_tipos_de_gastos"}
             fetchData={fetchData}
-            reload={fetchData}
         >
             <Column field="tipoDeGasto" header="Tipo de Gasto" style={{ paddingLeft: "60px" }} />
             <Column field="descripcion" header="Descripción" />

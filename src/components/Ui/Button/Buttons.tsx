@@ -5,7 +5,6 @@ const ButtonOk = ({
   onClick,
   styles,
   classe,
-  stylesButton,
   ...OtherProps
 }) => {
   const color =

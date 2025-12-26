@@ -40,27 +40,27 @@ const ReadOrCreate = ({ ItemRegister, ItemList, ItemReporte, submodule }) => {
         (permission) => permission === "DESAPROBAR"
     );
     const [searchParams, setSearchParams] = useSearchParams();
-    const [change, setChange] = useState(searchParams.get("select") || "");
+    const selectedView = searchParams.get("select");
 
     useEffect(() => {
         const vistaSeleccionada = searchParams.get("select");
 
         if (!vistaSeleccionada) {
-            if (permissionRead) {
-                setChange("Listar");
-                setSearchParams({ select: "Listar" });
-            } else if (permissionCreate) {
-                setChange("Crear");
-                setSearchParams({ select: "Crear" });
-            } else if (permissionReport) {
-                setChange("Reporte");
-                setSearchParams({ select: "Reporte" });
-            } else {
-                setChange("No hay Opciones Disponibles");
-                setSearchParams({ select: "No hay Opciones Disponibles" });
-            }
+            setSearchParams(prev => {
+                const params = new URLSearchParams(prev);
+
+                if (permissionRead) {
+                    params.set("select", "Listar");
+                } else if (permissionCreate) {
+                    params.set("select", "Crear");
+                } else if (permissionReport) {
+                    params.set("select", "Reporte");
+                }
+
+                return params;
+            });
         }
-    }, [permissionRead, permissionCreate, permissionReport, searchParams]);
+    }, [permissionRead, permissionCreate, permissionReport]);
 
     const [options, setOptions] = useState([]);
     useEffect(() => {
@@ -72,43 +72,40 @@ const ReadOrCreate = ({ ItemRegister, ItemList, ItemReporte, submodule }) => {
     }, [permissionRead, permissionCreate, permissionReport]);
 
     const handleOptionClick = (option) => {
-        setChange(option);
-        setSearchParams({ select: option });
+        setSearchParams(prev => {
+            const params = new URLSearchParams(prev);
+            params.set("select", option);
+            params.delete("view"); // opcional: limpiar view al cambiar pestaña
+            return params;
+        });
     };
 
     let children;
-    if (change === "Crear") {
+
+    if (selectedView === "Crear") {
         children = <ItemRegister />;
-    } else if (change === "Listar") {
-        children = (
-            <ItemList
-                permissionRead={permissionRead}
-                permissionEdit={permissionEdit}
-                permissionDelete={permissionDelete}
-                permissionApprove={permissionApprove}
-                permissionDisapprove={permissionDisapprove}
-            />
-        );
-    } else if (change === "Reporte") {
-        children = <ItemReporte />;
-    } else {
-        children = "No hay nada";
+    } else if (selectedView === "Listar") {
+        children = <ItemList
+            permissionRead={permissionRead}
+            permissionEdit={permissionEdit}
+            permissionDelete={permissionDelete}
+            permissionApprove={permissionApprove}
+            permissionDisapprove={permissionDisapprove}
+        />
     }
-    useEffect(() => {
-        const vistaSeleccionada = searchParams.get("select");
-        if (vistaSeleccionada) {
-            setChange(vistaSeleccionada);
-        }
-    }, [searchParams]);
+    else if (selectedView === "Reporte") {
+        children = <ItemReporte />;
+    }
 
     return (
         <div className="w-full">
             <div className="flex justify-center items-center p-5">
                 <RadioOption
                     opciones={options}
-                    selectedOption={change}
+                    selectedOption={selectedView}
                     onChange={handleOptionClick}
                 />
+
             </div>
             {children}
         </div>

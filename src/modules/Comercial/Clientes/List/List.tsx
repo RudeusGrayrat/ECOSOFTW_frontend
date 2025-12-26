@@ -2,11 +2,16 @@
 import { Column } from "primereact/column";
 import ListPrincipal from "../../../../components/Principal/List/List";
 import axios from "../../../../api/axios";
+import EditCliente from "../Permissions/Edit";
+import ViewCliente from "../Permissions/View";
+import ApproveCliente from "../Permissions/Approve";
+import DisapproveCliente from "../Permissions/Disapprove";
 
 const ListClientesComercial = ({
     permissionEdit,
-    permissionDelete,
     permissionRead,
+    permissionApprove,
+    permissionDisapprove,
 }) => {
 
     const fetchClientesComercial = async (page, limit, search) => {
@@ -17,7 +22,6 @@ const ListClientesComercial = ({
                 search,
             },
         })
-        console.log("response", response.data);
         return {
             data: response.data?.data,
             total: response.data?.total,
@@ -26,10 +30,15 @@ const ListClientesComercial = ({
     return (
         <ListPrincipal
             permissionEdit={permissionEdit}
-            permissionDelete={permissionDelete}
             permissionRead={permissionRead}
+            permissionApprove={permissionApprove}
+            permissionDisapprove={permissionDisapprove}
+            EditItem={EditCliente}
+            DetailItem={ViewCliente}
+            ApproveItem={ApproveCliente}
+            DisapproveItem={DisapproveCliente}
+            title={"cliente_comercial"}
             fetchData={fetchClientesComercial}
-            reload={fetchClientesComercial}
         >
             <Column
                 field="tipoCliente"

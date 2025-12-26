@@ -39,7 +39,6 @@ const ListCotizacionesComercial = ({
             DisapproveItem={DisapproveCotizacion}
             EditItem={EditCotizacion}
             fetchData={fetchCotizacionesComercial}
-            reload={fetchCotizacionesComercial}
             title={"comercial_cotizaciones"}
         >
             <Column
@@ -79,13 +78,13 @@ const ListCotizacionesComercial = ({
                 body={(rowData) => {
                     let color
                     switch (rowData.estado) {
-                        case "ACTVIO":
+                        case "APROBADO":
                             color = "text-green-600";
                             break;
                         case "PENDIENTE":
                             color = "text-yellow-500";
                             break;
-                        case "CANCELADO":
+                        case "ANULADO":
                             color = "text-red-600";
                             break;
                         default:

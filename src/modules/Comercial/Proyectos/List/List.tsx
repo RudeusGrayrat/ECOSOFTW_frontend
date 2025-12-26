@@ -26,7 +26,6 @@ const ListProyectos = ({
             permissionDelete={permissionDelete}
             permissionRead={permissionRead}
             fetchData={fetchData}
-            reload={fetchData}
             title={"comercial_proyectos"}
         >
             <Column field="cliente_id.tipoCliente" header="Tipo de Cliente"

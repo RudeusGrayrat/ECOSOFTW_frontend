@@ -25,7 +25,7 @@ const ListPrincipal = ({
     DetailItem,
     contenido,
     children,
-    reload,
+    reload = true,
     rowClick,
     onSearch,
     fetchData,
@@ -119,7 +119,7 @@ const ListPrincipal = ({
                         rounded
                         outlined
                         className={` text-green-500 rounded-full
-              ${isApproved ? "cursor-not-allowed opacity-30" : ""}
+              ${rowData.estado === "APROBADO" || rowData.state === "ACTIVO" ? "cursor-not-allowed opacity-30" : ""}
               mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out 
               ${selectedRowId === rowData._id && showApprove
                                 ? "shadow-inner translate-y-[2px]"
@@ -127,7 +127,7 @@ const ListPrincipal = ({
                             }
               `}
                         onClick={() => handleShowApprove(rowData)}
-                        disabled={isApproved}
+                        disabled={rowData.estado === "APROBADO" || rowData.state === "ACTIVO"}
                     />
                 )}
                 {permissionDisapprove && (
@@ -137,7 +137,7 @@ const ListPrincipal = ({
                         title="Desaprobar o Desactivar"
                         outlined
                         className={`text-orange-600! rounded-full
-              ${rowData.estado === "RECHAZADO" || rowData.state === "INACTIVO" ? "cursor-not-allowed opacity-30" : ""}
+              ${rowData.estado === "ANULADO" || rowData.state === "INACTIVO" ? "cursor-not-allowed opacity-30" : ""}
               mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out 
               ${selectedRowId === rowData._id && showDisapprove
                                 ? "shadow-inner translate-y-[2px]"
@@ -145,7 +145,7 @@ const ListPrincipal = ({
                             }
               `}
                         onClick={() => handleShowDisapprove(rowData)}
-                        disabled={rowData.estado === "RECHAZADO" || rowData.state === "INACTIVO"}
+                        disabled={rowData.estado === "ANULADO" || rowData.state === "INACTIVO"}
                     />
                 )}
                 {permissionEdit && (
@@ -155,7 +155,7 @@ const ListPrincipal = ({
                         rounded
                         outlined
                         className={` text-blue-500! rounded-full 
-              ${rowData.state === "APROBADO"
+              ${rowData.state === "APROBADO" || rowData.state === "ACTIVO"
                                 ? "cursor-not-allowed opacity-30"
                                 : ""
                             }
@@ -166,7 +166,7 @@ const ListPrincipal = ({
                             }
               `}
                         onClick={() => handleShowEdit(rowData)}
-                        disabled={rowData.state === "APROBADO"}
+                        disabled={rowData.state === "APROBADO" || rowData.state === "ACTIVO"}
                     />
                 )}
                 {permissionDelete && (
@@ -195,18 +195,19 @@ const ListPrincipal = ({
         );
     };
     const [loading, setLoading] = useState(false);
-    const useEffectAsync = async () => {
-        setLoading(true);
-        if (content?.length === 0) {
+    const fetchAll = async (pagina, limite, searchTerm) => {
+        try {
+            setLoading(true);
+            const result = await fetchData(pagina, limite, searchTerm);
+            setContent(result.data || []);
+            setTotalRecords(result.total || 0);
+        } catch (error) {
+            sendMessage(error.message || "Error al cargar los datos", "Error");
+        } finally {
             setLoading(false);
-            return;
         }
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setLoading(false);
     };
-    useEffect(() => {
-        useEffectAsync();
-    }, []);
+
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         // const editId = queryParams.get("edit");
@@ -230,6 +231,9 @@ const ListPrincipal = ({
             }
         }
     }, [location.search, content]);
+    const reloading = async () => {
+        await fetchAll(pagina, limite, searchTerm);
+    };
 
     const [selectedProducts, setSelectedProducts] = useState(null);
     const [globalFilter, setGlobalFilter] = useState(null);
@@ -253,23 +257,12 @@ const ListPrincipal = ({
                     icon="pi pi-refresh"
                     className=" w-16! text-green-600!  rounded-xl!  active:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg! bg-linear-to-r! from-gray-50! to-gray-100! "
                     onClick={() => {
-                        reload();
-                        useEffectAsync();
+                        reloading();
                     }}
                 />
             ) : null}
         </div>
     );
-
-    const fetchAll = async (pagina, limite, searchTerm) => {
-        try {
-            const result = await fetchData(pagina, limite, searchTerm);
-            setContent(result.data || []);
-            setTotalRecords(result.total || 0);
-        } catch (error) {
-            sendMessage(error.message || "Error al cargar los datos", "Error");
-        }
-    };
 
     useEffect(() => {
         if (!fetchData) return; // Si no se pasa fetchData, no hace nada.
@@ -288,12 +281,13 @@ const ListPrincipal = ({
                 <DetailItem setShowDetail={setShowDetail} selected={selected} />
             )}
             {showApprove && (
-                <ApproveItem setShowApprove={setShowApprove} selected={selected} />
+                <ApproveItem setShowApprove={setShowApprove} selected={selected} reload={reloading} />
             )}
             {showDisapprove && (
                 <DisapproveItem
                     setShowDisapprove={setShowDisapprove}
                     selected={selected}
+                    reload={reloading}
                 />
             )}
             {showEdit && (
@@ -301,13 +295,14 @@ const ListPrincipal = ({
                     setShowPopUp={setShowPopUp}
                     setShowEdit={setShowEdit}
                     selected={selected}
+                    reload={reloading}
                 />
             )}
             {showDelete && (
                 <DeleteItem
                     setShowDelete={setShowDelete}
                     selected={selected}
-                    reload={reload}
+                    reload={reloading}
                 />
             )}
             <div className="w-full border-2 m-2 mt-0 border-gray-100 rounded-xl shadow-lg bg-white">
