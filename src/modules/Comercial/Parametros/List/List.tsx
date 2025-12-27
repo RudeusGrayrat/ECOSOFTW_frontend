@@ -1,8 +1,8 @@
 import { Column } from "primereact/column";
 import ListPrincipal from "../../../../components/Principal/List/List";
 import axios from "../../../../api/axios";
-import ViewParametros from "../Permissions/view";
 import EditParametros from "../Permissions/Edit";
+import ViewParametros from "../Permissions/view";
 
 const ListParametrosComercial = ({
     permissionEdit,
