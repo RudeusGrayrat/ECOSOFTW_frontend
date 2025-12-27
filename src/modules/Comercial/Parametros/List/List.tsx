@@ -2,7 +2,7 @@ import { Column } from "primereact/column";
 import ListPrincipal from "../../../../components/Principal/List/List";
 import axios from "../../../../api/axios";
 import EditParametros from "../Permissions/Edit";
-import ViewParametros from "../Permissions/view";
+import ViewParametros from "../Permissions/View";
 
 const ListParametrosComercial = ({
     permissionEdit,
