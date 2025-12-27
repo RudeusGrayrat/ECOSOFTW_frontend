@@ -11,7 +11,7 @@ const GastosAdministrativos = ({ set, initialData }) => {
     });
 
     const [gastosAdministrativosOptions, setGastosAdministrativosOptions] = useState([]);
-    console.log("gastosAdministrativos", gastosAdministrativos);
+
     const lastSentPayloadRef = useRef(null);
 
     useEffect(() => {
@@ -29,15 +29,8 @@ const GastosAdministrativos = ({ set, initialData }) => {
         const calc = Number.isFinite(p) && Number.isFinite(q) ? p * q : 0;
         return Math.round((calc + Number.EPSILON) * 100) / 100; // 2 decimales
     }, [gastosAdministrativos.precio, gastosAdministrativos.cantidad]);
+
     useEffect(() => {
-        console.log("Initial Data en GastosAdministrativos:", initialData);
-        if (typeof initialData.descripcion === "string" && initialData.descripcion.trim().length > 0) {
-            console.log("pasaste por aqui");
-            return setGastosAdministrativos((prev) => ({
-                ...prev,
-                descripcion: {},
-            }));
-        }
         if (!gastosAdministrativos.descripcion) return;
         const payload = {
             tipoDeGasto_id: gastosAdministrativos.descripcion?._id,
@@ -70,7 +63,6 @@ const GastosAdministrativos = ({ set, initialData }) => {
         gastosAdministrativos.cantidad,
         gastosAdministrativos.subtotal,
         set,
-        initialData
     ]);
 
     return (

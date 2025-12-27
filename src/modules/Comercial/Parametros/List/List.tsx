@@ -1,6 +1,8 @@
 import { Column } from "primereact/column";
 import ListPrincipal from "../../../../components/Principal/List/List";
 import axios from "../../../../api/axios";
+import ViewParametros from "../Permissions/view";
+import EditParametros from "../Permissions/Edit";
 
 const ListParametrosComercial = ({
     permissionEdit,
@@ -26,8 +28,10 @@ const ListParametrosComercial = ({
             permissionEdit={permissionEdit}
             permissionDelete={permissionDelete}
             permissionRead={permissionRead}
+            DetailItem={ViewParametros}
+            EditItem={EditParametros}
             fetchData={fetchData}
-            reload={fetchData}
+            title={"parametros_cliente"}
         >
             <Column field="tipoDeAnalisis" header="Matriz" style={{ paddingLeft: "60px" }} ></Column>
             <Column field="parametro" header="Parámetro" ></Column>

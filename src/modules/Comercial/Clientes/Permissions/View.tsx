@@ -2,7 +2,6 @@ import Details from "../../../../components/Principal/Permissions/View";
 import PDetail from "../../../../components/Ui/Otros/PDtail";
 
 const ViewCliente = ({ selected, setShowDetail }) => {
-    console.log("Viewing cliente:", selected);
     return (
         <Details setShowDetail={setShowDetail}>
             <span className="text-3xl font-semibold ">DATOS DEL CLIENTE</span>

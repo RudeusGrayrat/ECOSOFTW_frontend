@@ -1,7 +1,7 @@
 import useref from "../../Otros/useRef";
 import ButtonOk from "../../Ui/Button/Buttons";
 
-const Edit = ({ setShowEdit, children, upDate }) => {
+const Edit = ({ setShowEdit, upDate, children }) => {
   const ref = useref(setShowEdit);
   const enviar = async () => {
     await upDate();
