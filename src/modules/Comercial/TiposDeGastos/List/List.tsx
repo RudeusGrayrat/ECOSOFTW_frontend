@@ -1,11 +1,16 @@
 import { Column } from "primereact/column";
 import ListPrincipal from "../../../../components/Principal/List/List";
 import axios from "../../../../api/axios";
+import ApproveTiposDeGastos from "../Permissions/Approve";
+import DisapproveTiposDeGastos from "../Permissions/Disapprove";
+import EditTiposDeGastos from "../Permissions/Edit";
 
 const ListTiposDeGastos = ({
     permissionEdit,
     permissionDelete,
     permissionRead,
+    permissionApprove,
+    permissionDisapprove
 }) => {
     const fetchData = async (limit, page, search) => {
         const response = await axios.get("/comercial/getTiposDeGastosPaginacion", {
@@ -20,11 +25,17 @@ const ListTiposDeGastos = ({
             total: response.data.total
         }
     }
+
     return (
         <ListPrincipal
             permissionEdit={permissionEdit}
             permissionDelete={permissionDelete}
             permissionRead={permissionRead}
+            permissionApprove={permissionApprove}
+            permissionDisapprove={permissionDisapprove}
+            ApproveItem={ApproveTiposDeGastos}
+            DisapproveItem={DisapproveTiposDeGastos}
+            EditItem={EditTiposDeGastos}
             title={"comercial_tipos_de_gastos"}
             fetchData={fetchData}
         >

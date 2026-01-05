@@ -30,8 +30,7 @@ const EditCliente = ({ selected, setShowEdit, reload }) => {
         }
     }
     return (
-        <Edit upDate={actualizar} setShowEdit={setShowEdit}>
-            <PopUp deshabilitar={deshabilitar} />
+        <Edit upDate={actualizar} setShowEdit={setShowEdit} deshabilitar={deshabilitar}>
             <div className="p-4 ">
                 <span className="text-3xl ml-6 font-semibold text-blue-500">Editar Cliente</span>
                 <CardPlegable title="Cliente">

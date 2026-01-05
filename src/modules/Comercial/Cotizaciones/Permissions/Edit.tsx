@@ -40,8 +40,7 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
     }
   }
   return (
-    <Edit setShowEdit={setShowEdit} upDate={editar} >
-      <PopUp deshabilitar={deshabilitar} />
+    <Edit setShowEdit={setShowEdit} upDate={editar} deshabilitar={deshabilitar} >
       <div className="p-4">
         <span className="text-3xl ml-6 font-semibold text-blue-500">Editar Cotización</span>
         <CardPlegable title="Proyecto">

@@ -1,7 +1,8 @@
 import useref from "../../Otros/useRef";
 import ButtonOk from "../../Ui/Button/Buttons";
+import PopUp from "../../Ui/Messages/PopUp";
 
-const Edit = ({ setShowEdit, upDate, children }) => {
+const Edit = ({ setShowEdit, upDate, children, deshabilitar }) => {
   const ref = useref(setShowEdit);
   const enviar = async () => {
     await upDate();
@@ -12,6 +13,7 @@ const Edit = ({ setShowEdit, upDate, children }) => {
       className={`w-[90%]  h-[93%] bg-white  flex flex-col justify-center
     border-gray-100 border shadow-2xl fixed top-5 z-40 rounded-xl `}
     >
+      <PopUp deshabilitar={deshabilitar} />
       <div className=" flex flex-col h-[90%] space-y-4 p-2 overflow-y-auto">
         {children}
       </div>

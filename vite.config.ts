@@ -6,6 +6,10 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [tailwindcss(), react()],
   cacheDir: ".vite-cache",
+  server:{
+    port: 5174,
+    open: true,
+  },
   build: {
     outDir: "dist",
   },

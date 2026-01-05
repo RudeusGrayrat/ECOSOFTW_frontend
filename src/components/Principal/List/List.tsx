@@ -94,7 +94,9 @@ const ListPrincipal = ({
 
     const actionBodyTemplate = (rowData) => {
         const isApproved =
-            rowData.state === "APROBADO" || rowData.state === "ACTIVO";
+            rowData.state === "APROBADO" || rowData.state === "ACTIVO" || rowData.estado === "ACTIVO" || rowData.estado === "APROBADO";
+        const isDisapproved =
+            rowData.state === "ANULADO" || rowData.state === "INACTIVO" || rowData.estado === "ANULADO" || rowData.estado === "INACTIVO" || rowData.estado === "DESACTIVADO" || rowData.state === "DESACTIVADO" || rowData.estado === "DESHABILITADO" || rowData.state === "DESHABILITADO" || rowData.estado === "PENDIENTE" || rowData.state === "PENDIENTE";
         return (
             <React.Fragment>
                 {permissionRead && (
@@ -119,7 +121,7 @@ const ListPrincipal = ({
                         rounded
                         outlined
                         className={` text-green-500 rounded-full
-              ${rowData.estado === "APROBADO" || rowData.state === "ACTIVO" ? "cursor-not-allowed opacity-30" : ""}
+              ${isApproved ? "cursor-not-allowed opacity-30" : ""}
               mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out 
               ${selectedRowId === rowData._id && showApprove
                                 ? "shadow-inner translate-y-[2px]"
@@ -127,7 +129,7 @@ const ListPrincipal = ({
                             }
               `}
                         onClick={() => handleShowApprove(rowData)}
-                        disabled={rowData.estado === "APROBADO" || rowData.state === "ACTIVO"}
+                        disabled={isApproved}
                     />
                 )}
                 {permissionDisapprove && (
@@ -137,7 +139,7 @@ const ListPrincipal = ({
                         title="Desaprobar o Desactivar"
                         outlined
                         className={`text-orange-600! rounded-full
-              ${rowData.estado === "ANULADO" || rowData.state === "INACTIVO" ? "cursor-not-allowed opacity-30" : ""}
+              ${isDisapproved ? "cursor-not-allowed opacity-30" : ""}
               mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out 
               ${selectedRowId === rowData._id && showDisapprove
                                 ? "shadow-inner translate-y-[2px]"
@@ -145,7 +147,7 @@ const ListPrincipal = ({
                             }
               `}
                         onClick={() => handleShowDisapprove(rowData)}
-                        disabled={rowData.estado === "ANULADO" || rowData.state === "INACTIVO"}
+                        disabled={isDisapproved}
                     />
                 )}
                 {permissionEdit && (

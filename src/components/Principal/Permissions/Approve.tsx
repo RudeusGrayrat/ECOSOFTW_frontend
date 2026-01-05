@@ -2,7 +2,7 @@ import useref from "../../Otros/useRef";
 import ButtonOk from "../../Ui/Button/Buttons";
 import PopUp from "../../Ui/Messages/PopUp";
 
-const Approve = ({ setShowApprove, onclick, deshabilitar }) => {
+const Approve = ({ setShowApprove, onclick, deshabilitar, tipo = "APROBAR" }) => {
   const ref = useref(setShowApprove);
 
   return (
@@ -17,7 +17,7 @@ const Approve = ({ setShowApprove, onclick, deshabilitar }) => {
             Atención !
           </h1>
           <h1 className="p-4 text-center text-xl">
-            ¿Estás seguro de querer aprobar?
+            ¿Estás seguro de querer {tipo}?
           </h1>
         </div>
         <div className="flex justify-center items-center">

@@ -1,11 +1,17 @@
 import { Column } from "primereact/column";
 import ListPrincipal from "../../../../components/Principal/List/List";
 import axios from "../../../../api/axios";
+import EditProyectos from "../Permissions/Edit";
+import ViewProyectos from "../Permissions/View";
+import ApproveProyectos from "../Permissions/Approve";
+import DisapproveProyecto from "../Permissions/Disapprove";
 
 const ListProyectos = ({
     permissionEdit,
     permissionDelete,
     permissionRead,
+    permissionApprove,
+    permissionDisapprove
 }) => {
     const fetchData = async (limit: Number, page: Number, search: String) => {
         const response = await axios.get("/comercial/getProyectosPaginacion", {
@@ -25,6 +31,12 @@ const ListProyectos = ({
             permissionEdit={permissionEdit}
             permissionDelete={permissionDelete}
             permissionRead={permissionRead}
+            permissionApprove={permissionApprove}
+            permissionDisapprove={permissionDisapprove}
+            EditItem={EditProyectos}
+            DetailItem={ViewProyectos}
+            ApproveItem={ApproveProyectos}
+            DisapproveItem={DisapproveProyecto}
             fetchData={fetchData}
             title={"comercial_proyectos"}
         >
@@ -39,7 +51,6 @@ const ListProyectos = ({
             <Column field="estado" header="Estado"
                 style={{
                     justifyItems: "center",
-                    // display: window.innerWidth <= 1250 ? "none" : "table-cell",
                 }}
                 body={(rowData) => {
                     const color =

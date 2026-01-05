@@ -12,10 +12,11 @@ const ApproveCliente = ({ setShowApprove, selected, reload }) => {
         setDeshabilitar(true);
         try {
             if (!idSelected) return;
-            if (estadoSelected === "APROBADO")
-                return sendMessage("El cliente ya está aprobado", "Error");
+            if (estadoSelected === "ACTIVO")
+                return sendMessage("El cliente ya está ACTIVO", "Error");
 
-            const response = await axios.patch(`/comercial/patchCliente/${idSelected}`, { estado: "APROBADO" });
+            const response = await axios.patch(`/comercial/patchCliente/${idSelected}`, { estado: "ACTIVO" });
+            if (!response) throw new Error("Error en la activación del cliente");
             sendMessage(response.data.message, "Correcto");
             await reload();
         } catch (error) {
@@ -25,7 +26,7 @@ const ApproveCliente = ({ setShowApprove, selected, reload }) => {
         }
     }
     return (
-        <Approve setShowApprove={setShowApprove} onclick={aprobar} deshabilitar={deshabilitar} />
+        <Approve tipo="ACTIVAR" setShowApprove={setShowApprove} onclick={aprobar} deshabilitar={deshabilitar} />
     );
 }
 export default ApproveCliente;

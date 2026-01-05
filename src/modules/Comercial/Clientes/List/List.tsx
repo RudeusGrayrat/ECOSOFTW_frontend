@@ -12,6 +12,7 @@ const ListClientesComercial = ({
     permissionRead,
     permissionApprove,
     permissionDisapprove,
+    permissionDelete
 }) => {
 
     const fetchClientesComercial = async (page, limit, search) => {
@@ -33,6 +34,7 @@ const ListClientesComercial = ({
             permissionRead={permissionRead}
             permissionApprove={permissionApprove}
             permissionDisapprove={permissionDisapprove}
+            permissionDelete={permissionDelete}
             EditItem={EditCliente}
             DetailItem={ViewCliente}
             ApproveItem={ApproveCliente}
@@ -56,6 +58,31 @@ const ListClientesComercial = ({
             <Column
                 field="telefono"
                 header="Teléfono"
+            ></Column>
+            <Column
+                field="correoElectronico"
+                header="Correo"
+            ></Column>
+            <Column
+                field="estado"
+                header="Estado"
+                style={{
+                    justifyItems: "center",
+                }}
+                body={(rowData) => {
+                    const color =
+                        rowData.estado === "ACTIVO"
+                            ? " text-green-500 "
+                            : " text-red-500 ";
+                    return (
+                        <div
+                            className={`text-center bg-linear-to-tr from-white to-gray-100
+                shadow-inner rounded-xl font-semibold  px-5 py-1  ${color} `}
+                        >
+                            {rowData.estado}
+                        </div>
+                    );
+                }}
             ></Column>
 
         </ListPrincipal>
