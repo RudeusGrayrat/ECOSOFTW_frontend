@@ -12,11 +12,12 @@ import GastosAdministrativos from "../Register/GastosAdministrativos";
 import Analisis from "../Register/Analisis";
 import GastosGenerales from "../Register/GastosGenerales";
 import Totales from "../Register/totales";
+import { useAuth } from "../../../../context/AuthContext";
 
 const EditCotizacion = ({ selected, setShowEdit, reload }) => {
   const idSelected = selected._id;
+  const { user } = useAuth();
   const [form, setForm] = useState({ ...selected });
-  console.log("selected en EditCotizacion:", selected);
   const changes = deepDiff(form, selected);
   const [deshabilitar, setDeshabilitar] = useState(false);
   const sendMessage = useSendMessage();
@@ -28,7 +29,14 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
         sendMessage("No hay cambios para guardar", "Error");
         return;
       }
-      const response = await axios.patch(`/comercial/patchCotizacion/${idSelected}`, changes);
+      if (!user) {
+        sendMessage("Usuario no autenticado", "Error");
+        return;
+      }
+      const response = await axios.patch(`/comercial/patchCotizacion/${idSelected}`, {
+        ...changes,
+        actualizadoPor: user._id,
+      });
       sendMessage(response.data.message, "Correcto");
       await reload();
     } catch (error) {

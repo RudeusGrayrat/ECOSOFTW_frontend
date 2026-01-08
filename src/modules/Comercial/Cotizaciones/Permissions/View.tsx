@@ -10,7 +10,6 @@ import ButtonOk from "../../../../components/Ui/Button/Buttons";
 const ViewCotizacion = ({ selected, setShowDetail }) => {
     const [showDoc, setShowDoc] = useState(false);
     const [docxContent, setDocxContent] = useState("");
-    const dispatch = useDispatch();
     const sendMessage = useSendMessage();
     console.log("selected cotizacion view", selected);
 
@@ -50,7 +49,7 @@ const ViewCotizacion = ({ selected, setShowDetail }) => {
             {showDoc ? (
                 <div className="flex flex-col gap-4 p-[2%]">
                     <div>
-                        <h2 className="text-2xl font-semibold mb-4">Documento Cotización Generado</h2>
+                        <h2 className="text-2xl font-semibold mb-4">Documento generado de la Cotización {selected.correlativa}</h2>
                     </div>
                     <div className="flex gap-7">
                         <div className="flex flex-col items-center gap-2 ">

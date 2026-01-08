@@ -6,6 +6,7 @@ const {
 } = import.meta.env;
 
 const renderDoc = async (Cotizacion) => {
+  console.log("Cotizacion para renderizar documento:", Cotizacion);
   let PLANTILLA_DOCUMENT = VITE_PLANTILLA_COTIZACION_ECOLOGY
   if (Cotizacion.estado === "PENDIENTE") {
     PLANTILLA_DOCUMENT = VITE_PLANTILLA_COTIZACION_ECOLOGY_PENDIENTE
@@ -127,6 +128,11 @@ const renderDoc = async (Cotizacion) => {
         total_sin_igv: formatMoney(data.totalSinIgv),
         direccion_legal: data.proyecto_id.cliente_id.direccionLegal,
         lugar_muestreo: data.proyecto_id.lugarMuestreo,
+
+        colaboradorAsesor: data.actualizadoPor?.colaborador || data.creadoPor.colaborador || "",
+        correoAsesor: data.actualizadoPor?.correoElectronico || data.creadoPor.correoElectronico || "",
+        numeroAsesor: data.actualizadoPor?.telefono || data.creadoPor.telefono || "",
+        puestoAsesor: data.actualizadoPor?.puesto || data.creadoPor.puesto || "",
       };
 
       return formattedData;

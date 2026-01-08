@@ -11,9 +11,12 @@ import Totales from "./totales";
 import Proyecto from "./Proyecto";
 import useSendMessage from "../../../../components/Ui/Messages/sendMessage";
 import axios from "../../../../api/axios";
+import { useValidation } from "../validacion";
+import { useAuth } from "../../../../context/AuthContext";
 
 const RegisterCotizacionesComercial = ({ }) => {
     const sendMessage = useSendMessage()
+    const { user } = useAuth()
     const [habilitar, setHabilitar] = useState(false);
     const [form, setForm] = useState({
         tiempoDeEntrega: [],
@@ -103,14 +106,16 @@ const RegisterCotizacionesComercial = ({ }) => {
         });
         setHabilitar(false);
     }
+    const round2 = (n) => Math.round(n * 100) / 100;
+
     useEffect(() => {
         if (form.analisis) {
             let totalAnalisis = form.analisis.reduce((acc, curr) => acc + (Number(curr.subtotal) || 0), 0);
             let totalGastosOperativos = form.gastosOperativos.reduce((acc, curr) => acc + (Number(curr.subtotal) || 0), 0);
             let totalGastosAdministrativos = form.gastosAdministrativos.reduce((acc, curr) => acc + (Number(curr.subtotal) || 0), 0);
-            let totalSinIgv = totalAnalisis + totalGastosOperativos + totalGastosAdministrativos;
-            let igv = totalSinIgv * 0.18;
-            let totalConIgv = totalSinIgv + igv;
+            let totalSinIgv = round2(totalAnalisis + totalGastosOperativos + totalGastosAdministrativos);
+            let igv = round2(totalSinIgv * 0.18);
+            let totalConIgv = round2(totalSinIgv + igv);
             let analisis = form.analisis.map(analisis => ({
                 descripcion: form.tipoDeServicio + " " + analisis.descripcion,
                 subtotal: Number(analisis.subtotal) || 0
@@ -123,6 +128,7 @@ const RegisterCotizacionesComercial = ({ }) => {
                 descripcion: "GASTOS ADMINISTRATIVOS",
                 subtotal: totalGastosAdministrativos
             };
+
             let a = [...analisis, gastosOperativos, gastosAdministrativos];
             setForm(prevForm => ({
                 ...prevForm,
@@ -133,14 +139,24 @@ const RegisterCotizacionesComercial = ({ }) => {
             }));
         }
     }, [form.analisis, form.gastosOperativos, form.gastosAdministrativos]);
-
+    const { errors, validateForm } = useValidation<typeof form>();
     const register = async () => {
         setHabilitar(true);
+        const isValid = validateForm(form);
         try {
-            const response = await axios.post("/comercial/postCotizacion", form);
+            if (!isValid) {
+                return sendMessage("Por favor, complete todos los campos obligatorios.", "Error")
+            }
+            if (!user) {
+                return sendMessage("Usuario no autenticado.", "Error")
+            }
+            const response = await axios.post("/comercial/postCotizacion", {
+                ...form,
+                creadoPor: user._id,
+            });
             const data = response.data;
             if (data.message)
-                sendMessage(data.message, "Correcto");
+                sendMessage(data.message, data.type);
             resetForm();
         } catch (error) {
             sendMessage(error, "Error");
