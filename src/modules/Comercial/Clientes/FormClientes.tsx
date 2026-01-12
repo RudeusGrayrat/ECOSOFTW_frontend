@@ -91,7 +91,8 @@ const FormClientes = () => {
             resetForm();
             return;
         } catch (error) {
-            sendMessage(error, "Error");
+            console.log("error", error);
+            sendMessage(error || error.message, "Error");
         } finally {
             setDeshabilitar(false);
         }
