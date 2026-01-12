@@ -87,11 +87,10 @@ const FormClientes = () => {
 
             const response = await axios.post("/comercial/postFormularioCotizacion", { ...form, fechaServicio: dayjs(form.fechaServicio).format('DD/MM/YYYY') });
             const data = response.data;
-            sendMessage(data.message, "Correcto");
+            sendMessage(data.message, data.type || "Correcto");
             resetForm();
             return;
         } catch (error) {
-            console.log("error", error);
             sendMessage(error || error.message, "Error");
         } finally {
             setDeshabilitar(false);
