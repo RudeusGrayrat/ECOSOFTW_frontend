@@ -23,7 +23,10 @@ const ListClientesComercial = ({
                 search,
             },
         })
-        console.log({ "reponse clientes comercial": response.data?.data })
+        console.log({
+            "reponse clientes comercial":
+                response.data?.data
+        })
         return {
             data: response.data?.data,
             total: response.data?.total,
