@@ -1,6 +1,29 @@
 import { useEffect } from "react";
 import InputP from "../../../../components/Ui/Input/InputP";
 import InputNormal from "../../../../components/Ui/Input/Normal";
+const unidadesDeMedida = [
+    "pH",
+    "mg/L",
+    "µg/L",
+    "ng/L",
+    "ppm",
+    "ppb",
+    "mg/kg",
+    "µg/kg",
+    "g/L",
+    "mol/L",
+    "%",
+    "µS/cm",
+    "mS/cm",
+    "NTU",
+    "mg O₂/L",
+    "mg/m³",
+    "µg/m³",
+    "UFC/mL",
+    "UFC/g",
+    "NMP/100 mL",
+    "°C"
+];
 
 const DatosDelParametro = ({ form, setForm }) => {
     useEffect(() => {
@@ -96,7 +119,7 @@ const DatosDelParametro = ({ form, setForm }) => {
                 name="unidadDeMedida"
                 type="select"
                 mayus={false}
-                options={["unidad de pH", "µS/cm", "mg/L", "µg/L", "NTU", "pH", "°C", "Otros"]}
+                options={unidadesDeMedida}
                 value={form.unidadDeMedida}
                 setForm={setForm}
             />
