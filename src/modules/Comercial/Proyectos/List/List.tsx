@@ -54,12 +54,14 @@ const ListProyectos = ({
                 }}
                 body={(rowData) => {
                     let color = "text-gray-500";
-                    if (rowData.estado === "ACTIVOO") {
+                    if (rowData.estado === "APROBADO") {
                         color = "text-green-500";
-                    } else if (rowData.estado === "INACTIVO") {
+                    } else if (rowData.estado === "ANULADO") {
                         color = "text-red-500";
                     } else if (rowData.estado === "PENDIENTE") {
-                        color = "text-orange-300";
+                        color = "text-orange-500";
+                    } else if (rowData.estado === "COTIZADO") {
+                        color = "text-blue-500";
                     }
 
                     return (
