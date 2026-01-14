@@ -53,10 +53,12 @@ const ListProyectos = ({
                     justifyItems: "center",
                 }}
                 body={(rowData) => {
-                    const color =
-                        rowData.estado === "ACTIVO"
-                            ? " text-green-500 "
-                            : " text-red-500 ";
+                    let color = "text-green-500"
+                    if (rowData.estado === "ACTIVOO") {
+                        color = "text-green-500";
+                    } else if (rowData.estado === "INACTIVO") {
+                        color = "text-red-500";
+                    }
 
                     return (
                         <div

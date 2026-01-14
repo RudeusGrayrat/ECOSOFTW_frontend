@@ -2,6 +2,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { useState, useEffect } from "react";
 import Loading from "./components/Ui/Loading";
+import Circuite from "./components/Ui/Loading/Circuite";
 
 const ProtectedRoute = () => {
     const { isAuthenticated, isLoading } = useAuth();
@@ -19,7 +20,7 @@ const ProtectedRoute = () => {
         }
     }, [isLoading]);
 
-    if (showLoading) return <Loading />; // Se mantiene visible 1s después de que `isLoading` sea false
+    if (showLoading) return <Loading/>; // Se mantiene visible 1s después de que `isLoading` sea false
 
     if (!isAuthenticated) {
         localStorage.setItem("lastRoute", location.pathname);
