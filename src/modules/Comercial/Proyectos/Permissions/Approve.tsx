@@ -11,7 +11,7 @@ const ApproveProyectos = ({ selected, setShowApprove, reload }) => {
         setDeshabilitar(true);
         try {
             const response = await axios.patch(`comercial/patchProyecto/${idSelected}`, {
-                estado: 'ACTIVO'
+                estado: 'APROBADO'
             });
             sendMessage(response.data.message, response.data.type);
             await reload()
@@ -21,7 +21,7 @@ const ApproveProyectos = ({ selected, setShowApprove, reload }) => {
             setDeshabilitar(false);
         }
     }
-    return <Approve setShowApprove={setShowApprove} onclick={aprobar} deshabilitar={deshabilitar} tipo="cambiar a ACTIVO" />;
+    return <Approve setShowApprove={setShowApprove} onclick={aprobar} deshabilitar={deshabilitar} tipo="APROBAR" />;
 }
 
 export default ApproveProyectos;

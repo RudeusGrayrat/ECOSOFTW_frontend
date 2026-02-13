@@ -5,6 +5,7 @@ import EditProyectos from "../Permissions/Edit";
 import ViewProyectos from "../Permissions/View";
 import ApproveProyectos from "../Permissions/Approve";
 import DisapproveProyecto from "../Permissions/Disapprove";
+import DeleteProyecto from "../Permissions/delete";
 
 const ListProyectos = ({
     permissionEdit,
@@ -37,6 +38,7 @@ const ListProyectos = ({
             DetailItem={ViewProyectos}
             ApproveItem={ApproveProyectos}
             DisapproveItem={DisapproveProyecto}
+            DeleteItem={DeleteProyecto}
             fetchData={fetchData}
             title={"comercial_proyectos"}
         >

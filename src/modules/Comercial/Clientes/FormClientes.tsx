@@ -241,12 +241,14 @@ const FormClientes = () => {
                     {activeIndex === 2 &&
                         <div className="  w-full h-full flex flex-col gap-6 items-center justify-start pt-2 overflow-x-hidden  border-gray-300  max-sm:p-[0%] max-lg:pl-[8%] pl-[6%] rounded-lg  max-h-[70vh] overflow-y-auto ">
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-[80%] max-w-full">
-                                {Object.entries(form).map(([key, value]) => (
+                                {Object.entries(form)
+                                    .filter(([key]) => !(key === "nombreContacto" && form.tipoCliente !== "EMPRESA"))
+                                    .map(([key, value]) => (
                                     <div key={key} className="flex gap-2 text-left">
                                         <span className="font-medium text-blue-900 capitalize lg:whitespace-nowrap">
                                             {key.replace(/([A-Z])/g, " $1").toLowerCase()}:
                                         </span>
-                                        {value ? <span className="break-words">
+                                        {value ? <span className="wrap-break-word">
                                             {value}
                                         </span> : <span className="text-red-500 italic">No proporcionado</span>}
                                     </div>
