@@ -60,6 +60,7 @@ const RegisterCotizacionesComercial = ({ }) => {
         igv: 0,
         totalConIgv: 0,
     });
+    console.log("form", form);
 
     const resetForm = () => {
         setForm({
@@ -192,7 +193,6 @@ const RegisterCotizacionesComercial = ({ }) => {
                 <Directorio
                     estilos="flex justify-center items-center"
                     ItemComponent={Analisis}
-                    directory={form.analisis}
                     data="analisis"
                     setForm={setForm}
                 />

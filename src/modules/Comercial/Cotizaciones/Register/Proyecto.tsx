@@ -18,10 +18,7 @@ const Proyecto = ({ form, setForm }) => {
     });
     const [tiempoDeEntrega, setTiempoDeEntrega] = useState([]);
     const [clienteForAutoComplete, setClienteForAutoComplete] = useState([]);
-    console.log("localForm", localForm);
-    console.log("form en Proyecto Cotizacion", form);
     const [proyectosForAutoComplete, setProyectosForAutoComplete] = useState([]);
-    console.log("proyectosForAutoComplete", proyectosForAutoComplete);
     useEffect(() => {
         if (localForm.nombre && localForm.cliente) {
             const proyectoSeleccionado = localForm.nombre

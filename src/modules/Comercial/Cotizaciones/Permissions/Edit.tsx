@@ -15,10 +15,12 @@ import Totales from "../Register/totales";
 import { useAuth } from "../../../../context/AuthContext";
 
 const EditCotizacion = ({ selected, setShowEdit, reload }) => {
+  console.log("Selected Cotización for Edit:", selected);
   const idSelected = selected._id;
   const { user } = useAuth();
   const [form, setForm] = useState({ ...selected });
   const changes = deepDiff(form, selected);
+  console.log("Detected Changes in EditCotizacion:", changes);
   const [deshabilitar, setDeshabilitar] = useState(false);
   const sendMessage = useSendMessage();
   const editar = async () => {
@@ -47,6 +49,7 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
       setShowEdit(false);
     }
   }
+  console.log("Form State in EditCotizacion:", form);
   return (
     <Edit setShowEdit={setShowEdit} upDate={editar} deshabilitar={deshabilitar} >
       <div className="p-4">

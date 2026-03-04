@@ -37,7 +37,9 @@ const DatosDelParametro = ({ form, setForm }) => {
                 label="Tipo de Analisis"
                 name="tipoDeAnalisis"
                 type="select"
-                options={["AGUA", "AIRE", "SUELO", "RUIDO", "EMISIONES"]}
+                editable={false}
+                options={["AGUA", "AIRE", "SUELO", "RUIDO", "EMISIONES", "MONITOREO OCUPACIONAL"
+                ]}
                 value={form.tipoDeAnalisis || ""}
                 setForm={setForm}
             />

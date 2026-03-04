@@ -60,10 +60,7 @@ function Login() {
         >
             <PopUp deshabilitar={deshabilitar} />
             <div
-                className="flex flex-col max-lg:w-[90%]  items-center h-[95%] w-[40%] rounded-4xl shadow-lg overflow-hidden"
-
-            >
-
+                className="flex flex-col max-lg:w-[90%]  items-center h-[95%] w-[40%] rounded-4xl shadow-lg overflow-hidden">
                 <div
                     className="w-full h-[50%] relative items-center flex justify-center"
                     style={{
@@ -97,8 +94,6 @@ function Login() {
                         noValidate
                         className="flex flex-col  items-center space-y-5 w-full"
                     >
-
-
                         <h2 style={{
                             fontFamily: "'Exo', sans-serif",
                             fontWeight: 700,
@@ -108,16 +103,14 @@ function Login() {
                             Iniciar sesión
                         </h2>
                         {/* USERNAME */}
-                        <div className="max-sm:w-[60%] w-[50%] ">
-                            <label htmlFor="userName" className="block text-sm text-gray-50 mb-2">
-                                Usuario
-                            </label>
+                        <div className="max-sm:w-[60%] w-[50%]">
                             <div className="relative">
-                                <span >
+
+                                <span>
                                     <img
                                         src="/ICON-LOGIN-1.png"
                                         alt="Icon"
-                                        className="absolute top-1/2 -translate-y-1/2 h-5 flex items-center left-4"
+                                        className="absolute m-2 inset-y-0 left-0 h-5 flex items-center pl-3"
                                     />
                                 </span>
                                 <input
@@ -144,7 +137,6 @@ function Login() {
                                 Contraseña
                             </label>
                             <div className="relative">
-
                                 <span>
                                     <img
                                         src="/ICON-LOGIN-2.png"

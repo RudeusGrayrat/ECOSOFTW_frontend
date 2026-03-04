@@ -1,27 +1,28 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import InputP from "../../../../components/Ui/Input/InputP";
 
-/**
- * Analisis component corregido y optimizado
- * Props:
- *  - set(payload)  -> función para enviar el payload al padre
- *  - initialData   -> (opcional) datos iniciales
- */
 const Analisis = ({ set, initialData }) => {
+    console.log("Initial Data in Analisis:", initialData);
     const [analisisDeCotizacion, setAnalisisDeCotizacion] = useState({
-        parametro: null, // guarda el objeto parámetro completo o null
-        precio: "",      // valor editable (puede venir del parametro)
-        cantidad: 0,
+        tipoDeAnalisis: initialData.parametro_id?.tipoDeAnalisis || "",
+        parametro: initialData.parametro_id || null,
+        precio: initialData.precio || "",
+        cantidad: initialData.cantidad || 0,
+        subtotal: initialData.subtotal || 0,
     });
 
     // opciones del autocomplete
     const [parametrosOptions, setParametrosOptions] = useState([]);
 
-    // ref para recordar el último payload enviado y no reenviarlo si no cambió
-    const lastSentPayloadRef = useRef(null);
+    useMemo(() => {
+        const p = parseFloat(analisisDeCotizacion.precio || "0");
+        const q = parseFloat(analisisDeCotizacion.cantidad || "0");
+        const calc = Number.isFinite(p) && Number.isFinite(q) ? p * q : 0;
+        const final = Math.round((calc + Number.EPSILON) * 100) / 100; // 2 decimales
+        setAnalisisDeCotizacion((prev) => ({ ...prev, subtotal: final }));
+        return final;
+    }, [analisisDeCotizacion.precio, analisisDeCotizacion.cantidad]);
 
-    // -- Sincronizar precio cuando cambia el parámetro seleccionado --
-    // Actualizamos el precio en el estado SOLO si el nuevo precio es distinto.
     useEffect(() => {
         const paramPrice = analisisDeCotizacion.parametro?.precio ?? null;
 
@@ -35,69 +36,34 @@ const Analisis = ({ set, initialData }) => {
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [analisisDeCotizacion.parametro?.precio]);
-    // Observa: dependemos de propiedades estables del parámetro (id, precio),
-    // no del objeto entero para reducir re-ejecuciones.
 
-    // -- Subtotal derivado (no guardado en state) --
-    const subtotal = useMemo(() => {
-        const p = parseFloat(analisisDeCotizacion.precio || 0);
-        const q = parseFloat(analisisDeCotizacion.cantidad || 0);
-        const calc = Number.isFinite(p) && Number.isFinite(q) ? p * q : 0;
-        return Math.round((calc + Number.EPSILON) * 100) / 100; // 2 decimales
-    }, [analisisDeCotizacion.precio, analisisDeCotizacion.cantidad]);
 
-    // -- Construir y enviar payload al padre solo si hay cambios reales --
     useEffect(() => {
-        // Solo enviamos si hay un parametro seleccionado (evita envíos prematuros)
-        if (!analisisDeCotizacion.parametro) return;
-        if (subtotal <= 0) return; // si subtotal 0 no enviamos
-
         const payload = {
-            parametro_id: analisisDeCotizacion.parametro._id,
-            precio: analisisDeCotizacion.precio,
+            descripcion: analisisDeCotizacion.tipoDeAnalisis || "",
+            parametro_id: analisisDeCotizacion.parametro?._id || null,
             cantidad: analisisDeCotizacion.cantidad,
-            subtotal: subtotal,
-            descripcion: analisisDeCotizacion.parametro?.tipoDeAnalisis ?? null,
+            precio: analisisDeCotizacion.precio,
+            subtotal: analisisDeCotizacion.subtotal,
         };
-
-        // compara con el último enviado para evitar reenvíos innecesarios
-        const last = lastSentPayloadRef.current;
-        const same =
-            last &&
-            last.parametro_id === payload.parametro_id &&
-            String(last.precio) === String(payload.precio) &&
-            String(last.cantidad) === String(payload.cantidad) &&
-            String(last.subtotal) === String(payload.subtotal) &&
-            last.tipoDeAnalisis === payload.tipoDeAnalisis
-
-        if (!same) {
-            // manda al padre
-            try {
-                set(payload);
-                lastSentPayloadRef.current = payload;
-            } catch (err) {
-                console.warn("Error al ejecutar set(payload):", err);
-            }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        // dependencias: solo valores primitivos/estables que determinan el payload
-        analisisDeCotizacion.parametro?.id,
-        analisisDeCotizacion.parametro?.tipoDeAnalisis,
-        analisisDeCotizacion.precio,
-        analisisDeCotizacion.cantidad,
-        subtotal,
-        set, // asumimos que set es estable; si no lo es, el padre debería memoizarlo
-    ]);
-
+        set(payload);
+    }, [analisisDeCotizacion.cantidad, analisisDeCotizacion.precio, analisisDeCotizacion.parametro, analisisDeCotizacion.tipoDeAnalisis, []]);
     return (
         <div className="flex flex-wrap justify-center items-center pt-2">
             <InputP
                 label="Tipo de Análisis"
-                type="text"
+                type="select"
                 name="tipoDeAnalisis"
-                disabled={true}
-                value={analisisDeCotizacion.parametro?.tipoDeAnalisis ?? ""}
+                options={[
+                    "AGUA",
+                    "AIRE",
+                    "SUELO",
+                    "RUIDO",
+                    "EMISIONES",
+                    "MONITOREO OCUPACIONAL"
+                ]}
+                value={analisisDeCotizacion.tipoDeAnalisis}
+                setForm={setAnalisisDeCotizacion}
             />
 
             {analisisDeCotizacion.parametro?.tipoDeAnalisis === "AGUA" && (
@@ -116,7 +82,7 @@ const Analisis = ({ set, initialData }) => {
                 ancho={"w-96"}
                 value={analisisDeCotizacion.parametro}
                 options={parametrosOptions}
-                fetchData={"/comercial/getParametrosPaginacion"} // InputP usa axios.get(fetchData, ...)
+                fetchData={`/comercial/getParametrosPaginacion?tipoDeAnalisis=${analisisDeCotizacion?.tipoDeAnalisis}`} // ajusta el endpoint según tu backend
                 setOptions={setParametrosOptions}
                 setForm={setAnalisisDeCotizacion}
             />
@@ -202,7 +168,7 @@ const Analisis = ({ set, initialData }) => {
                 type="number"
                 disabled={true}
                 name="subtotal"
-                value={subtotal}
+                value={analisisDeCotizacion.subtotal}
             // no enviamos setForm porque está deshabilitado; InputP en tu implementación lo manejará
             />
         </div>

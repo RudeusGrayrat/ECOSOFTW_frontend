@@ -159,7 +159,10 @@ const InputP = ({
                     {!otroMode ? (
                         <AutoComplete
                             value={value}
-                            suggestions={opcionesConOtro}
+                            suggestions={opcionesConOtro.map(option => ({
+                                ...option,
+                                [name]: option[name].length > 100 ? option[name].substring(0, 100) + '...' : option[name]
+                            }))}
                             completeMethod={(e) => {
                                 clearTimeout(debounceRef.current);
 
