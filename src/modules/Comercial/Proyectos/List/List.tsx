@@ -5,7 +5,7 @@ import EditProyectos from "../Permissions/Edit";
 import ViewProyectos from "../Permissions/View";
 import ApproveProyectos from "../Permissions/Approve";
 import DisapproveProyecto from "../Permissions/Disapprove";
-import DeleteProyecto from "../Permissions/delete";
+import DeleteProyecto from "../Permissions/Delete";
 
 const ListProyectos = ({
     permissionEdit,
