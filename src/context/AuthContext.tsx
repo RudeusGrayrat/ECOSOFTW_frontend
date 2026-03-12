@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }) => {
                     }
                 } catch (error) {
                     if (error?.response?.data?.message === "Token expirado") {
-                        setErrors("Sesión expirada. Por favor, inicie sesión de nuevo.");
+                        console.log("Sesión expirada. Por favor, inicie sesión de nuevo.");
                         await logout();
                     }
                     setUser(null);

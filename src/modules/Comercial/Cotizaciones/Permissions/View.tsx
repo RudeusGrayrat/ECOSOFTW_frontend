@@ -24,9 +24,19 @@ const ViewCotizacion = ({ selected, setShowDetail }) => {
                 }
                 const codigo = selected.correlativaVisible;
                 const cliente = selected.proyecto_id.cliente_id.cliente;
+                //separaar el nombre del cliente y coger solo la primera palabra para el nombre del documento, ya que a veces el nombre del cliente es muy largo y puede causar problemas en la generación del documento en cloudinary
+                const clientName = cliente.split(" ")[0];
+                const namedoc = `Cotizacion_${codigo}_${clientName}`;
+                function sanitizePublicId(filename) {
+                    return filename
+                        .replace(/[^a-zA-Z0-9._-]/g, '_') // Reemplaza caracteres no permitidos por _
+                        .replace(/\.+/g, '.')              // Evita puntos múltiples
+                        .replace(/_{2,}/g, '_');           // Evita underscores múltiples
+                }
+                const newNamedoc = sanitizePublicId(namedoc);
                 const pathCloudinary = await documentoCloudinary(
                     file,
-                    `${codigo}_${cliente}_CotizacionComercial`
+                    newNamedoc
                 );
                 setDocxContent(pathCloudinary.secure_url);
                 setShowDoc(true);
@@ -34,6 +44,7 @@ const ViewCotizacion = ({ selected, setShowDetail }) => {
                     data: { public_id: pathCloudinary.public_id },
                 });
             } catch (error) {
+                console.error("Error al renderizar el documento:", error);
                 sendMessage(error, "Error");
             }
         };

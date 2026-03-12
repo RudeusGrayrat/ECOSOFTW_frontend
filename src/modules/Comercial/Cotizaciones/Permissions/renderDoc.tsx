@@ -6,7 +6,6 @@ const {
 } = import.meta.env;
 
 const renderDoc = async (Cotizacion) => {
-  console.log("Cotizacion para renderizar documento:", Cotizacion);
   let PLANTILLA_DOCUMENT = VITE_PLANTILLA_COTIZACION_ECOLOGY
   if (Cotizacion.estado === "PENDIENTE") {
     PLANTILLA_DOCUMENT = VITE_PLANTILLA_COTIZACION_ECOLOGY_PENDIENTE
