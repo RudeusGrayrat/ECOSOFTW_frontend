@@ -1,39 +1,59 @@
-import { useState } from "react";
-import { useAuth } from "../../../../context/AuthContext";
-import useValidation from "../validateModulo";
+import { useEffect, useState } from "react";
 import useSendMessage from "../../../../components/Ui/Messages/sendMessage";
 import PopUp from "../../../../components/Ui/Messages/PopUp";
 import CardPlegable from "../../../../components/Ui/Otros/CardPlegable";
 import InputP from "../../../../components/Ui/Input/InputP";
-import InputNormal from "../../../../components/Ui/Input/Normal";
 import ButtonOk from "../../../../components/Ui/Button/Buttons";
+import axios from "../../../../api/axios";
 
 const Register = () => {
-  const { postModule, postSubModule } = useAuth;
   const [form, setForm] = useState({
     module: "",
     name: "",
   });
+  const [modules, setModules] = useState([]);
   const [deshabilitar, setDeshabilitar] = useState(false);
-  const { error, validateForm } = useValidation(form);
   const sendMessage = useSendMessage();
+
+  const loadModules = async () => {
+    const response = await axios.get("/herramientas/getModules");
+    setModules(response.data.map((module) => module.name));
+  }
+
+  useEffect(() => {
+    loadModules();
+  }, []);
+
+  const resetForm = () => {
+    setForm({ module: "", name: "" });
+  }
+
   const enviar = async () => {
+    setDeshabilitar(true);
     try {
-      if (!validateForm(form)) {
-        sendMessage("Por favor completa todos los campos", "Error");
+      if (!form.module) {
+        sendMessage("Por favor ingresa el módulo", "Error");
         return;
       }
       if (form.module && !form.name) {
-        await postModule({ name: form.module });
+        const response = await axios.post("/herramientas/postModule", { name: form.module });
+        sendMessage(response.data.message, "Correcto");
+        resetForm();
+        await loadModules();
         return;
       }
 
       if (form.module && form.name) {
-        await postSubModule(form);
+        const response = await axios.post("/herramientas/postSubModule", form);
+        sendMessage(response.data.message, "Correcto");
+        resetForm();
+        await loadModules();
         return;
       }
     } catch (error) {
-      sendMessage(error.message, "Error");
+      sendMessage(error, "Error");
+    } finally {
+      setDeshabilitar(false);
     }
   };
   return (
@@ -46,14 +66,16 @@ const Register = () => {
             value={form.module}
             setForm={setForm}
             name="module"
+            type="select"
+            options={modules}
             ancho="w-80"
-            errorOnclick={error.module}
           />
-          <InputNormal
+          <InputP
             label="SubModulo"
             value={form.name}
             setForm={setForm}
             name="name"
+            type="text"
             ancho="w-80"
           />
         </div>

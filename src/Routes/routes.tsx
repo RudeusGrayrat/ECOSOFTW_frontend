@@ -8,6 +8,7 @@ import ProtectedRoute from "../ProtecteRoute";
 import Nav from "../components/Nav/Nav";
 import ModuleRoute from "./ModuleRoute";
 import Login from "../components/Otros/Login";
+import ConsultaInforme from "../modules/Operaciones/InformesEnsayo/ConsultaInforme";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -22,6 +23,8 @@ export const AppRoutes = () => {
           <Route path="/" element={<Login />} />
           <Route path="/*" element={<Error />} />
           <Route path="/formulario/clientes" element={<FormClientes />} />
+          <Route path="/consulta-informes" element={<ConsultaInforme />} />
+          <Route path="/consulta-informes/:token" element={<ConsultaInforme />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/:module/:submodule" element={<ModulesRoutes />} />
             <Route path="/:module" element={<ModuleRoute />} />

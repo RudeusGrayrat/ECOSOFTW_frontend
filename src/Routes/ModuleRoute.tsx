@@ -1,26 +1,22 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import Clientes from "../modules/Comercial/Clientes/Clientes";
-import ProtectedComponent from "./ProtectedComponent";
-import Cotizaciones from "../modules/Comercial/Cotizaciones/Cotizaciones";
-import Parametros_Comercial from "../modules/Comercial/Parametros/Parametros";
-import ModulosYSubmodulos from "../modules/Herramientas/ModulosYSubmodulos/ModulosYSubmodulos";
 import Comercial from "../modules/Comercial/Comercial";
 import ProtectedModule from "./ProtectecModule";
 import Operaciones from "../modules/Operaciones/Operaciones";
+import Herramientas from "../modules/Herramientas/Herramientas";
 
-type ModulesMap = Record<string, Record<string, React.ComponentType<any>>>;
+type ModulesMap = Record<string, React.ComponentType<any>>;
 
 const componentMap: ModulesMap = {
     "comercial": Comercial,
+    "herramientas": Herramientas,
     "operaciones": Operaciones
 }
 
 const ModuleRoute: React.FC = () => {
-    const { module, } = useParams();
+    const { module } = useParams();
 
-    const moduleComponents = componentMap[module];
-    const ComponentToRender = moduleComponents
+    const ComponentToRender = module ? componentMap[module] : null;
     return (
         <div className="w-full ">
             <ProtectedModule allowedModules={[module || ""]}>
