@@ -9,6 +9,7 @@ import Nav from "../components/Nav/Nav";
 import ModuleRoute from "./ModuleRoute";
 import Login from "../components/Otros/Login";
 import ConsultaInforme from "../modules/Operaciones/InformesEnsayo/ConsultaInforme";
+import Notificaciones from "../components/Otros/Notificaciones";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -29,6 +30,7 @@ export const AppRoutes = () => {
             <Route path="/:module/:submodule" element={<ModulesRoutes />} />
             <Route path="/:module" element={<ModuleRoute />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/notificaciones" element={<Notificaciones />} />
           </Route>
         </Routes>
       </div>
