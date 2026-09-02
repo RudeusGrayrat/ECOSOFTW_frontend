@@ -8,14 +8,14 @@ import PopUp from "../../../../components/Ui/Messages/PopUp";
 import ConfiguracionDocumental from "./ConfiguracionDocumental";
 
 const RegisterInformesEnsayo = () => {
-    const [form, setForm] = useState({ tipoPlantilla: "SIN_ACREDITACION", motivo: "Carga inicial" });
+    const [form, setForm] = useState({ tipoPlantilla: "SIN_ACREDITACION", motivo: "" });
     const [file, setFile] = useState(null);
     const [pendingReplace, setPendingReplace] = useState(null);
     const [deshabilitar, setDeshabilitar] = useState(false);
     const sendMessage = useSendMessage();
 
     const resetForm = () => {
-        setForm({ tipoPlantilla: "SIN_ACREDITACION", motivo: "Carga inicial" });
+        setForm({ tipoPlantilla: "SIN_ACREDITACION", motivo: "" });
         setFile(null);
         setPendingReplace(null);
     }
@@ -66,10 +66,10 @@ const RegisterInformesEnsayo = () => {
                     </div>
                 </div>
             )}
-            <CardPlegable title="Información General" >
+            <CardPlegable title="Procesar Informe de Ensayo" >
                 <DatosGenerales form={form} setForm={setForm} setFile={setFile} />
             </CardPlegable>
-            <CardPlegable title="Configuración Documental" >
+            <CardPlegable title="Configuración Documental Global" >
                 <ConfiguracionDocumental />
             </CardPlegable>
             <div className="flex flex-col mx-5">
