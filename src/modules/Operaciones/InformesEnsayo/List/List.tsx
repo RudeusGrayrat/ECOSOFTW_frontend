@@ -45,7 +45,6 @@ const ListInformesEnsayo = ({
             <Column field="codigo" header="Código" style={{ paddingLeft: "60px" }} />
             <Column field="archivoGenerado" header="Archivo Generado" />
             <Column field="idAcceso" header="ID de Acceso" />
-            <Column field="versionActual" header="Versión" />
             <Column field="estado" header="Estado"
                 style={{ justifyItems: "center" }}
                 body={(rowData) => {

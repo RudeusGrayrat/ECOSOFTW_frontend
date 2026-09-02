@@ -7,11 +7,14 @@ type NotificationItem = {
     _id: string;
     title: string;
     message: string;
+    type?: "GLOBAL" | "SUBMODULE" | "INDIVIDUAL";
     module?: string;
     submodule?: string;
     route?: string;
     creator?: string;
     creatorName?: string;
+    isReadIndividual?: boolean;
+    readBy?: { userId: string | { _id: string }; readAt: string }[];
     createdAt: string;
 };
 
@@ -29,6 +32,7 @@ type NotificationsContextValue = {
     unread: number;
     refreshNotifications: () => Promise<void>;
     markAsRead: (id: string) => Promise<void>;
+    isRead: (notification: NotificationItem) => boolean;
     showToast: (tone: ToastTone, title: string, message: string) => void;
 };
 
@@ -71,10 +75,20 @@ export const NotificationsProvider = ({ children }) => {
         setUnread(response.data.unread || 0);
     };
 
+    const isRead = (notification: NotificationItem) => {
+        if (notification.type === "INDIVIDUAL") return Boolean(notification.isReadIndividual);
+        return Boolean(notification.readBy?.some((read) => {
+            const userId = typeof read.userId === "string" ? read.userId : read.userId?._id;
+            return userId?.toString() === user?._id?.toString();
+        }));
+    };
+
     const markAsRead = async (id: string) => {
-        await axios.patch(`/herramientas/notificaciones/${id}/leida`);
-        setNotifications((current) => current.map((item) => item._id === id ? { ...item } : item));
-        setUnread((current) => Math.max(current - 1, 0));
+        const selected = notifications.find((item) => item._id === id);
+        const wasUnread = selected ? !isRead(selected) : true;
+        const response = await axios.patch(`/herramientas/notificaciones/${id}/leida`);
+        setNotifications((current) => current.map((item) => item._id === id ? { ...item, ...response.data.data } : item));
+        if (wasUnread) setUnread((current) => Math.max(current - 1, 0));
     };
 
     useEffect(() => {
@@ -114,8 +128,9 @@ export const NotificationsProvider = ({ children }) => {
         unread,
         refreshNotifications,
         markAsRead,
+        isRead,
         showToast,
-    }), [notifications, unread]);
+    }), [notifications, unread, user?._id]);
 
     return (
         <NotificationsContext.Provider value={value}>
