@@ -54,7 +54,7 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionReport }) => {
                         <div className="mb-5">
                             <h2 className="text-3xl font-bold text-emerald-700">Liberar informe oficial</h2>
                             <p className="mt-2 text-sm font-semibold text-slate-500">
-                                Se aplicará firma, QR, ID y marca de acreditación. Además se enviará el correo al cliente.
+                                Se aplicará firma, QR, ID y marca de acreditación. El correo saldrá desde Calidad y las respuestas llegarán al correo del usuario que libera.
                             </p>
                         </div>
 
