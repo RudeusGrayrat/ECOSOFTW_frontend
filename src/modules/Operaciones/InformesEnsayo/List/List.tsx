@@ -43,8 +43,11 @@ const ListInformesEnsayo = ({
             fetchData={fetchData}
         >
             <Column field="codigo" header="Código" style={{ paddingLeft: "60px" }} />
+            <Column field="pm" header="PM" />
+            <Column field="matriz" header="Matriz" />
             <Column field="archivoGenerado" header="Archivo Generado" />
             <Column field="idAcceso" header="ID de Acceso" />
+            <Column field="versionActual" header="Versión" />
             <Column field="estado" header="Estado"
                 style={{ justifyItems: "center" }}
                 body={(rowData) => {

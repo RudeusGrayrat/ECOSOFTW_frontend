@@ -7,6 +7,7 @@ type NotificationItem = {
     _id: string;
     title: string;
     message: string;
+    detail?: string;
     type?: "GLOBAL" | "SUBMODULE" | "INDIVIDUAL";
     module?: string;
     submodule?: string;

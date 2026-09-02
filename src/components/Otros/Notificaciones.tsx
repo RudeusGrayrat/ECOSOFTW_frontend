@@ -82,7 +82,7 @@ const Notificaciones = () => {
                                 <div className="overflow-hidden">
                                     <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm leading-6 text-slate-600 shadow-inner">
                                         <p className="font-black text-slate-800">Descripción completa</p>
-                                        <p className="mt-1">{notification.message}</p>
+                                        <p className="mt-1">{notification.detail || notification.message}</p>
                                         {notification.creatorName && <p className="mt-3"><span className="font-bold">Creado por:</span> {notification.creatorName}</p>}
                                         <p><span className="font-bold">Tipo:</span> {notification.type || "SUBMODULE"}</p>
                                         <p><span className="font-bold">Fecha:</span> {formatDate(notification.createdAt)}</p>

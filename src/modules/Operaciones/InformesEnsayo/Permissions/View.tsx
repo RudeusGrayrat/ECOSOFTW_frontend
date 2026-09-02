@@ -7,6 +7,9 @@ const ViewInformesEnsayo = ({ selected, setShowDetail }) => {
             <span className="text-3xl font-semibold ">DATOS DEL INFORME</span>
             <div className="flex flex-col flex-wrap overflow-y-hidden mt-4 ml-2">
                 <PDetail content="CÓDIGO" value={selected?.codigo} />
+                <PDetail content="PM" value={selected?.pm} />
+                <PDetail content="MATRIZ" value={selected?.matriz} />
+                <PDetail content="ARCHIVO ORIGINAL" value={selected?.archivoOriginal} />
                 <PDetail content="ID DE ACCESO" value={selected?.idAcceso} />
                 <PDetail content="ESTADO" value={selected?.estado} />
                 <PDetail content="VERSIÓN ACTUAL" value={selected?.versionActual} />
