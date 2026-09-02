@@ -94,6 +94,9 @@ const formatDate = (date: string) => new Intl.DateTimeFormat("es-PE", {
 const statusColors: Record<string, string> = {
     ACTIVO: "bg-emerald-500",
     APROBADO: "bg-green-500",
+    BORRADOR: "bg-amber-400",
+    PRELIMINAR: "bg-sky-500",
+    LIBERADO: "bg-lime-500",
     DISPONIBLE: "bg-lime-500",
     PENDIENTE: "bg-amber-400",
     COTIZADO: "bg-sky-500",

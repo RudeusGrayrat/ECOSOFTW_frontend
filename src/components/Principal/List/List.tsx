@@ -194,7 +194,7 @@ const ListPrincipal = ({
                         disabled={isApproved || isActivo}
                     />
                 )}
-                {ExtraActions && <ExtraActions rowData={rowData} />}
+                {ExtraActions && <ExtraActions rowData={rowData} reload={reloading} />}
             </React.Fragment>
         );
     };

@@ -2,7 +2,7 @@ import ButtonOk from "../../Ui/Button/Buttons";
 import PopUp from "../../Ui/Messages/PopUp";
 import useref from "../../Otros/useRef";
 
-const Delete = ({ setShowDelete, onclick, deshabilitar }) => {
+const Delete = ({ setShowDelete, onclick, deshabilitar, title = "Alerta!", message = "¿Está seguro que desea eliminarlo?", confirmText = "SI" }) => {
   const ref = useref(setShowDelete);
 
   return (
@@ -14,10 +14,10 @@ const Delete = ({ setShowDelete, onclick, deshabilitar }) => {
       <div className="flex flex-col  bg-white p-8 border-2 border-gray-300 rounded-lg shadow-lg ">
         <div className="">
           <h1 className="p-4 font-bold text-red-600 text-center text-5xl">
-            Alerta!
+            {title}
           </h1>
           <h1 className="p-4 text-center text-xl">
-            ¿Está seguro que desea eliminarlo?
+            {message}
           </h1>
         </div>
         <div className="flex justify-center items-center">
@@ -26,7 +26,7 @@ const Delete = ({ setShowDelete, onclick, deshabilitar }) => {
             type="ok"
             styles={"!w-full m-4 flex justify-center mx-4"}
             classe={"!w-24"}
-            children="SI"
+            children={confirmText}
           />
           <ButtonOk
             onClick={() => setShowDelete(false)}

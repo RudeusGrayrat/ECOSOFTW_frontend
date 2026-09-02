@@ -10,6 +10,7 @@ import Usuarios_Herramientas from "../modules/Herramientas/Usuarios/Usuarios";
 import Proyectos_Comercial from "../modules/Comercial/Proyectos/Proyectos";
 import TipoDeGatos_Comercial from "../modules/Comercial/TiposDeGastos/TipoDeGastos";
 import InformesEnsayo from "../modules/Operaciones/InformesEnsayo/InformesEnsayo";
+import Configuracion_Operaciones from "../modules/Operaciones/Configuracion/Configuracion";
 
 type ModulesMap = Record<string, Record<string, React.ComponentType<any>>>;
 
@@ -27,7 +28,8 @@ const componentMap: ModulesMap = {
         usuarios: Usuarios_Herramientas
     },
     "operaciones": {
-        "informes de ensayo": InformesEnsayo
+        "informes de ensayo": InformesEnsayo,
+        configuracion: Configuracion_Operaciones
     }
 
 }

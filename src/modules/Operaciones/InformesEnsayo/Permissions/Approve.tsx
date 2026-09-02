@@ -7,13 +7,13 @@ const ApproveInformesEnsayo = ({ selected, setShowApprove, reload }) => {
     const idSelected = selected._id;
     const [deshabilitar, setDeshabilitar] = useState(false);
     const sendMessage = useSendMessage();
-    const publicar = async () => {
+    const aprobar = async () => {
         setDeshabilitar(true);
         try {
             if (!idSelected) return;
-            if (selected.estado === "DISPONIBLE")
-                return sendMessage("El informe ya está DISPONIBLE", "Error");
-            const response = await axios.post(`/operaciones/informes-ensayo/${idSelected}/publicar`);
+            if (selected.estado === "PRELIMINAR" || selected.estado === "LIBERADO")
+                return sendMessage("El informe ya tiene visto bueno de jefatura", "Error");
+            const response = await axios.post(`/operaciones/informes-ensayo/${idSelected}/aprobar`);
             sendMessage(response.data.message, response.data.type || "Correcto");
             await reload();
         } catch (error) {
@@ -23,7 +23,7 @@ const ApproveInformesEnsayo = ({ selected, setShowApprove, reload }) => {
         }
     }
 
-    return <Approve setShowApprove={setShowApprove} onclick={publicar} deshabilitar={deshabilitar} tipo="MARCAR DISPONIBLE" />;
+    return <Approve setShowApprove={setShowApprove} onclick={aprobar} deshabilitar={deshabilitar} tipo="APROBAR BORRADOR" />;
 }
 
 export default ApproveInformesEnsayo;

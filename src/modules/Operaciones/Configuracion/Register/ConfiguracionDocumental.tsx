@@ -4,6 +4,7 @@ import axios from "../../../../api/axios";
 import InputArchivoConfig from "./InputArchivoConfig";
 
 const tiposMarca = [
+    { label: "Versión Preliminar", value: "VERSION_PRELIMINAR" },
     { label: "INACAL", value: "INACAL" },
     { label: "NAC", value: "NAC" },
     { label: "Sin Acreditación", value: "SIN_ACREDITACION" },
@@ -59,7 +60,7 @@ const ConfiguracionDocumental = () => {
     return (
         <div className="flex flex-col gap-5">
             <div className="mx-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-800">
-                Esta configuración es global. Solo actualízala cuando cambie la firma autorizada o alguna plantilla de marca de agua; los nuevos informes usarán estos archivos.
+                Esta configuración es global. La marca preliminar se usa al aprobar jefatura; INACAL, NAC o Sin Acreditación se usan al liberar el informe oficial.
             </div>
 
             <InputArchivoConfig
