@@ -1,196 +1,208 @@
 {
-  "hash": "05343250",
+  "hash": "50ff6c81",
   "configHash": "ab5f1cb1",
-  "lockfileHash": "48400e0e",
-  "browserHash": "3fef7366",
+  "lockfileHash": "68460109",
+  "browserHash": "ec864160",
   "optimized": {
     "react": {
       "src": "../../node_modules/react/index.js",
       "file": "react.js",
-      "fileHash": "5a39320b",
+      "fileHash": "d78b3c0f",
       "needsInterop": true
     },
     "react-dom": {
       "src": "../../node_modules/react-dom/index.js",
       "file": "react-dom.js",
-      "fileHash": "b6115911",
+      "fileHash": "346b8409",
       "needsInterop": true
     },
     "react/jsx-dev-runtime": {
       "src": "../../node_modules/react/jsx-dev-runtime.js",
       "file": "react_jsx-dev-runtime.js",
-      "fileHash": "1659bbb9",
+      "fileHash": "dd5f883d",
       "needsInterop": true
     },
     "react/jsx-runtime": {
       "src": "../../node_modules/react/jsx-runtime.js",
       "file": "react_jsx-runtime.js",
-      "fileHash": "aba91825",
+      "fileHash": "4be52cf9",
       "needsInterop": true
     },
     "@reduxjs/toolkit": {
       "src": "../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs",
       "file": "@reduxjs_toolkit.js",
-      "fileHash": "cb0b7343",
+      "fileHash": "3e482378",
       "needsInterop": false
     },
     "axios": {
       "src": "../../node_modules/axios/index.js",
       "file": "axios.js",
-      "fileHash": "a255b16b",
+      "fileHash": "07681cf0",
       "needsInterop": false
     },
     "dayjs": {
       "src": "../../node_modules/dayjs/dayjs.min.js",
       "file": "dayjs.js",
-      "fileHash": "c35b0560",
+      "fileHash": "aac51fc1",
       "needsInterop": true
     },
     "dayjs/plugin/customParseFormat": {
       "src": "../../node_modules/dayjs/plugin/customParseFormat.js",
       "file": "dayjs_plugin_customParseFormat.js",
-      "fileHash": "1cd4a7a2",
+      "fileHash": "4da76f92",
       "needsInterop": true
     },
     "docxtemplater": {
       "src": "../../node_modules/docxtemplater/js/docxtemplater.js",
       "file": "docxtemplater.js",
-      "fileHash": "63c2f3d5",
+      "fileHash": "40a820f0",
       "needsInterop": true
     },
     "pizzip": {
       "src": "../../node_modules/pizzip/js/index.js",
       "file": "pizzip.js",
-      "fileHash": "fafa5ddc",
+      "fileHash": "e6ba805f",
       "needsInterop": true
     },
     "primereact/api": {
       "src": "../../node_modules/primereact/api/api.esm.js",
       "file": "primereact_api.js",
-      "fileHash": "94d0c473",
+      "fileHash": "b0b873c1",
       "needsInterop": false
     },
     "primereact/autocomplete": {
       "src": "../../node_modules/primereact/autocomplete/autocomplete.esm.js",
       "file": "primereact_autocomplete.js",
-      "fileHash": "8067a790",
+      "fileHash": "dff86dd1",
       "needsInterop": false
     },
     "primereact/button": {
       "src": "../../node_modules/primereact/button/button.esm.js",
       "file": "primereact_button.js",
-      "fileHash": "803f0bba",
+      "fileHash": "c24babbd",
       "needsInterop": false
     },
     "primereact/column": {
       "src": "../../node_modules/primereact/column/column.esm.js",
       "file": "primereact_column.js",
-      "fileHash": "cb285639",
+      "fileHash": "6bef9165",
       "needsInterop": false
     },
     "primereact/datatable": {
       "src": "../../node_modules/primereact/datatable/datatable.esm.js",
       "file": "primereact_datatable.js",
-      "fileHash": "7b1b06d2",
+      "fileHash": "b464c3d5",
       "needsInterop": false
     },
     "primereact/dropdown": {
       "src": "../../node_modules/primereact/dropdown/dropdown.esm.js",
       "file": "primereact_dropdown.js",
-      "fileHash": "0b1c2354",
+      "fileHash": "783c75b3",
       "needsInterop": false
     },
     "primereact/iconfield": {
       "src": "../../node_modules/primereact/iconfield/iconfield.esm.js",
       "file": "primereact_iconfield.js",
-      "fileHash": "6411b96d",
+      "fileHash": "726e0e6b",
       "needsInterop": false
     },
     "primereact/inputicon": {
       "src": "../../node_modules/primereact/inputicon/inputicon.esm.js",
       "file": "primereact_inputicon.js",
-      "fileHash": "bee9e1be",
+      "fileHash": "ad08213c",
       "needsInterop": false
     },
     "primereact/inputtext": {
       "src": "../../node_modules/primereact/inputtext/inputtext.esm.js",
       "file": "primereact_inputtext.js",
-      "fileHash": "09046a25",
+      "fileHash": "0563fb33",
       "needsInterop": false
     },
     "primereact/multiselect": {
       "src": "../../node_modules/primereact/multiselect/multiselect.esm.js",
       "file": "primereact_multiselect.js",
-      "fileHash": "032085ac",
+      "fileHash": "6d7c18bf",
       "needsInterop": false
     },
     "primereact/password": {
       "src": "../../node_modules/primereact/password/password.esm.js",
       "file": "primereact_password.js",
-      "fileHash": "ee35bd5a",
+      "fileHash": "614305a1",
       "needsInterop": false
     },
     "primereact/steps": {
       "src": "../../node_modules/primereact/steps/steps.esm.js",
       "file": "primereact_steps.js",
-      "fileHash": "cff97be9",
+      "fileHash": "13e4eed3",
       "needsInterop": false
     },
     "react-dom/client": {
       "src": "../../node_modules/react-dom/client.js",
       "file": "react-dom_client.js",
-      "fileHash": "180dd501",
+      "fileHash": "02e96ca7",
       "needsInterop": true
     },
     "react-hook-form": {
       "src": "../../node_modules/react-hook-form/dist/index.esm.mjs",
       "file": "react-hook-form.js",
-      "fileHash": "367508b8",
+      "fileHash": "e77c8833",
       "needsInterop": false
     },
     "react-phone-number-input": {
       "src": "../../node_modules/react-phone-number-input/min/index.js",
       "file": "react-phone-number-input.js",
-      "fileHash": "f8d2b8d8",
+      "fileHash": "41b42260",
       "needsInterop": false
     },
     "react-redux": {
       "src": "../../node_modules/react-redux/dist/react-redux.mjs",
       "file": "react-redux.js",
-      "fileHash": "7a8ab58b",
+      "fileHash": "ad023ca7",
       "needsInterop": false
     },
     "react-router-dom": {
       "src": "../../node_modules/react-router-dom/dist/index.mjs",
       "file": "react-router-dom.js",
-      "fileHash": "1b4c59cd",
+      "fileHash": "dc4248b2",
       "needsInterop": false
     },
     "redux": {
       "src": "../../node_modules/redux/dist/redux.mjs",
       "file": "redux.js",
-      "fileHash": "d88a3286",
+      "fileHash": "f67c8e0e",
       "needsInterop": false
     },
     "styled-components": {
       "src": "../../node_modules/styled-components/dist/styled-components.browser.esm.js",
       "file": "styled-components.js",
-      "fileHash": "957b442a",
+      "fileHash": "94b18100",
+      "needsInterop": false
+    },
+    "socket.io-client": {
+      "src": "../../node_modules/socket.io-client/build/esm/index.js",
+      "file": "socket__io-client.js",
+      "fileHash": "50572fbb",
       "needsInterop": false
     }
   },
   "chunks": {
-    "chunk-WJDSPQ2E": {
-      "file": "chunk-WJDSPQ2E.js"
-    },
-    "chunk-EXUSC2O4": {
-      "file": "chunk-EXUSC2O4.js"
+    "chunk-65JG2JFT": {
+      "file": "chunk-65JG2JFT.js"
     },
     "chunk-6PP5RSDO": {
       "file": "chunk-6PP5RSDO.js"
     },
     "chunk-PHSNR4QK": {
       "file": "chunk-PHSNR4QK.js"
+    },
+    "chunk-IVYMAEY2": {
+      "file": "chunk-IVYMAEY2.js"
+    },
+    "chunk-WJDSPQ2E": {
+      "file": "chunk-WJDSPQ2E.js"
+    },
+    "chunk-EXUSC2O4": {
+      "file": "chunk-EXUSC2O4.js"
     },
     "chunk-T6QNNSAK": {
       "file": "chunk-T6QNNSAK.js"
@@ -200,9 +212,6 @@
     },
     "chunk-7R5XCFNO": {
       "file": "chunk-7R5XCFNO.js"
-    },
-    "chunk-IVYMAEY2": {
-      "file": "chunk-IVYMAEY2.js"
     },
     "chunk-NF7ISAR7": {
       "file": "chunk-NF7ISAR7.js"
@@ -218,9 +227,6 @@
     },
     "chunk-FBCUQ44Q": {
       "file": "chunk-FBCUQ44Q.js"
-    },
-    "chunk-65JG2JFT": {
-      "file": "chunk-65JG2JFT.js"
     },
     "chunk-7I2UKMSJ": {
       "file": "chunk-7I2UKMSJ.js"

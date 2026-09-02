@@ -12,13 +12,13 @@ import ConsultaInforme from "../modules/Operaciones/InformesEnsayo/ConsultaInfor
 
 export const AppRoutes = () => {
   const location = useLocation();
-  const paths = ["/formulario/clientes", "/"].includes(location.pathname);
+  const publicLayout = ["/formulario/clientes", "/"].includes(location.pathname) || location.pathname.startsWith("/consulta-informes");
   return (
     <div className="flex w-screen h-screen overflow-hidden">
-      {!paths && <SideBar />}
+      {!publicLayout && <SideBar />}
 
       <div className="w-full h-full overflow-y-auto ">
-        {!paths && <Nav notifications={[]} />}
+        {!publicLayout && <Nav />}
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/*" element={<Error />} />

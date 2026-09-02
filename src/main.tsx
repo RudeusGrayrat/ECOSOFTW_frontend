@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { PrimeReactProvider } from "primereact/api";
 import { StrictMode } from "react";
 import { AuthProvider } from "./context/AuthContext";
+import { NotificationsProvider } from "./context/NotificationsContext";
 
 import "primereact/resources/themes/saga-green/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <BrowserRouter>
         <AuthProvider>
           <PrimeReactProvider>
-            <App />
+            <NotificationsProvider>
+              <App />
+            </NotificationsProvider>
           </PrimeReactProvider>
         </AuthProvider>
       </BrowserRouter>

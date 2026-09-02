@@ -23,6 +23,7 @@ const ListPrincipal = ({
     DeleteItem,
     EditItem,
     DetailItem,
+    ExtraActions,
     contenido,
     children,
     reload = true,
@@ -193,6 +194,7 @@ const ListPrincipal = ({
                         disabled={isApproved || isActivo}
                     />
                 )}
+                {ExtraActions && <ExtraActions rowData={rowData} />}
             </React.Fragment>
         );
     };

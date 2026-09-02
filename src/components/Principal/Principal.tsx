@@ -89,6 +89,7 @@ const ReadOrCreate = ({ ItemRegister, ItemList, ItemReporte, submodule }) => {
             permissionRead={permissionRead}
             permissionEdit={permissionEdit}
             permissionDelete={permissionDelete}
+            permissionReport={permissionReport}
             permissionApprove={permissionApprove}
             permissionDisapprove={permissionDisapprove}
         />

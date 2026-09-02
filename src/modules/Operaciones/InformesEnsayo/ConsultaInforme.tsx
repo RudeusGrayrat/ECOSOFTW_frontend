@@ -5,42 +5,148 @@ export default function ConsultaInforme() {
   const [codigo, setCodigo] = useState("");
   const [idAcceso, setIdAcceso] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resultado, setResultado] = useState(null);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    setLoading(true);
+    setMensaje("");
+    setResultado(null);
     try {
       const { data } = await axios.post("/operaciones/publico/informes-ensayo", { codigo, idAcceso });
-      const url = `${import.meta.env.VITE_SERVER_URL}/operaciones/publico/informes-ensayo/archivo?token=${data.viewToken}`;
-      window.open(url, "_blank");
-      setMensaje("");
-    } catch (_) {
-      setMensaje("Informe o ID de acceso no válidos");
+      setResultado(data);
+    } catch (error: any) {
+      setMensaje(error?.response?.data?.message || "Informe o ID de acceso no válidos");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const pdfUrl = (download = false) => {
+    if (!resultado?.viewToken) return "";
+    const params = new URLSearchParams({ token: resultado.viewToken });
+    if (download) params.set("download", "true");
+    return `${import.meta.env.VITE_SERVER_URL}/operaciones/publico/informes-ensayo/archivo?${params.toString()}`;
+  };
+
+  const reset = () => {
+    setCodigo("");
+    setIdAcceso("");
+    setResultado(null);
+    setMensaje("");
+  };
+
   return (
-    <main className="min-h-screen grid place-items-center bg-slate-100 p-6">
-      <form onSubmit={submit} className="w-full max-w-md bg-white rounded-2xl shadow p-8">
-        <h1 className="text-2xl font-bold">Consulta de informe</h1>
-        <p className="text-slate-500 mt-2">Ingresa el código del informe y el ID de acceso entregado.</p>
-        <input
-          required
-          className="border rounded w-full p-3 mt-6"
-          value={codigo}
-          placeholder="Código del informe"
-          onChange={(event) => setCodigo(event.target.value.toUpperCase())}
-        />
-        <input
-          required
-          maxLength={8}
-          className="border rounded w-full p-3 mt-4"
-          value={idAcceso}
-          placeholder="ID de acceso"
-          onChange={(event) => setIdAcceso(event.target.value.toUpperCase())}
-        />
-        <button className="mt-4 bg-emerald-700 text-white rounded w-full py-3 font-semibold">Ver informe</button>
-        {mensaje && <p className="text-red-600 mt-4">{mensaje}</p>}
-      </form>
+    <main className="relative min-h-screen overflow-hidden bg-linear-to-br from-emerald-950 via-slate-950 to-emerald-800 px-6 py-8 text-slate-900">
+      <div className="absolute -left-24 top-10 h-80 w-80 rounded-full bg-lime-300/20 blur-3xl" />
+      <div className="absolute -right-20 bottom-0 h-96 w-96 rounded-full bg-emerald-300/15 blur-3xl" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.09)_0,transparent_28%),radial-gradient(circle_at_80%_30%,rgba(190,242,100,0.12)_0,transparent_24%)]" />
+
+      <section className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl items-center">
+        <div className="grid w-full gap-8 lg:grid-cols-[1fr_440px] lg:items-center">
+          <div className="text-white">
+            <div className="mb-8 flex items-center gap-4">
+              <img src="/ISOTIPO_LOGO.svg" alt="ECOSOFT" className="h-16 w-16 rounded-full bg-white/90 p-2 shadow-2xl" />
+              <div>
+                <p className="text-sm font-black uppercase tracking-[0.35em] text-lime-200">ECOSOFT</p>
+                <p className="text-sm text-emerald-100">Consulta publica de informes</p>
+              </div>
+            </div>
+            <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight">
+              Verifica tu informe de ensayo de forma segura.
+            </h1>
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-emerald-50/80">
+              Ingresa el codigo del informe y el ID de acceso entregado por Ecology. Si los datos coinciden, podras ver o descargar el PDF autorizado.
+            </p>
+            <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
+              <div className="rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                <p className="text-2xl font-black">1</p>
+                <p className="mt-1 text-sm text-emerald-100">Ingresa codigo</p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                <p className="text-2xl font-black">2</p>
+                <p className="mt-1 text-sm text-emerald-100">Valida ID</p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                <p className="text-2xl font-black">3</p>
+                <p className="mt-1 text-sm text-emerald-100">Abre el PDF</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-white/30 bg-white/95 p-7 shadow-2xl shadow-emerald-950/40 backdrop-blur">
+            {!resultado ? (
+              <form onSubmit={submit}>
+                <p className="text-sm font-black uppercase tracking-[0.25em] text-emerald-700">Portal de cliente</p>
+                <h2 className="mt-3 text-3xl font-black text-slate-900">Consulta de informe</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-500">Usa los datos impresos o enviados junto con tu informe.</p>
+
+                <label className="mt-7 block text-sm font-black text-slate-700">Codigo del informe</label>
+                <input
+                  required
+                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-lg font-bold uppercase outline-none transition focus:border-emerald-400 focus:bg-white focus:shadow-lg"
+                  value={codigo}
+                  placeholder="Ej. 260714"
+                  onChange={(event) => setCodigo(event.target.value.toUpperCase())}
+                />
+
+                <label className="mt-5 block text-sm font-black text-slate-700">ID de acceso</label>
+                <input
+                  required
+                  maxLength={8}
+                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-lg font-bold uppercase tracking-[0.2em] outline-none transition focus:border-emerald-400 focus:bg-white focus:shadow-lg"
+                  value={idAcceso}
+                  placeholder="Ej. A1B2C3D4"
+                  onChange={(event) => setIdAcceso(event.target.value.toUpperCase())}
+                />
+
+                <button
+                  disabled={loading}
+                  className="mt-7 w-full rounded-2xl bg-emerald-600 py-4 text-lg font-black text-white shadow-xl shadow-emerald-100 transition hover:-translate-y-0.5 hover:bg-emerald-700 disabled:cursor-wait disabled:opacity-60"
+                >
+                  {loading ? "Consultando..." : "Consultar informe"}
+                </button>
+                {mensaje && <p className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">{mensaje}</p>}
+              </form>
+            ) : (
+              <div>
+                <div className="rounded-3xl bg-emerald-50 p-5">
+                  <p className="text-sm font-black uppercase tracking-[0.25em] text-emerald-700">Informe encontrado</p>
+                  <h2 className="mt-3 text-3xl font-black text-slate-900">{resultado.codigo}</h2>
+                  <p className="mt-2 text-sm text-slate-500">Version {resultado.version} disponible para consulta.</p>
+                </div>
+
+                <div className="mt-6 grid gap-3">
+                  <a
+                    href={pdfUrl(false)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-2xl bg-slate-950 px-5 py-4 text-center font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-800"
+                  >
+                    Ver PDF
+                  </a>
+                  <a
+                    href={pdfUrl(true)}
+                    className="rounded-2xl bg-emerald-600 px-5 py-4 text-center font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-700"
+                  >
+                    Descargar PDF
+                  </a>
+                  <button
+                    onClick={reset}
+                    className="rounded-2xl border border-slate-200 bg-white px-5 py-4 font-black text-slate-700 transition hover:bg-slate-50"
+                  >
+                    Nueva consulta
+                  </button>
+                </div>
+                <p className="mt-5 text-center text-xs leading-5 text-slate-400">
+                  Por seguridad, este acceso temporal puede vencer. Si ocurre, realiza la consulta nuevamente.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
