@@ -130,18 +130,6 @@ const ListInformesEnsayo = ({
                     { label: "Sin acreditación", value: "SIN_ACREDITACION" },
                 ], "Todas")}
             />
-            <Column field="vistoBuenoJefatura" header="V° B° Jefatura"
-                sortable
-                filter
-                showFilterMatchModes={false}
-                showFilterOperator={false}
-                maxConstraints={1}
-                filterElement={(options) => selectFilter(options, [
-                    { label: "Sí", value: "SI" },
-                    { label: "No", value: "NO" },
-                ], "Todos")}
-                body={(rowData) => rowData.vistoBuenoJefatura ? "SI" : "NO"}
-            />
             <Column field="estado" header="Estado"
                 sortable
                 filter
