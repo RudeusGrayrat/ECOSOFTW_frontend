@@ -50,7 +50,16 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
             {showPanel && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
                     <PopUp deshabilitar={deshabilitar} />
-                    <div className="w-[680px] max-w-[92vw] rounded-2xl border border-emerald-100 bg-white p-7 shadow-2xl">
+                    <div className="relative w-[680px] max-w-[92vw] rounded-2xl border border-emerald-100 bg-white p-7 shadow-2xl">
+                        {deshabilitar && (
+                            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-white/80 text-center backdrop-blur-sm">
+                                <i className="pi pi-spin pi-spinner text-4xl text-emerald-600" />
+                                <p className="mt-4 text-lg font-black text-slate-800">Liberando informe oficial</p>
+                                <p className="mt-1 max-w-md text-sm font-semibold text-slate-500">
+                                    Estamos generando el PDF final y enviando el correo al cliente. Esto puede tardar unos segundos.
+                                </p>
+                            </div>
+                        )}
                         <div className="mb-5">
                             <h2 className="text-3xl font-bold text-emerald-700">Liberar informe oficial</h2>
                             <p className="mt-2 text-sm font-semibold text-slate-500">
@@ -93,8 +102,8 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
                         </div>
 
                         <div className="mt-6 flex justify-end">
-                            <ButtonOk type="cancel" onClick={() => setShowPanel(false)} classe="!w-32" children="Cancelar" />
-                            <ButtonOk type="ok" onClick={liberar} classe="!w-40" children="Liberar" />
+                            <ButtonOk type="cancel" onClick={() => setShowPanel(false)} disabled={deshabilitar} classe="!w-32 disabled:opacity-50" children="Cancelar" />
+                            <ButtonOk type="ok" onClick={liberar} disabled={deshabilitar} classe="!w-52 disabled:opacity-60" children={deshabilitar ? "Liberando..." : "Liberar y enviar"} />
                         </div>
                     </div>
                 </div>
