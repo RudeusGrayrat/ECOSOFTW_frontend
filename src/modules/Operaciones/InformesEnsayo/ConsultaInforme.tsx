@@ -47,10 +47,12 @@ export default function ConsultaInforme() {
         <div className="grid w-full gap-8 lg:grid-cols-[1fr_440px] lg:items-center">
           <div className="text-white">
             <div className="mb-8 flex items-center gap-4">
-              <img src="/ISOTIPO_LOGO.svg" alt="ECOSOFT" className="h-16 w-16 rounded-full bg-white/90 p-2 shadow-2xl" />
+              <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/95 p-3 shadow-2xl shadow-emerald-950/30 ring-1 ring-white/40">
+                <img src="/ecology-logo.svg" alt="Ecology" className="h-full w-full object-contain" />
+              </div>
               <div>
-                <p className="text-sm font-black uppercase tracking-[0.35em] text-lime-200">ECOSOFT</p>
-                <p className="text-sm text-emerald-100">Consulta publica de informes</p>
+                <p className="text-sm font-black uppercase tracking-[0.35em] text-lime-200">ECOLOGY</p>
+                <p className="text-sm text-emerald-100">Consulta publica de informes via ECOSOFT</p>
               </div>
             </div>
             <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight">

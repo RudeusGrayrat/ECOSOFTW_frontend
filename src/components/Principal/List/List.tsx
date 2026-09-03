@@ -12,6 +12,8 @@ import useSendMessage from "../../Ui/Messages/sendMessage";
 import PopUp from "../../Ui/Messages/PopUp";
 import { useAuth } from "../../../context/AuthContext";
 
+const cloneFilters = (filters) => filters ? JSON.parse(JSON.stringify(filters)) : null;
+
 const ListPrincipal = ({
     permissionEdit,
     permissionDelete,
@@ -29,6 +31,7 @@ const ListPrincipal = ({
     reload = true,
     rowClick,
     onSearch,
+    tableFilters = null,
     fetchData,
     title,
     ...OtheProps
@@ -50,6 +53,9 @@ const ListPrincipal = ({
     const [limite, setLimite] = useState(10);
     const [searchTerm, setSearchTerm] = useState("");
     const [totalRecords, setTotalRecords] = useState(0);
+    const [filters, setFilters] = useState(() => cloneFilters(tableFilters));
+    const [sortField, setSortField] = useState(null);
+    const [sortOrder, setSortOrder] = useState(null);
 
     const [content, setContent] = useState(contenido || []);
     const sendMessage = useSendMessage();
@@ -199,10 +205,10 @@ const ListPrincipal = ({
         );
     };
     const [loading, setLoading] = useState(false);
-    const fetchAll = async (pagina, limite, searchTerm) => {
+    const fetchAll = async (pagina, limite, searchTerm, columnFilters = filters) => {
         try {
             setLoading(true);
-            const result = await fetchData(pagina, limite, searchTerm);
+            const result = await fetchData(pagina, limite, searchTerm, columnFilters, { sortField, sortOrder });
             setContent(result.data || []);
             setTotalRecords(result.total || 0);
         } catch (error) {
@@ -236,7 +242,7 @@ const ListPrincipal = ({
         }
     }, [location.search, content]);
     const reloading = async () => {
-        await fetchAll(pagina, limite, searchTerm);
+        await fetchAll(pagina, limite, searchTerm, filters);
     };
 
     const [selectedProducts, setSelectedProducts] = useState(null);
@@ -256,6 +262,17 @@ const ListPrincipal = ({
                     className="p-2! border-none! rounded-xl! pl-11! focus:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg bg-linear-to-r! from-gray-50! to-gray-100! "
                 />
             </IconField>
+            {filters ? (
+                <Button
+                    icon="pi pi-filter-slash"
+                    title="Limpiar filtros"
+                    className=" w-16! text-blue-900!  rounded-xl!  active:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg! bg-linear-to-r! from-gray-50! to-gray-100! "
+                    onClick={() => {
+                        setPagina(0);
+                        setFilters(cloneFilters(tableFilters));
+                    }}
+                />
+            ) : null}
             {reload ? (
                 <Button
                     icon="pi pi-refresh"
@@ -270,8 +287,8 @@ const ListPrincipal = ({
 
     useEffect(() => {
         if (!fetchData) return; // Si no se pasa fetchData, no hace nada.
-        fetchAll(pagina, limite, searchTerm);
-    }, [pagina, limite, searchTerm]);
+        fetchAll(pagina, limite, searchTerm, filters);
+    }, [pagina, limite, searchTerm, filters, sortField, sortOrder]);
     useEffect(() => {
         if (contenido) {
             setContent(contenido);
@@ -314,6 +331,21 @@ const ListPrincipal = ({
                     ref={dt}
                     value={content}
                     lazy
+                    reorderableColumns
+                    removableSort
+                    filterDisplay={filters ? "menu" : undefined}
+                    filters={filters || undefined}
+                    onFilter={(e) => {
+                        setPagina(0);
+                        setFilters(e.filters);
+                    }}
+                    sortField={sortField || undefined}
+                    sortOrder={sortOrder || undefined}
+                    onSort={(e) => {
+                        setPagina(0);
+                        setSortField(e.sortField);
+                        setSortOrder(e.sortOrder);
+                    }}
                     key={title + "Table"}
                     selection={selectedProducts}
                     onSelectionChange={(e) => setSelectedProducts(e.value)}

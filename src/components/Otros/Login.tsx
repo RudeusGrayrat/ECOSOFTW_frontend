@@ -51,7 +51,7 @@ function Login() {
     return (
         <div className="min-h-screen h-screen flex justify-center items-center w-screen"
             style={{
-                backgroundImage: "url('FONDO_ECOSOFTW.svg')",
+                backgroundImage: "url('FONDO_ECOSOFT.svg')",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
                 backgroundPositionY: "center",
@@ -64,7 +64,7 @@ function Login() {
                 <div
                     className="w-full h-[50%] relative items-center flex justify-center"
                     style={{
-                        backgroundImage: "url('FONDO_ECOSOFTW.svg')",
+                        backgroundImage: "url('FONDO_ECOSOFT.svg')",
                         backgroundSize: "cover",
                         backgroundRepeat: "no-repeat",
                         backgroundPosition: "center",
@@ -73,7 +73,7 @@ function Login() {
                     <div
                         className="w-[75%] absolute -bottom-2 z-50 h-[15%] mt-4"
                         style={{
-                            backgroundImage: "url('ECOSOFTW_NAME.png')",
+                            backgroundImage: "url('ECOSOFT_NAME.png')",
                             backgroundSize: "contain",
                             backgroundRepeat: "no-repeat",
                             backgroundPosition: "bottom",

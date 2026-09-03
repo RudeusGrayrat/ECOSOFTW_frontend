@@ -1,4 +1,6 @@
 import { Column } from "primereact/column";
+import { Dropdown } from "primereact/dropdown";
+import { FilterMatchMode, FilterOperator } from "primereact/api";
 import ListPrincipal from "../../../../components/Principal/List/List";
 import axios from "../../../../api/axios";
 import ApproveInformesEnsayo from "../Permissions/Approve";
@@ -18,15 +20,52 @@ const ListInformesEnsayo = ({
     const [searchParams, setSearchParams] = useSearchParams();
     const papelera = searchParams.get("papelera") === "true";
 
-    const fetchData = async (page, limit, search) => {
+    const textMatchModes = [
+        { label: "Contiene", value: FilterMatchMode.CONTAINS },
+        { label: "Empieza con", value: FilterMatchMode.STARTS_WITH },
+        { label: "Termina con", value: FilterMatchMode.ENDS_WITH },
+        { label: "Igual a", value: FilterMatchMode.EQUALS },
+        { label: "Diferente de", value: FilterMatchMode.NOT_EQUALS },
+    ];
+
+    const tableFilters = {
+        codigo: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
+        planMonitoreo: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
+        matriz: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
+        idAcceso: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
+        acreditacion: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+        vistoBuenoJefatura: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+        estado: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+    };
+
+    const fetchData = async (page, limit, search, filters = {}, sort = {}) => {
         const response = await axios.get("/operaciones/informes-ensayo", {
-            params: { limit, page, search, papelera }
+            params: {
+                limit,
+                page,
+                search,
+                papelera,
+                filters: JSON.stringify(filters || {}),
+                sortField: sort.sortField,
+                sortOrder: sort.sortOrder,
+            }
         });
         return {
             data: response.data.data,
             total: response.data.total
         }
     }
+
+    const selectFilter = (options, values, placeholder) => (
+        <Dropdown
+            value={options.value}
+            options={values}
+            onChange={(event) => options.filterCallback(event.value)}
+            placeholder={placeholder}
+            showClear
+            className="w-full rounded-xl text-sm"
+        />
+    );
 
     return (
         <div className="w-full">
@@ -68,16 +107,42 @@ const ListInformesEnsayo = ({
             )}
             title={"operaciones_informes_ensayo"}
             fetchData={fetchData}
+            tableFilters={tableFilters}
         >
-            <Column field="codigo" header="Código" style={{ paddingLeft: "60px" }} />
-            <Column field="planMonitoreo" header="Plan de Monitoreo" />
-            <Column field="matriz" header="Matriz" />
-            <Column field="idAcceso" header="ID de Acceso" />
-            <Column field="acreditacion" header="Acreditación" />
+            <Column field="codigo" header="Código" style={{ paddingLeft: "60px" }} sortable filter filterPlaceholder="Código" filterMatchModeOptions={textMatchModes} maxConstraints={3} />
+            <Column field="planMonitoreo" header="Plan de Monitoreo" sortable filter filterPlaceholder="Plan de monitoreo" filterMatchModeOptions={textMatchModes} maxConstraints={3} />
+            <Column field="matriz" header="Matriz" sortable filter filterPlaceholder="Matriz" filterMatchModeOptions={textMatchModes} maxConstraints={3} />
+            <Column field="idAcceso" header="ID de Acceso" sortable filter filterPlaceholder="ID de acceso" filterMatchModeOptions={textMatchModes} maxConstraints={3} />
+            <Column field="acreditacion" header="Acreditación" sortable filter showFilterMatchModes={false} showFilterOperator={false} maxConstraints={1}
+                filterElement={(options) => selectFilter(options, [
+                    { label: "INACAL", value: "INACAL" },
+                    { label: "NAC", value: "NAC" },
+                    { label: "Sin acreditación", value: "SIN_ACREDITACION" },
+                ], "Todas")}
+            />
             <Column field="vistoBuenoJefatura" header="V° B° Jefatura"
+                sortable
+                filter
+                showFilterMatchModes={false}
+                showFilterOperator={false}
+                maxConstraints={1}
+                filterElement={(options) => selectFilter(options, [
+                    { label: "Sí", value: "SI" },
+                    { label: "No", value: "NO" },
+                ], "Todos")}
                 body={(rowData) => rowData.vistoBuenoJefatura ? "SI" : "NO"}
             />
             <Column field="estado" header="Estado"
+                sortable
+                filter
+                showFilterMatchModes={false}
+                showFilterOperator={false}
+                maxConstraints={1}
+                filterElement={(options) => selectFilter(options, [
+                    { label: "Borrador", value: "BORRADOR" },
+                    { label: "Preliminar", value: "PRELIMINAR" },
+                    { label: "Liberado", value: "LIBERADO" },
+                ], "Todos")}
                 style={{ justifyItems: "center" }}
                 body={(rowData) => {
                     const color =
