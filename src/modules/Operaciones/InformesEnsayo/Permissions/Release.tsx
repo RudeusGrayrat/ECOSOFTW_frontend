@@ -5,7 +5,7 @@ import axios from "../../../../api/axios";
 import ButtonOk from "../../../../components/Ui/Button/Buttons";
 import PopUp from "../../../../components/Ui/Messages/PopUp";
 
-const ReleaseInformesEnsayo = ({ rowData, reload, permissionReport }) => {
+const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [showPanel, setShowPanel] = useState(false);
     const [form, setForm] = useState({
@@ -33,7 +33,7 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionReport }) => {
         }
     }
 
-    if (!permissionReport) return null;
+    if (!permissionSend) return null;
 
     return (
         <>

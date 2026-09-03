@@ -114,7 +114,9 @@ export default function ConsultaInforme() {
                 <div className="rounded-3xl bg-emerald-50 p-5">
                   <p className="text-sm font-black uppercase tracking-[0.25em] text-emerald-700">Informe encontrado</p>
                   <h2 className="mt-3 text-3xl font-black text-slate-900">{resultado.codigo}</h2>
-                  <p className="mt-2 text-sm text-slate-500">Version {resultado.version} disponible para consulta.</p>
+                  <p className="mt-2 text-sm text-slate-500">
+                    {resultado.tipoVersion || resultado.estado || "Version"} disponible para consulta.
+                  </p>
                 </div>
 
                 <div className="mt-6 grid gap-3">

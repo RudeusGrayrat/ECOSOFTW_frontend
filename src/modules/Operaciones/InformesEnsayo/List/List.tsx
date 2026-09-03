@@ -11,6 +11,7 @@ import { useSearchParams } from "react-router-dom";
 const ListInformesEnsayo = ({
     permissionRead,
     permissionReport,
+    permissionSend,
     permissionApprove,
     permissionDelete
 }) => {
@@ -56,7 +57,7 @@ const ListInformesEnsayo = ({
                 <>
                     <ReleaseInformesEnsayo
                         {...props}
-                        permissionReport={permissionReport}
+                        permissionSend={permissionSend}
                     />
                     <PdfActionsInformesEnsayo
                         {...props}

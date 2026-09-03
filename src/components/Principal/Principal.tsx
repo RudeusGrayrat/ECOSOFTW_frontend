@@ -33,6 +33,9 @@ const ReadOrCreate = ({ ItemRegister, ItemList, ItemReporte, submodule }) => {
     const permissionReport = hasPermission()?.some(
         (permission) => permission === "REPORTAR"
     );
+    const permissionSend = hasPermission()?.some(
+        (permission) => permission === "ENVIAR"
+    );
     const permissionApprove = hasPermission()?.some(
         (permission) => permission === "APROBAR"
     );
@@ -42,34 +45,39 @@ const ReadOrCreate = ({ ItemRegister, ItemList, ItemReporte, submodule }) => {
     const [searchParams, setSearchParams] = useSearchParams();
     const selectedView = searchParams.get("select");
 
+    const defaultView = () => {
+        if (permissionRead) return "Listar";
+        if (permissionCreate) return "Crear";
+        if (permissionReport && ItemReporte) return "Reporte";
+        return "";
+    };
+
     useEffect(() => {
         const vistaSeleccionada = searchParams.get("select");
+        const availableViews = [];
+        if (permissionRead) availableViews.push("Listar");
+        if (permissionCreate) availableViews.push("Crear");
+        if (permissionReport && ItemReporte) availableViews.push("Reporte");
 
-        if (!vistaSeleccionada) {
+        if (!vistaSeleccionada || !availableViews.includes(vistaSeleccionada)) {
             setSearchParams(prev => {
                 const params = new URLSearchParams(prev);
-
-                if (permissionRead) {
-                    params.set("select", "Listar");
-                } else if (permissionCreate) {
-                    params.set("select", "Crear");
-                } else if (permissionReport) {
-                    params.set("select", "Reporte");
-                }
-
+                const nextView = defaultView();
+                if (nextView) params.set("select", nextView);
+                params.delete("view");
                 return params;
             });
         }
-    }, [permissionRead, permissionCreate, permissionReport]);
+    }, [permissionRead, permissionCreate, permissionReport, ItemReporte, submodule]);
 
     const [options, setOptions] = useState([]);
     useEffect(() => {
         const newOptions = [];
         if (permissionRead) newOptions.push("Listar");
         if (permissionCreate) newOptions.push("Crear");
-        if (permissionReport) newOptions.push("Reporte");
+        if (permissionReport && ItemReporte) newOptions.push("Reporte");
         setOptions(newOptions);
-    }, [permissionRead, permissionCreate, permissionReport]);
+    }, [permissionRead, permissionCreate, permissionReport, ItemReporte]);
 
     const handleOptionClick = (option) => {
         setSearchParams(prev => {
@@ -90,12 +98,13 @@ const ReadOrCreate = ({ ItemRegister, ItemList, ItemReporte, submodule }) => {
             permissionEdit={permissionEdit}
             permissionDelete={permissionDelete}
             permissionReport={permissionReport}
+            permissionSend={permissionSend}
             permissionApprove={permissionApprove}
             permissionDisapprove={permissionDisapprove}
         />
     }
     else if (selectedView === "Reporte") {
-        children = <ItemReporte />;
+        children = ItemReporte ? <ItemReporte permissionReport={permissionReport} /> : null;
     }
 
     return (
