@@ -3,7 +3,7 @@ import axios from "../../../../api/axios";
 
 const PdfActionsInformesEnsayo = ({ rowData, permissionRead, permissionReport }) => {
     const openPdf = async (download = false) => {
-        const response = await axios.get(`/operaciones/informes-ensayo/${rowData._id}/archivo`, {
+        const response = await axios.get(`/calidad/informes-ensayo/${rowData._id}/archivo`, {
             params: { download },
             responseType: "blob"
         });

@@ -44,7 +44,7 @@ const RegisterInformesEnsayo = () => {
             dataForm.append("tipoPlantilla", form.tipoPlantilla || "SIN_ACREDITACION");
             dataForm.append("reemplazar", reemplazar ? "true" : "false");
 
-            const response = await axios.post("/operaciones/informes-ensayo/procesar", dataForm, {
+            const response = await axios.post("/calidad/informes-ensayo/procesar", dataForm, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             resetForm();

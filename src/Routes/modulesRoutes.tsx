@@ -9,8 +9,8 @@ import Permisos_Herramientas from "../modules/Herramientas/Permisos/Permisos";
 import Usuarios_Herramientas from "../modules/Herramientas/Usuarios/Usuarios";
 import Proyectos_Comercial from "../modules/Comercial/Proyectos/Proyectos";
 import TipoDeGatos_Comercial from "../modules/Comercial/TiposDeGastos/TipoDeGastos";
-import InformesEnsayo from "../modules/Operaciones/InformesEnsayo/InformesEnsayo";
-import Configuracion_Operaciones from "../modules/Operaciones/Configuracion/Configuracion";
+import InformesEnsayo from "../modules/Calidad/InformesEnsayo/InformesEnsayo";
+import Configuracion_Calidad from "../modules/Calidad/Configuracion/Configuracion";
 
 type ModulesMap = Record<string, Record<string, React.ComponentType<any>>>;
 
@@ -27,9 +27,9 @@ const componentMap: ModulesMap = {
         permisos: Permisos_Herramientas,
         usuarios: Usuarios_Herramientas
     },
-    "operaciones": {
+    "calidad": {
         "informes de ensayo": InformesEnsayo,
-        configuracion: Configuracion_Operaciones
+        configuracion: Configuracion_Calidad
     }
 
 }

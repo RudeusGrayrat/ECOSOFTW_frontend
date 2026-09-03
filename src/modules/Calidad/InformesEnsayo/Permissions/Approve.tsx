@@ -13,7 +13,7 @@ const ApproveInformesEnsayo = ({ selected, setShowApprove, reload }) => {
             if (!idSelected) return;
             if (selected.estado === "PRELIMINAR" || selected.estado === "LIBERADO")
                 return sendMessage("El informe ya tiene visto bueno de jefatura", "Error");
-            const response = await axios.post(`/operaciones/informes-ensayo/${idSelected}/aprobar`);
+            const response = await axios.post(`/calidad/informes-ensayo/${idSelected}/aprobar`);
             sendMessage(response.data.message, response.data.type || "Correcto");
             await reload();
         } catch (error) {

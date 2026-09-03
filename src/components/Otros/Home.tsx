@@ -190,24 +190,36 @@ const TopClients = ({ data }: { data: ClienteTop[] }) => (
     </section>
 );
 
-const Activity = ({ data }: { data: ActividadItem[] }) => (
-    <section className="rounded-3xl bg-slate-900 p-5 text-white shadow-xl shadow-slate-300/80">
-        <h3 className="text-lg font-black">Actividad reciente</h3>
-        <div className="mt-5 space-y-3">
-            {data.length === 0 && <p className="text-sm text-slate-400">Sin actividad registrada.</p>}
-            {data.map((item, index) => (
-                <div key={`${item.tipo}-${item.titulo}-${index}`} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <div className="flex items-center justify-between gap-3">
-                        <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-black text-emerald-200">{item.tipo}</span>
-                        <span className="text-xs text-slate-400">{formatDate(item.fecha)}</span>
-                    </div>
-                    <p className="mt-3 font-black">{item.titulo}</p>
-                    <p className="mt-1 text-sm text-slate-300">{item.detalle}</p>
+const Activity = ({ data }: { data: ActividadItem[] }) => {
+    const visibleData = data.slice(0, 8);
+
+    return (
+        <section className="h-full max-h-[500px] rounded-3xl bg-slate-900 p-5 text-white shadow-xl shadow-slate-300/80">
+            <div className="flex items-center justify-between gap-3">
+                <div>
+                    <h3 className="text-lg font-black">Actividad reciente</h3>
+                    <p className="text-xs font-semibold text-slate-400">Últimos movimientos del sistema</p>
                 </div>
-            ))}
-        </div>
-    </section>
-);
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black text-emerald-200">
+                    {formatNumber(data.length)}
+                </span>
+            </div>
+            <div className="mt-5 max-h-[395px] space-y-3 overflow-y-auto pr-1">
+                {visibleData.length === 0 && <p className="text-sm text-slate-400">Sin actividad registrada.</p>}
+                {visibleData.map((item, index) => (
+                    <div key={`${item.tipo}-${item.titulo}-${index}`} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div className="flex items-center justify-between gap-3">
+                            <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-black text-emerald-200">{item.tipo}</span>
+                            <span className="text-xs text-slate-400">{formatDate(item.fecha)}</span>
+                        </div>
+                        <p className="mt-3 font-black">{item.titulo}</p>
+                        <p className="mt-1 text-sm text-slate-300">{item.detalle}</p>
+                    </div>
+                ))}
+            </div>
+        </section>
+    );
+};
 
 const Home = () => {
     const [dashboard, setDashboard] = useState<DashboardData>(emptyDashboard);
@@ -242,7 +254,7 @@ const Home = () => {
                     <div>
                         <p className="text-sm font-bold uppercase tracking-[0.35em] text-emerald-200">ECOSOFT</p>
                         <h1 className="mt-3 text-4xl font-black tracking-tight">Panel de control</h1>
-                        <p className="mt-2 max-w-2xl text-slate-300">Indicadores vivos de comercial, operaciones y herramientas para ver el pulso del sistema sin entrar módulo por módulo.</p>
+                        <p className="mt-2 max-w-2xl text-slate-300">Indicadores vivos de comercial, calidad y herramientas para ver el pulso del sistema sin entrar módulo por módulo.</p>
                     </div>
                     <button
                         onClick={loadDashboard}
@@ -267,17 +279,20 @@ const Home = () => {
                 </div>
             ) : (
                 <>
-                    <section className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-                        <MetricCard title="Clientes" value={formatNumber(indicadores.clientes.total)} subtitle={`${formatNumber(indicadores.clientes.activos)} activos`} accent="bg-emerald-500" />
-                        <MetricCard title="Cotizaciones" value={formatNumber(indicadores.cotizaciones.total)} subtitle={`${formatNumber(indicadores.cotizaciones.aprobadas)} aprobadas / ${formatNumber(indicadores.cotizaciones.pendientes)} pendientes`} accent="bg-amber-400" />
-                        <MetricCard title="Monto cotizado" value={formatCurrency(indicadores.cotizaciones.montoTotal)} subtitle="Total con IGV acumulado" accent="bg-sky-500" />
-                        <MetricCard title="Informes de ensayo" value={formatNumber(indicadores.informes.total)} subtitle={`${formatNumber(indicadores.informes.disponibles)} disponibles para clientes`} accent="bg-lime-500" />
+                    <section className="mt-6 grid gap-5 xl:grid-cols-[1fr_420px]">
+                        <div className="grid gap-5 md:grid-cols-2">
+                            <MetricCard title="Clientes" value={formatNumber(indicadores.clientes.total)} subtitle={`${formatNumber(indicadores.clientes.activos)} activos`} accent="bg-emerald-500" />
+                            <MetricCard title="Cotizaciones" value={formatNumber(indicadores.cotizaciones.total)} subtitle={`${formatNumber(indicadores.cotizaciones.aprobadas)} aprobadas / ${formatNumber(indicadores.cotizaciones.pendientes)} pendientes`} accent="bg-amber-400" />
+                            <MetricCard title="Monto cotizado" value={formatCurrency(indicadores.cotizaciones.montoTotal)} subtitle="Total con IGV acumulado" accent="bg-sky-500" />
+                            <MetricCard title="Informes de ensayo" value={formatNumber(indicadores.informes.total)} subtitle={`${formatNumber(indicadores.informes.disponibles)} disponibles para clientes`} accent="bg-lime-500" />
+                            <MetricCard title="Proyectos" value={formatNumber(indicadores.proyectos.total)} subtitle={`${formatNumber(indicadores.proyectos.activos)} activos o cotizados`} accent="bg-cyan-500" />
+                            <MetricCard title="Usuarios activos" value={formatNumber(indicadores.herramientas.usuariosActivos)} subtitle={`${formatNumber(indicadores.herramientas.usuarios)} usuarios registrados`} accent="bg-teal-500" />
+                        </div>
+                        <Activity data={actividad} />
                     </section>
 
-                    <section className="mt-5 grid gap-5 lg:grid-cols-3">
-                        <MetricCard title="Proyectos" value={formatNumber(indicadores.proyectos.total)} subtitle={`${formatNumber(indicadores.proyectos.activos)} activos o cotizados`} accent="bg-cyan-500" />
-                        <MetricCard title="Usuarios activos" value={formatNumber(indicadores.herramientas.usuariosActivos)} subtitle={`${formatNumber(indicadores.herramientas.usuarios)} usuarios registrados`} accent="bg-teal-500" />
-                        <MetricCard title="Arquitectura" value={`${formatNumber(indicadores.herramientas.modulosActivos)} / ${formatNumber(indicadores.herramientas.submodulosActivos)}`} subtitle={`${formatNumber(indicadores.herramientas.permisosActivos)} permisos activos`} accent="bg-slate-700" />
+                    <section className="mt-5 grid gap-5 lg:grid-cols-1">
+                        <MetricCard title="Arquitectura" value={`${formatNumber(indicadores.herramientas.modulosActivos)} / ${formatNumber(indicadores.herramientas.submodulosActivos)}`} subtitle={`${formatNumber(indicadores.herramientas.permisosActivos)} permisos activos entre módulos y submódulos`} accent="bg-slate-700" />
                     </section>
 
                     <section className="mt-6 grid gap-5 xl:grid-cols-2">
@@ -297,7 +312,7 @@ const Home = () => {
                         <StatusBars title="Estados de informes" data={graficos.estadosInformes} />
                     </section>
 
-                    <section className="mt-6 grid gap-5 xl:grid-cols-[1fr_420px]">
+                    <section className="mt-6">
                         <section className="rounded-3xl bg-white p-5 shadow-lg shadow-slate-200/70 border border-slate-100">
                             <h3 className="text-lg font-black text-slate-800">Lectura rapida</h3>
                             <div className="mt-5 grid gap-4 md:grid-cols-3">
@@ -322,7 +337,6 @@ const Home = () => {
                                 </div>
                             </div>
                         </section>
-                        <Activity data={actividad} />
                     </section>
                 </>
             )}

@@ -23,7 +23,7 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
                 sendMessage("Ingresa el correo del cliente para liberar y notificar", "Error");
                 return;
             }
-            const response = await axios.post(`/operaciones/informes-ensayo/${rowData._id}/liberar`, form);
+            const response = await axios.post(`/calidad/informes-ensayo/${rowData._id}/liberar`, form);
             sendMessage(response.data.message, response.data.type || "Correcto");
             setShowPanel(false);
             await reload?.();

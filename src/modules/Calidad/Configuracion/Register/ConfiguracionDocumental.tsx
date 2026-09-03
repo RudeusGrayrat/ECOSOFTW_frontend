@@ -18,7 +18,7 @@ const ConfiguracionDocumental = () => {
     const sendMessage = useSendMessage();
 
     const load = async () => {
-        const response = await axios.get("/operaciones/informes-ensayo/configuracion");
+        const response = await axios.get("/calidad/informes-ensayo/configuracion");
         setConfig(response.data);
     }
 
@@ -70,8 +70,8 @@ const ConfiguracionDocumental = () => {
                 selectedFile={firma}
                 disabled={deshabilitar}
                 onSelect={setFirma}
-                onUpload={() => uploadFile("/operaciones/informes-ensayo/configuracion/firma", firma, "Firma actualizada", () => setFirma(null))}
-                onDelete={() => deleteFile("/operaciones/informes-ensayo/configuracion/firma", "Firma eliminada", () => setFirma(null))}
+                onUpload={() => uploadFile("/calidad/informes-ensayo/configuracion/firma", firma, "Firma actualizada", () => setFirma(null))}
+                onDelete={() => deleteFile("/calidad/informes-ensayo/configuracion/firma", "Firma eliminada", () => setFirma(null))}
             />
 
             <div className="flex flex-wrap gap-4">
@@ -85,13 +85,13 @@ const ConfiguracionDocumental = () => {
                             disabled={deshabilitar}
                             onSelect={(file) => setMarcas((prev) => ({ ...prev, [tipo.value]: file }))}
                             onUpload={() => uploadFile(
-                                `/operaciones/informes-ensayo/configuracion/marca-agua/${tipo.value}`,
+                                `/calidad/informes-ensayo/configuracion/marca-agua/${tipo.value}`,
                                 marcas[tipo.value],
                                 "Marca de agua actualizada",
                                 () => setMarcas((prev) => ({ ...prev, [tipo.value]: null }))
                             )}
                             onDelete={() => deleteFile(
-                                `/operaciones/informes-ensayo/configuracion/marca-agua/${tipo.value}`,
+                                `/calidad/informes-ensayo/configuracion/marca-agua/${tipo.value}`,
                                 "Marca de agua eliminada",
                                 () => setMarcas((prev) => ({ ...prev, [tipo.value]: null }))
                             )}

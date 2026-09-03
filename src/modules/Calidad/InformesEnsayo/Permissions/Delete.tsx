@@ -11,7 +11,7 @@ const DeleteInformesEnsayo = ({ selected, setShowDelete, reload }) => {
         setDeshabilitar(true);
         try {
             const action = selected?.papelera ? "restablecer" : "papelera";
-            const response = await axios.post(`/operaciones/informes-ensayo/${selected._id}/${action}`);
+            const response = await axios.post(`/calidad/informes-ensayo/${selected._id}/${action}`);
             sendMessage(response.data.message, response.data.type || "Correcto");
             setShowDelete(false);
             await reload();

@@ -23,6 +23,14 @@ const BulkActionsInformesEnsayo = ({
     const sendMessage = useSendMessage();
     const selectedIds = selectedItems.map((item) => item._id);
     const selectedCount = selectedIds.length;
+    const normalizeEstado = (item) => item?.papelera ? "PAPELERA" : (item?.estado === "DISPONIBLE" ? "LIBERADO" : item?.estado);
+    const isBorrador = (item) => normalizeEstado(item) === "BORRADOR" && !item?.vistoBuenoJefatura;
+    const isLiberable = (item) => ["PRELIMINAR"].includes(normalizeEstado(item)) || item?.vistoBuenoJefatura;
+    const isLiberado = (item) => ["LIBERADO", "DISPONIBLE"].includes(item?.estado);
+    const canApprove = selectedItems.every(isBorrador);
+    const canRelease = selectedItems.every((item) => isLiberable(item) && !isLiberado(item) && !item?.papelera);
+    const hasOfficial = selectedItems.some(isLiberado);
+    const disabledClass = "disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0";
 
     if (!selectedCount) return null;
 
@@ -35,6 +43,19 @@ const BulkActionsInformesEnsayo = ({
         URL.revokeObjectURL(url);
     };
 
+    const requestErrorMessage = async (error) => {
+        const data = error?.response?.data;
+        if (data instanceof Blob) {
+            const text = await data.text();
+            try {
+                return JSON.parse(text)?.message || text || error.message;
+            } catch (_) {
+                return text || error.message;
+            }
+        }
+        return data?.message || error?.message || "No se pudo completar la acción";
+    };
+
     const requestZip = async (url, filename) => {
         setDeshabilitar(true);
         try {
@@ -42,7 +63,7 @@ const BulkActionsInformesEnsayo = ({
             downloadBlob(response.data, filename);
             sendMessage("Descarga generada correctamente", "Correcto");
         } catch (error) {
-            sendMessage(error, "Error");
+            sendMessage(await requestErrorMessage(error), "Error");
         } finally {
             setDeshabilitar(false);
         }
@@ -51,12 +72,12 @@ const BulkActionsInformesEnsayo = ({
     const approveSelected = async () => {
         setDeshabilitar(true);
         try {
-            const response = await axios.post("/operaciones/informes-ensayo/bulk/aprobar", { ids: selectedIds });
+            const response = await axios.post("/calidad/informes-ensayo/bulk/aprobar", { ids: selectedIds });
             sendMessage(response.data.message, response.data.type || "Correcto");
             clearSelection();
             await reload?.();
         } catch (error) {
-            sendMessage(error, "Error");
+            sendMessage(await requestErrorMessage(error), "Error");
         } finally {
             setDeshabilitar(false);
         }
@@ -65,7 +86,7 @@ const BulkActionsInformesEnsayo = ({
     const releaseSelected = async () => {
         setDeshabilitar(true);
         try {
-            const response = await axios.post("/operaciones/informes-ensayo/bulk/liberar", {
+            const response = await axios.post("/calidad/informes-ensayo/bulk/liberar", {
                 ids: selectedIds,
                 ...releaseForm,
             });
@@ -74,7 +95,7 @@ const BulkActionsInformesEnsayo = ({
             clearSelection();
             await reload?.();
         } catch (error) {
-            sendMessage(error, "Error");
+            sendMessage(await requestErrorMessage(error), "Error");
         } finally {
             setDeshabilitar(false);
         }
@@ -90,16 +111,17 @@ const BulkActionsInformesEnsayo = ({
                 {permissionReport && (
                     <>
                         <button
-                            className="rounded-xl bg-white px-3 py-2 text-xs font-black text-slate-700 shadow transition hover:-translate-y-0.5"
+                            className={`rounded-xl bg-white px-3 py-2 text-xs font-black text-slate-700 shadow transition hover:-translate-y-0.5 ${disabledClass}`}
                             disabled={deshabilitar}
-                            onClick={() => requestZip("/operaciones/informes-ensayo/bulk/descargar", `informes_seleccionados_${new Date().toISOString().slice(0, 10)}.zip`)}
+                            onClick={() => requestZip("/calidad/informes-ensayo/bulk/descargar", `informes_seleccionados_${new Date().toISOString().slice(0, 10)}.zip`)}
                         >
                             Descargar todos
                         </button>
                         <button
-                            className="rounded-xl bg-white px-3 py-2 text-xs font-black text-blue-700 shadow transition hover:-translate-y-0.5"
-                            disabled={deshabilitar}
-                            onClick={() => requestZip("/operaciones/informes-ensayo/reportes/oficiales", `informes_oficiales_${new Date().toISOString().slice(0, 10)}.zip`)}
+                            className={`rounded-xl bg-white px-3 py-2 text-xs font-black text-blue-700 shadow transition hover:-translate-y-0.5 ${disabledClass}`}
+                            disabled={deshabilitar || !hasOfficial}
+                            title={hasOfficial ? "Descargar solo versiones oficiales de la selección" : "Selecciona al menos un informe liberado"}
+                            onClick={() => requestZip("/calidad/informes-ensayo/reportes/oficiales", `informes_oficiales_${new Date().toISOString().slice(0, 10)}.zip`)}
                         >
                             Descargar oficiales
                         </button>
@@ -107,8 +129,9 @@ const BulkActionsInformesEnsayo = ({
                 )}
                 {permissionApprove && (
                     <button
-                        className="rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white shadow transition hover:-translate-y-0.5"
-                        disabled={deshabilitar}
+                        className={`rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white shadow transition hover:-translate-y-0.5 ${disabledClass}`}
+                        disabled={deshabilitar || !canApprove}
+                        title={canApprove ? "Aprobar borradores seleccionados" : "Para aprobar, selecciona solo informes en BORRADOR sin visto bueno"}
                         onClick={approveSelected}
                     >
                         Aprobar
@@ -116,20 +139,26 @@ const BulkActionsInformesEnsayo = ({
                 )}
                 {permissionSend && (
                     <button
-                        className="rounded-xl bg-blue-600 px-3 py-2 text-xs font-black text-white shadow transition hover:-translate-y-0.5"
-                        disabled={deshabilitar}
+                        className={`rounded-xl bg-blue-600 px-3 py-2 text-xs font-black text-white shadow transition hover:-translate-y-0.5 ${disabledClass}`}
+                        disabled={deshabilitar || !canRelease}
+                        title={canRelease ? "Liberar informes con visto bueno" : "Para liberar, selecciona solo informes preliminares o con visto bueno que aún no estén liberados"}
                         onClick={() => setShowRelease(true)}
                     >
                         Liberar
                     </button>
                 )}
                 <button
-                    className="rounded-xl bg-slate-200 px-3 py-2 text-xs font-black text-slate-600 shadow transition hover:-translate-y-0.5"
+                    className={`rounded-xl bg-slate-200 px-3 py-2 text-xs font-black text-slate-600 shadow transition hover:-translate-y-0.5 ${disabledClass}`}
                     disabled={deshabilitar}
                     onClick={clearSelection}
                 >
                     Quitar selección
                 </button>
+                {(!canApprove || !canRelease) && (
+                    <span className="text-xs font-semibold text-amber-700">
+                        Las acciones se activan solo cuando toda la selección cumple el estado requerido.
+                    </span>
+                )}
             </div>
 
             {showRelease && (

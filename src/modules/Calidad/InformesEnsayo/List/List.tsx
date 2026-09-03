@@ -40,7 +40,7 @@ const ListInformesEnsayo = ({
     };
 
     const fetchData = async (page, limit, search, filters = {}, sort = {}) => {
-        const response = await axios.get("/operaciones/informes-ensayo", {
+        const response = await axios.get("/calidad/informes-ensayo", {
             params: {
                 limit,
                 page,
@@ -106,7 +106,7 @@ const ListInformesEnsayo = ({
                     />
                 </>
             )}
-            title={"operaciones_informes_ensayo"}
+            title={"calidad_informes_ensayo"}
             fetchData={fetchData}
             tableFilters={tableFilters}
             selectable={permissionReport || permissionApprove || permissionSend}

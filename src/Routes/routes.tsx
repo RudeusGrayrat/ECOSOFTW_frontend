@@ -8,7 +8,7 @@ import ProtectedRoute from "../ProtecteRoute";
 import Nav from "../components/Nav/Nav";
 import ModuleRoute from "./ModuleRoute";
 import Login from "../components/Otros/Login";
-import ConsultaInforme from "../modules/Operaciones/InformesEnsayo/ConsultaInforme";
+import ConsultaInforme from "../modules/Calidad/InformesEnsayo/ConsultaInforme";
 import Notificaciones from "../components/Otros/Notificaciones";
 
 export const AppRoutes = () => {

@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import Comercial from "../modules/Comercial/Comercial";
 import ProtectedModule from "./ProtectecModule";
-import Operaciones from "../modules/Operaciones/Operaciones";
+import Calidad from "../modules/Calidad/Calidad";
 import Herramientas from "../modules/Herramientas/Herramientas";
 
 type ModulesMap = Record<string, React.ComponentType<any>>;
@@ -10,7 +10,7 @@ type ModulesMap = Record<string, React.ComponentType<any>>;
 const componentMap: ModulesMap = {
     "comercial": Comercial,
     "herramientas": Herramientas,
-    "operaciones": Operaciones
+    "calidad": Calidad
 }
 
 const ModuleRoute: React.FC = () => {

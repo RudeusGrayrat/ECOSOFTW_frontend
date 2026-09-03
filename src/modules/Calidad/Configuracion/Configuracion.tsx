@@ -1,12 +1,12 @@
 import CardPlegable from "../../../components/Ui/Otros/CardPlegable";
 import ConfiguracionDocumental from "./Register/ConfiguracionDocumental";
 
-const Configuracion_Operaciones = () => {
+const Configuracion_Calidad = () => {
     return (
-        <CardPlegable title="Configuración Documental de Operaciones">
+        <CardPlegable title="Configuración Documental de Calidad">
             <ConfiguracionDocumental />
         </CardPlegable>
     )
 }
 
-export default Configuracion_Operaciones;
+export default Configuracion_Calidad;

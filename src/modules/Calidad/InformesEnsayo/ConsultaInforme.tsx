@@ -14,7 +14,7 @@ export default function ConsultaInforme() {
     setMensaje("");
     setResultado(null);
     try {
-      const { data } = await axios.post("/operaciones/publico/informes-ensayo", { codigo, idAcceso });
+      const { data } = await axios.post("/calidad/publico/informes-ensayo", { codigo, idAcceso });
       setResultado(data);
     } catch (error: any) {
       setMensaje(error?.response?.data?.message || "Informe o ID de acceso no válidos");
@@ -27,7 +27,7 @@ export default function ConsultaInforme() {
     if (!resultado?.viewToken) return "";
     const params = new URLSearchParams({ token: resultado.viewToken });
     if (download) params.set("download", "true");
-    return `${import.meta.env.VITE_SERVER_URL}/operaciones/publico/informes-ensayo/archivo?${params.toString()}`;
+    return `${import.meta.env.VITE_SERVER_URL}/calidad/publico/informes-ensayo/archivo?${params.toString()}`;
   };
 
   const reset = () => {
