@@ -32,6 +32,8 @@ const ListPrincipal = ({
     rowClick,
     onSearch,
     tableFilters = null,
+    selectable = false,
+    BulkActions,
     fetchData,
     title,
     ...OtheProps
@@ -245,43 +247,54 @@ const ListPrincipal = ({
         await fetchAll(pagina, limite, searchTerm, filters);
     };
 
-    const [selectedProducts, setSelectedProducts] = useState(null);
+    const [selectedProducts, setSelectedProducts] = useState([]);
     const [globalFilter, setGlobalFilter] = useState(null);
     const header = (
-        <div className="flex flex-wrap pr-20 justify-end gap-2 ">
-            <IconField iconPosition="left">
-                <InputIcon className="pi pi-search pl-2!" />
-                <InputText
-                    type="search"
-                    value={searchTerm}
-                    onChange={(e) => {
-                        setPagina(0); // Reinicia a la primera página
-                        setSearchTerm(e.target.value);
-                    }}
-                    placeholder="Buscar..."
-                    className="p-2! border-none! rounded-xl! pl-11! focus:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg bg-linear-to-r! from-gray-50! to-gray-100! "
-                />
-            </IconField>
-            {filters ? (
-                <Button
-                    icon="pi pi-filter-slash"
-                    title="Limpiar filtros"
-                    className=" w-16! text-blue-900!  rounded-xl!  active:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg! bg-linear-to-r! from-gray-50! to-gray-100! "
-                    onClick={() => {
-                        setPagina(0);
-                        setFilters(cloneFilters(tableFilters));
-                    }}
-                />
-            ) : null}
-            {reload ? (
-                <Button
-                    icon="pi pi-refresh"
-                    className=" w-16! text-green-600!  rounded-xl!  active:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg! bg-linear-to-r! from-gray-50! to-gray-100! "
-                    onClick={() => {
-                        reloading();
-                    }}
-                />
-            ) : null}
+        <div className="flex flex-wrap items-center justify-between gap-3 pr-20">
+            <div>
+                {BulkActions ? (
+                    <BulkActions
+                        selectedItems={selectedProducts || []}
+                        clearSelection={() => setSelectedProducts([])}
+                        reload={reloading}
+                    />
+                ) : null}
+            </div>
+            <div className="flex flex-wrap justify-end gap-2">
+                <IconField iconPosition="left">
+                    <InputIcon className="pi pi-search pl-2!" />
+                    <InputText
+                        type="search"
+                        value={searchTerm}
+                        onChange={(e) => {
+                            setPagina(0); // Reinicia a la primera página
+                            setSearchTerm(e.target.value);
+                        }}
+                        placeholder="Buscar..."
+                        className="p-2! border-none! rounded-xl! pl-11! focus:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg bg-linear-to-r! from-gray-50! to-gray-100! "
+                    />
+                </IconField>
+                {filters ? (
+                    <Button
+                        icon="pi pi-filter-slash"
+                        title="Limpiar filtros"
+                        className=" w-16! text-blue-900!  rounded-xl!  active:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg! bg-linear-to-r! from-gray-50! to-gray-100! "
+                        onClick={() => {
+                            setPagina(0);
+                            setFilters(cloneFilters(tableFilters));
+                        }}
+                    />
+                ) : null}
+                {reload ? (
+                    <Button
+                        icon="pi pi-refresh"
+                        className=" w-16! text-green-600!  rounded-xl!  active:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg! bg-linear-to-r! from-gray-50! to-gray-100! "
+                        onClick={() => {
+                            reloading();
+                        }}
+                    />
+                ) : null}
+            </div>
         </div>
     );
 
@@ -349,7 +362,7 @@ const ListPrincipal = ({
                     key={title + "Table"}
                     selection={selectedProducts}
                     onSelectionChange={(e) => setSelectedProducts(e.value)}
-                    // dataKey="_id"
+                    dataKey="_id"
                     loading={loading}
                     paginator
                     onRowClick={rowClick}
@@ -373,6 +386,7 @@ const ListPrincipal = ({
                     header={header}
                     {...OtheProps}
                 >
+                    {selectable && <Column selectionMode="multiple" headerStyle={{ width: "3rem" }}></Column>}
                     {children}
                     <Column body={actionBodyTemplate} exportable={false}></Column>
                 </DataTable>

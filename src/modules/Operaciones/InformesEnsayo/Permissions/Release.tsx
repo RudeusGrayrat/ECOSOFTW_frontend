@@ -9,6 +9,7 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [showPanel, setShowPanel] = useState(false);
     const [form, setForm] = useState({
+        enviarCorreo: false,
         correoCliente: rowData?.clienteId?.correoElectronico || "",
         asunto: `Informe de ensayo ${rowData?.codigo || ""} liberado`,
         mensaje: "Estimado cliente, su informe de ensayo ya se encuentra disponible para consulta.",
@@ -18,7 +19,7 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
     const liberar = async () => {
         setDeshabilitar(true);
         try {
-            if (!form.correoCliente) {
+            if (form.enviarCorreo && !form.correoCliente) {
                 sendMessage("Ingresa el correo del cliente para liberar y notificar", "Error");
                 return;
             }
@@ -56,7 +57,7 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
                                 <i className="pi pi-spin pi-spinner text-4xl text-emerald-600" />
                                 <p className="mt-4 text-lg font-black text-slate-800">Liberando informe oficial</p>
                                 <p className="mt-1 max-w-md text-sm font-semibold text-slate-500">
-                                    Estamos generando el PDF final y enviando el correo al cliente. Esto puede tardar unos segundos.
+                                    Estamos generando el PDF final{form.enviarCorreo ? " y enviando el correo al cliente" : ""}. Esto puede tardar unos segundos.
                                 </p>
                             </div>
                         )}
@@ -68,42 +69,54 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
                         </div>
 
                         <div className="grid gap-4">
-                            <label className="flex flex-col gap-1">
-                                <span className="font-semibold text-slate-700">Correo del cliente</span>
-                                <input
-                                    value={form.correoCliente}
-                                    onChange={(event) => setForm((prev) => ({ ...prev, correoCliente: event.target.value }))}
-                                    className="rounded-xl border border-slate-200 px-4 py-3 font-semibold outline-none focus:border-emerald-400"
-                                    placeholder="cliente@empresa.com"
-                                />
-                            </label>
-                            <label className="flex flex-col gap-1">
-                                <span className="font-semibold text-slate-700">Asunto</span>
-                                <input
-                                    value={form.asunto}
-                                    onChange={(event) => setForm((prev) => ({ ...prev, asunto: event.target.value }))}
-                                    className="rounded-xl border border-slate-200 px-4 py-3 font-semibold outline-none focus:border-emerald-400"
-                                />
-                            </label>
-                            <label className="flex flex-col gap-1">
-                                <span className="font-semibold text-slate-700">Mensaje</span>
-                                <textarea
-                                    value={form.mensaje}
-                                    onChange={(event) => setForm((prev) => ({ ...prev, mensaje: event.target.value }))}
-                                    rows={4}
-                                    className="rounded-xl border border-slate-200 px-4 py-3 font-semibold outline-none focus:border-emerald-400"
-                                />
-                            </label>
                             <div className="rounded-xl bg-slate-50 p-4 text-sm font-semibold text-slate-600">
                                 <p>Código: {rowData.codigo}</p>
                                 <p>Plan: {rowData.planMonitoreo || "-"}</p>
                                 <p>ID de acceso: {rowData.idAcceso}</p>
                             </div>
+                            <label className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-3 font-bold text-slate-700">
+                                <input
+                                    type="checkbox"
+                                    checked={form.enviarCorreo}
+                                    onChange={(event) => setForm((prev) => ({ ...prev, enviarCorreo: event.target.checked }))}
+                                />
+                                Enviar correo al cliente después de liberar
+                            </label>
+                            {form.enviarCorreo && (
+                                <>
+                                    <label className="flex flex-col gap-1">
+                                        <span className="font-semibold text-slate-700">Correo del cliente</span>
+                                        <input
+                                            value={form.correoCliente}
+                                            onChange={(event) => setForm((prev) => ({ ...prev, correoCliente: event.target.value }))}
+                                            className="rounded-xl border border-slate-200 px-4 py-3 font-semibold outline-none focus:border-emerald-400"
+                                            placeholder="cliente@empresa.com"
+                                        />
+                                    </label>
+                                    <label className="flex flex-col gap-1">
+                                        <span className="font-semibold text-slate-700">Asunto</span>
+                                        <input
+                                            value={form.asunto}
+                                            onChange={(event) => setForm((prev) => ({ ...prev, asunto: event.target.value }))}
+                                            className="rounded-xl border border-slate-200 px-4 py-3 font-semibold outline-none focus:border-emerald-400"
+                                        />
+                                    </label>
+                                    <label className="flex flex-col gap-1">
+                                        <span className="font-semibold text-slate-700">Mensaje</span>
+                                        <textarea
+                                            value={form.mensaje}
+                                            onChange={(event) => setForm((prev) => ({ ...prev, mensaje: event.target.value }))}
+                                            rows={4}
+                                            className="rounded-xl border border-slate-200 px-4 py-3 font-semibold outline-none focus:border-emerald-400"
+                                        />
+                                    </label>
+                                </>
+                            )}
                         </div>
 
                         <div className="mt-6 flex justify-end">
                             <ButtonOk type="cancel" onClick={() => setShowPanel(false)} disabled={deshabilitar} classe="!w-32 disabled:opacity-50" children="Cancelar" />
-                            <ButtonOk type="ok" onClick={liberar} disabled={deshabilitar} classe="!w-52 disabled:opacity-60" children={deshabilitar ? "Liberando..." : "Liberar y enviar"} />
+                            <ButtonOk type="ok" onClick={liberar} disabled={deshabilitar} classe="!w-52 disabled:opacity-60" children={deshabilitar ? "Liberando..." : form.enviarCorreo ? "Liberar y enviar" : "Liberar"} />
                         </div>
                     </div>
                 </div>

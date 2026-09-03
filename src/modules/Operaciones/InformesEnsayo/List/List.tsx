@@ -8,6 +8,7 @@ import ViewInformesEnsayo from "../Permissions/View";
 import PdfActionsInformesEnsayo from "../Permissions/PdfActions";
 import ReleaseInformesEnsayo from "../Permissions/Release";
 import DeleteInformesEnsayo from "../Permissions/Delete";
+import BulkActionsInformesEnsayo from "./BulkActions";
 import { useSearchParams } from "react-router-dom";
 
 const ListInformesEnsayo = ({
@@ -108,6 +109,15 @@ const ListInformesEnsayo = ({
             title={"operaciones_informes_ensayo"}
             fetchData={fetchData}
             tableFilters={tableFilters}
+            selectable={permissionReport || permissionApprove || permissionSend}
+            BulkActions={(props) => (
+                <BulkActionsInformesEnsayo
+                    {...props}
+                    permissionReport={permissionReport}
+                    permissionApprove={permissionApprove}
+                    permissionSend={permissionSend}
+                />
+            )}
         >
             <Column field="codigo" header="Código" style={{ paddingLeft: "60px" }} sortable filter filterPlaceholder="Código" filterMatchModeOptions={textMatchModes} maxConstraints={3} />
             <Column field="planMonitoreo" header="Plan de Monitoreo" sortable filter filterPlaceholder="Plan de monitoreo" filterMatchModeOptions={textMatchModes} maxConstraints={3} />
