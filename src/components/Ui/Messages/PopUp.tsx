@@ -80,7 +80,8 @@ const PopUp = ({ deshabilitar, ...OtherProps }) => {
                         <div className="flex justify-center items-center absolute -top-4 -right-4">
                             <button
                                 onClick={handleClosePopUp}
-                                title="Cerrar"
+                                data-pr-tooltip="Cerrar"
+                                data-pr-position="left"
                                 {...OtherProps}
                                 className=" rounded-full font-medium text-xl border border-gray-200 shadow-lg bg-gray-200 transition-all hover:bg-gray-300 w-12 h-12"
                             >

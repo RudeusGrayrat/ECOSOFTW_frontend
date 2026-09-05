@@ -25,7 +25,8 @@ const OptionSideBar = ({ icon, options, module }) => {
             <button
                 className="p-[7px] boder w-17 cursor-pointer active:shadow-inner border-gray-200 shadow-lg shadow-gray-500 m-[5px]
         bg-linear-to-tr from-white to-gray-300 rounded-full"
-                title={module}
+                data-pr-tooltip={module}
+                data-pr-position="right"
                 onClick={handleSubmit}
             >
                 {icon}

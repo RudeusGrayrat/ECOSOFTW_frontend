@@ -29,6 +29,7 @@ const InputP = ({
     if (setForm === undefined) {
         setForm = () => { };
     }
+    const { title: tooltipTitle, ...inputProps } = OtherProps;
     const [error, setErrorState] = useState(false);
     const [animation, setAnimation] = useState(false);
     const [otroMode, setOtroMode] = useState(false);
@@ -113,9 +114,9 @@ const InputP = ({
                 <MultiSelect
                     className={estilo + " py-0!"}
                     value={value}
-                    maxSelectedLabels={OtherProps.max ? OtherProps.max : 4}
+                    maxSelectedLabels={inputProps.max ? inputProps.max : 4}
                     onChange={handleChange}
-                    options={OtherProps.options}
+                    options={inputProps.options}
                     display="chip"
                     placeholder="Seleccione una opción"
                 />
@@ -146,11 +147,11 @@ const InputP = ({
             let opcionesConOtro = [];
             if (otro) {
                 opcionesConOtro = [
-                    ...OtherProps?.options,
+                    ...inputProps?.options,
                     { [name]: "OTRO", value: "OTRO" }
                 ];
             } else {
-                opcionesConOtro = [...OtherProps?.options];
+                opcionesConOtro = [...inputProps?.options];
             }
 
 
@@ -173,7 +174,7 @@ const InputP = ({
                                         limit: 10,
                                         search: e.query,
                                     }
-                                    if (OtherProps.extraParams) {
+                                    if (inputProps.extraParams) {
                                         allParams = {
                                             ...allParams,
                                             ...extraParams
@@ -198,7 +199,7 @@ const InputP = ({
                                     handleChange(e);
                                 }
                             }}
-                            {...OtherProps}
+                            {...inputProps}
                         />
                     ) : (
                         <div className="flex items-center gap-2">
@@ -238,10 +239,10 @@ const InputP = ({
                     className={estilo + " py-0!"}
                     value={value}
                     onChange={handleChange}
-                    options={OtherProps.options}
+                    options={inputProps.options}
                     placeholder={label}
-                    editable={OtherProps.editable || true}
-                    {...OtherProps}
+                    editable={inputProps.editable || true}
+                    {...inputProps}
                 />
             );
             break;
@@ -255,14 +256,18 @@ const InputP = ({
                     placeholder={error ? "Este campo es obligatorio" : label}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    {...OtherProps}
+                    {...inputProps}
                     className={estilo}
                 />
             );
     }
 
     return (
-        <div className="flex flex-col mx-3 F h-20" title={OtherProps.title || ""}>
+        <div
+            className="flex flex-col mx-3 F h-20"
+            data-pr-tooltip={tooltipTitle || undefined}
+            data-pr-position="top"
+        >
             <label
                 className={`text-base font-medium ${error ? "text-red-500" : "text-gray-700"
                     }`}

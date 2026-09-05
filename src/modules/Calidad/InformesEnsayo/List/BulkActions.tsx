@@ -31,6 +31,7 @@ const BulkActionsInformesEnsayo = ({
     const canRelease = selectedItems.every((item) => isLiberable(item) && !isLiberado(item) && !item?.papelera);
     const hasOfficial = selectedItems.some(isLiberado);
     const disabledClass = "disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0";
+    const actionBaseClass = `inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-black shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 ${disabledClass}`;
 
     if (!selectedCount) return null;
 
@@ -104,59 +105,67 @@ const BulkActionsInformesEnsayo = ({
     return (
         <>
             <PopUp deshabilitar={deshabilitar} />
-            <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/70 px-3 py-2 shadow-inner">
-                <span className="px-2 text-sm font-black text-emerald-800">
+            <div className="flex max-w-full flex-wrap items-center gap-2 rounded-2xl border border-slate-100 bg-white/90 px-3 py-2 shadow-lg shadow-slate-200/70">
+                <span className="inline-flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700 ring-1 ring-emerald-100">
+                    <i className="pi pi-check-square text-[0.8rem]" />
                     {selectedCount} seleccionados
                 </span>
                 {permissionReport && (
                     <>
                         <button
-                            className={`rounded-xl bg-white px-3 py-2 text-xs font-black text-slate-700 shadow transition hover:-translate-y-0.5 ${disabledClass}`}
+                            className={`${actionBaseClass} bg-slate-50 text-slate-700`}
                             disabled={deshabilitar}
                             onClick={() => requestZip("/calidad/informes-ensayo/bulk/descargar", `informes_seleccionados_${new Date().toISOString().slice(0, 10)}.zip`)}
                         >
-                            Descargar todos
+                            <i className="pi pi-download text-[0.8rem]" />
+                            Todos
                         </button>
                         <button
-                            className={`rounded-xl bg-white px-3 py-2 text-xs font-black text-blue-700 shadow transition hover:-translate-y-0.5 ${disabledClass}`}
+                            className={`${actionBaseClass} bg-blue-50 text-blue-700`}
                             disabled={deshabilitar || !hasOfficial}
-                            title={hasOfficial ? "Descargar solo versiones oficiales de la selección" : "Selecciona al menos un informe liberado"}
+                            data-pr-tooltip={hasOfficial ? "Descargar solo versiones oficiales de la selección" : "Selecciona al menos un informe liberado"}
+                            data-pr-position="top"
                             onClick={() => requestZip("/calidad/informes-ensayo/reportes/oficiales", `informes_oficiales_${new Date().toISOString().slice(0, 10)}.zip`)}
                         >
-                            Descargar oficiales
+                            <i className="pi pi-file-pdf text-[0.8rem]" />
+                            Oficiales
                         </button>
                     </>
                 )}
                 {permissionApprove && (
                     <button
-                        className={`rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white shadow transition hover:-translate-y-0.5 ${disabledClass}`}
+                        className={`${actionBaseClass} bg-emerald-600 text-white`}
                         disabled={deshabilitar || !canApprove}
-                        title={canApprove ? "Aprobar borradores seleccionados" : "Para aprobar, selecciona solo informes en BORRADOR sin visto bueno"}
+                        data-pr-tooltip={canApprove ? "Aprobar borradores seleccionados" : "Para aprobar, selecciona solo informes en BORRADOR sin visto bueno"}
+                        data-pr-position="top"
                         onClick={approveSelected}
                     >
+                        <i className="pi pi-check text-[0.8rem]" />
                         Aprobar
                     </button>
                 )}
                 {permissionSend && (
                     <button
-                        className={`rounded-xl bg-blue-600 px-3 py-2 text-xs font-black text-white shadow transition hover:-translate-y-0.5 ${disabledClass}`}
+                        className={`${actionBaseClass} bg-blue-600 text-white`}
                         disabled={deshabilitar || !canRelease}
-                        title={canRelease ? "Liberar informes con visto bueno" : "Para liberar, selecciona solo informes preliminares o con visto bueno que aún no estén liberados"}
+                        data-pr-tooltip={canRelease ? "Liberar informes con visto bueno" : "Para liberar, selecciona solo informes preliminares o con visto bueno que aún no estén liberados"}
+                        data-pr-position="top"
                         onClick={() => setShowRelease(true)}
                     >
+                        <i className="pi pi-send text-[0.8rem]" />
                         Liberar
                     </button>
                 )}
                 <button
-                    className={`rounded-xl bg-slate-200 px-3 py-2 text-xs font-black text-slate-600 shadow transition hover:-translate-y-0.5 ${disabledClass}`}
+                    className={`${actionBaseClass} bg-slate-100 text-slate-600`}
                     disabled={deshabilitar}
                     onClick={clearSelection}
                 >
-                    Quitar selección
+                    <i className="pi pi-times text-[0.8rem]" />
                 </button>
                 {(!canApprove || !canRelease) && (
-                    <span className="text-xs font-semibold text-amber-700">
-                        Las acciones se activan solo cuando toda la selección cumple el estado requerido.
+                    <span className="max-w-[260px] text-xs font-semibold leading-tight text-amber-700">
+                        Algunas acciones se bloquean por estado.
                     </span>
                 )}
             </div>

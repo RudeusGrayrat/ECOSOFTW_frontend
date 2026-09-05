@@ -1,5 +1,6 @@
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
+import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import ListPrincipal from "../../../../components/Principal/List/List";
 import axios from "../../../../api/axios";
@@ -70,19 +71,6 @@ const ListInformesEnsayo = ({
 
     return (
         <div className="w-full">
-            <div className="mb-3 flex justify-end px-6">
-                <button
-                    className="rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 px-5 py-2 font-semibold text-slate-600 shadow-lg transition-all hover:-translate-y-0.5"
-                    onClick={() => {
-                        const params = new URLSearchParams(searchParams);
-                        if (papelera) params.delete("papelera");
-                        else params.set("papelera", "true");
-                        setSearchParams(params);
-                    }}
-                >
-                    {papelera ? "Ver activos" : "Ver papelera"}
-                </button>
-            </div>
         <ListPrincipal
             key={papelera ? "informes-papelera" : "informes-activos"}
             permissionEdit={false}
@@ -109,6 +97,20 @@ const ListInformesEnsayo = ({
             title={"calidad_informes_ensayo"}
             fetchData={fetchData}
             tableFilters={tableFilters}
+            HeaderActions={() => (
+                <Button
+                    icon={papelera ? "pi pi-list" : "pi pi-trash"}
+                    data-pr-tooltip={papelera ? "Ver informes activos" : "Ver papelera"}
+                    data-pr-position="top"
+                    className={`w-16! rounded-xl! active:shadow-inner! focus:translate-x-px! ease-in-out! shadow-lg! bg-linear-to-r! from-gray-50! to-gray-100! ${papelera ? "text-emerald-600!" : "text-red-500!"}`}
+                    onClick={() => {
+                        const params = new URLSearchParams(searchParams);
+                        if (papelera) params.delete("papelera");
+                        else params.set("papelera", "true");
+                        setSearchParams(params);
+                    }}
+                />
+            )}
             selectable={permissionReport || permissionApprove || permissionSend}
             BulkActions={(props) => (
                 <BulkActionsInformesEnsayo
@@ -155,11 +157,6 @@ const ListInformesEnsayo = ({
                         </div>
                     );
                 }}
-            />
-            <Column field="urlConsulta" header="Consulta"
-                body={(rowData) => rowData.urlConsulta ? (
-                    <a className="text-sky-600 font-semibold" href={rowData.urlConsulta} target="_blank" rel="noreferrer">Abrir</a>
-                ) : ""}
             />
         </ListPrincipal>
         </div>

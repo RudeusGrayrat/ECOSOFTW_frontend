@@ -5,6 +5,7 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { OverlayPanel } from "primereact/overlaypanel";
 import "./stylePrueba.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -13,6 +14,72 @@ import PopUp from "../../Ui/Messages/PopUp";
 import { useAuth } from "../../../context/AuthContext";
 
 const cloneFilters = (filters) => filters ? JSON.parse(JSON.stringify(filters)) : null;
+
+const flattenActionChildren = (children) => {
+    return React.Children.toArray(children).flatMap((child) => {
+        if (React.isValidElement(child) && child.type === React.Fragment) {
+            return flattenActionChildren(child.props.children);
+        }
+        return child ? [child] : [];
+    });
+};
+
+const MoreActions = ({ rowId, actions, openActionsRow, setOpenActionsRow }) => {
+    const overlayRef = useRef(null);
+    const isOpen = openActionsRow === rowId;
+    const hasOverflow = actions.length > 4;
+    const visibleActions = hasOverflow ? actions.slice(0, 3) : actions;
+    const hiddenActions = hasOverflow ? actions.slice(3) : [];
+
+    return (
+        <div className={`list-row-actions ${isOpen ? "is-open" : ""}`}>
+            {visibleActions.map((action, index) => (
+                <React.Fragment key={`visible-action-${rowId}-${index}`}>
+                    {action}
+                </React.Fragment>
+            ))}
+            {hasOverflow && (
+                <>
+                    <button
+                        type="button"
+                        className={`list-action-more ${isOpen ? "is-open" : ""}`}
+                        aria-label={isOpen ? "Cerrar acciones" : "Más acciones"}
+                        data-pr-tooltip={isOpen ? "Cerrar acciones" : "Más acciones"}
+                        data-pr-position="top"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            overlayRef.current?.toggle(event);
+                        }}
+                    >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <OverlayPanel
+                        ref={overlayRef}
+                        className="list-row-actions__overlay"
+                        onShow={() => setOpenActionsRow(rowId)}
+                        onHide={() => setOpenActionsRow((current) => current === rowId ? null : current)}
+                    >
+                        <div
+                            className="list-row-actions__menu"
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                overlayRef.current?.hide();
+                            }}
+                        >
+                            {hiddenActions.map((action, index) => (
+                                <React.Fragment key={`hidden-action-${rowId}-${index}`}>
+                                    {action}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    </OverlayPanel>
+                </>
+            )}
+        </div>
+    );
+};
 
 const ListPrincipal = ({
     permissionEdit,
@@ -34,6 +101,7 @@ const ListPrincipal = ({
     tableFilters = null,
     selectable = false,
     BulkActions,
+    HeaderActions,
     fetchData,
     title,
     ...OtheProps
@@ -58,6 +126,7 @@ const ListPrincipal = ({
     const [filters, setFilters] = useState(() => cloneFilters(tableFilters));
     const [sortField, setSortField] = useState(null);
     const [sortOrder, setSortOrder] = useState(null);
+    const [openActionsRow, setOpenActionsRow] = useState(null);
 
     const [content, setContent] = useState(contenido || []);
     const sendMessage = useSendMessage();
@@ -112,98 +181,112 @@ const ListPrincipal = ({
             rowData.state === "ANULADO" || rowData.estado === "ANULADO";
         const isAnulado =
             rowData.state === "ANULADO" || rowData.estado === "ANULADO";
+        const extraActions = ExtraActions
+            ? flattenActionChildren(ExtraActions({ rowData, reload: reloading }))
+            : [];
+        const actions = [
+            permissionRead && (
+                <Button
+                    icon="pi pi-eye"
+                    data-pr-tooltip="Ver detalle"
+                    data-pr-position="top"
+                    rounded
+                    outlined
+                    className={`  text-black! rounded-full mx-1! bg-[#f7f6f6bb]  transition-all duration-150 ease-in-out 
+          ${selectedRowId === rowData._id && showDetail
+                            ? "shadow-inner translate-y-[2px]"
+                            : "shadow-xl"
+                        }
+          `}
+                    onClick={() => handleShowDetail(rowData)}
+                />
+            ),
+            permissionApprove && (
+                <Button
+                    icon={"pi pi-check"}
+                    data-pr-tooltip="Aprobar o activar"
+                    data-pr-position="top"
+                    rounded
+                    outlined
+                    className={` text-green-500 rounded-full
+          ${isApproved || isActivo ? "cursor-not-allowed opacity-30" : ""}
+          mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out 
+          ${selectedRowId === rowData._id && showApprove
+                            ? "shadow-inner translate-y-[2px]"
+                            : "shadow-xl"
+                        }
+          `}
+                    onClick={() => handleShowApprove(rowData)}
+                    disabled={isApproved || isActivo}
+                />
+            ),
+            permissionDisapprove && (
+                <Button
+                    icon={"pi pi-times"}
+                    rounded
+                    data-pr-tooltip="Desactivar o anular"
+                    data-pr-position="top"
+                    outlined
+                    className={`text-orange-600! rounded-full
+          ${isDisapproved || isInactivo ? "cursor-not-allowed opacity-30" : ""}
+          mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out 
+          ${selectedRowId === rowData._id && showDisapprove
+                            ? "shadow-inner translate-y-[2px]"
+                            : "shadow-xl"
+                        }
+          `}
+                    onClick={() => handleShowDisapprove(rowData)}
+                    disabled={isDisapproved || isInactivo}
+                />
+            ),
+            permissionEdit && (
+                <Button
+                    icon="pi pi-pencil"
+                    data-pr-tooltip="Editar"
+                    data-pr-position="top"
+                    rounded
+                    outlined
+                    className={` text-blue-500! rounded-full 
+            ${isAnulado || isApproved || isInactivo ? "cursor-not-allowed opacity-30" : ""}
+          mx-1! bg-[#f7f6f6bb]  transition-all duration-150 ease-in-out 
+          ${selectedRowId === rowData._id && showEdit
+                            ? "shadow-inner translate-y-[2px]"
+                            : "shadow-xl"
+                        }
+          `}
+                    onClick={() => handleShowEdit(rowData)}
+                    disabled={isAnulado || isApproved || isInactivo}
+                />
+            ),
+            permissionDelete && (
+                <Button
+                    icon="pi pi-trash"
+                    data-pr-tooltip="Eliminar"
+                    data-pr-position="top"
+                    rounded
+                    outlined
+                    className={` text-red-600 rounded-full 
+          ${isApproved || isActivo ? "cursor-not-allowed opacity-30" : ""}
+          mx-1! bg-[#f7f6f6bb]  transition-all duration-150 ease-in-out 
+          ${selectedRowId === rowData._id && showDelete
+                            ? "shadow-inner translate-y-[2px]"
+                            : "shadow-xl"
+                        }
+          `}
+                    severity="danger"
+                    onClick={() => handleShowDelete(rowData)}
+                    disabled={isApproved || isActivo}
+                />
+            ),
+            ...extraActions,
+        ].filter(Boolean);
         return (
-            <React.Fragment>
-                {permissionRead && (
-                    <Button
-                        icon="pi pi-eye"
-                        title="Ver Detalle"
-                        rounded
-                        outlined
-                        className={`  text-black! rounded-full mx-1! bg-[#f7f6f6bb]  transition-all duration-150 ease-in-out 
-              ${selectedRowId === rowData._id && showDetail
-                                ? "shadow-inner translate-y-[2px]"
-                                : "shadow-xl"
-                            }
-              `}
-                        onClick={() => handleShowDetail(rowData)}
-                    />
-                )}
-                {permissionApprove && (
-                    <Button
-                        icon={"pi pi-check"}
-                        title="Aprobar o Activar"
-                        rounded
-                        outlined
-                        className={` text-green-500 rounded-full
-              ${isApproved || isActivo ? "cursor-not-allowed opacity-30" : ""}
-              mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out 
-              ${selectedRowId === rowData._id && showApprove
-                                ? "shadow-inner translate-y-[2px]"
-                                : "shadow-xl"
-                            }
-              `}
-                        onClick={() => handleShowApprove(rowData)}
-                        disabled={isApproved || isActivo}
-                    />
-                )}
-                {permissionDisapprove && (
-                    <Button
-                        icon={"pi pi-times"}
-                        rounded
-                        title="Desactivar o Anular"
-                        outlined
-                        className={`text-orange-600! rounded-full
-              ${isDisapproved || isInactivo ? "cursor-not-allowed opacity-30" : ""}
-              mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out 
-              ${selectedRowId === rowData._id && showDisapprove
-                                ? "shadow-inner translate-y-[2px]"
-                                : "shadow-xl"
-                            }
-              `}
-                        onClick={() => handleShowDisapprove(rowData)}
-                        disabled={isDisapproved || isInactivo}
-                    />
-                )}
-                {permissionEdit && (
-                    <Button
-                        icon="pi pi-pencil"
-                        title="Editar"
-                        rounded
-                        outlined
-                        className={` text-blue-500! rounded-full 
-                ${isAnulado || isApproved || isInactivo ? "cursor-not-allowed opacity-30" : ""}
-              mx-1! bg-[#f7f6f6bb]  transition-all duration-150 ease-in-out 
-              ${selectedRowId === rowData._id && showEdit
-                                ? "shadow-inner translate-y-[2px]"
-                                : "shadow-xl"
-                            }
-              `}
-                        onClick={() => handleShowEdit(rowData)}
-                        disabled={isAnulado || isApproved || isInactivo}
-                    />
-                )}
-                {permissionDelete && (
-                    <Button
-                        icon="pi pi-trash"
-                        title="Eliminar"
-                        rounded
-                        outlined
-                        className={` text-red-600 rounded-full 
-              ${isApproved || isActivo ? "cursor-not-allowed opacity-30" : ""}
-              mx-1! bg-[#f7f6f6bb]  transition-all duration-150 ease-in-out 
-              ${selectedRowId === rowData._id && showDelete
-                                ? "shadow-inner translate-y-[2px]"
-                                : "shadow-xl"
-                            }
-              `}
-                        severity="danger"
-                        onClick={() => handleShowDelete(rowData)}
-                        disabled={isApproved || isActivo}
-                    />
-                )}
-                {ExtraActions && <ExtraActions rowData={rowData} reload={reloading} />}
-            </React.Fragment>
+            <MoreActions
+                rowId={rowData._id}
+                actions={actions}
+                openActionsRow={openActionsRow}
+                setOpenActionsRow={setOpenActionsRow}
+            />
         );
     };
     const [loading, setLoading] = useState(false);
@@ -277,7 +360,8 @@ const ListPrincipal = ({
                 {filters ? (
                     <Button
                         icon="pi pi-filter-slash"
-                        title="Limpiar filtros"
+                        data-pr-tooltip="Limpiar filtros"
+                        data-pr-position="top"
                         className=" w-16! text-blue-900!  rounded-xl!  active:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg! bg-linear-to-r! from-gray-50! to-gray-100! "
                         onClick={() => {
                             setPagina(0);
@@ -285,9 +369,17 @@ const ListPrincipal = ({
                         }}
                     />
                 ) : null}
+                {HeaderActions ? (
+                    <HeaderActions
+                        reload={reloading}
+                        loading={loading}
+                    />
+                ) : null}
                 {reload ? (
                     <Button
                         icon="pi pi-refresh"
+                        data-pr-tooltip="Recargar"
+                        data-pr-position="top"
                         className=" w-16! text-green-600!  rounded-xl!  active:shadow-inner! focus:translate-x-px! ease-in-out!  shadow-lg! bg-linear-to-r! from-gray-50! to-gray-100! "
                         onClick={() => {
                             reloading();
@@ -386,9 +478,9 @@ const ListPrincipal = ({
                     header={header}
                     {...OtheProps}
                 >
-                    {selectable && <Column selectionMode="multiple" headerStyle={{ width: "3rem" }}></Column>}
+                    {selectable && <Column selectionMode="multiple" headerStyle={{ width: "3rem" }} reorderable={false}></Column>}
                     {children}
-                    <Column body={actionBodyTemplate} exportable={false}></Column>
+                    <Column body={actionBodyTemplate} exportable={false} reorderable={false}></Column>
                 </DataTable>
             </div>
         </div>

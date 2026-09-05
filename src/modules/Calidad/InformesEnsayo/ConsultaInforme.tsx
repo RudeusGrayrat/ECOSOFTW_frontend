@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import axios from "../../../api/axios";
 
 export default function ConsultaInforme() {
-  const [codigo, setCodigo] = useState("");
+  const [codigo, setCodigo] = useState(() => new URLSearchParams(window.location.search).get("codigo") || "");
   const [idAcceso, setIdAcceso] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);

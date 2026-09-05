@@ -109,7 +109,13 @@ const DatosGenerales = ({ form, setForm, files, setFiles }) => {
                             <tbody>
                                 {files.map((item) => (
                                     <tr key={item.id} className="border-t border-slate-100">
-                                        <td className="max-w-72 truncate px-4 py-3 font-semibold text-slate-600" title={item.file.name}>{item.file.name}</td>
+                                        <td
+                                            className="max-w-72 truncate px-4 py-3 font-semibold text-slate-600"
+                                            data-pr-tooltip={item.file.name}
+                                            data-pr-position="top"
+                                        >
+                                            {item.file.name}
+                                        </td>
                                         {["codigo", "planMonitoreo", "cliente", "matriz"].map((field) => (
                                             <td key={field} className="px-4 py-3">
                                                 <input
@@ -124,7 +130,8 @@ const DatosGenerales = ({ form, setForm, files, setFiles }) => {
                                                 type="button"
                                                 className="rounded-full bg-white px-3 py-2 text-red-500 shadow-lg transition-all hover:-translate-y-0.5"
                                                 onClick={() => removeFile(item.id)}
-                                                title="Quitar de la carga"
+                                                data-pr-tooltip="Quitar de la carga"
+                                                data-pr-position="top"
                                             >
                                                 <i className="pi pi-trash" />
                                             </button>

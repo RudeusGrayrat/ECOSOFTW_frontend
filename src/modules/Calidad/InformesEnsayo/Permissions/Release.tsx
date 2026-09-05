@@ -40,7 +40,8 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
         <>
             <Button
                 icon="pi pi-send"
-                title="Liberar informe oficial"
+                data-pr-tooltip="Liberar informe oficial"
+                data-pr-position="top"
                 rounded
                 outlined
                 disabled={deshabilitar || rowData.estado !== "PRELIMINAR" || rowData.papelera}

@@ -23,7 +23,8 @@ const Nav = () => {
                     <button
                         onClick={() => navigate("/notificaciones")}
                         className="relative bg-slate-200 flex justify-center items-center w-16 m-4 h-16 rounded-full"
-                        title="Notificaciones"
+                        data-pr-tooltip="Notificaciones"
+                        data-pr-position="bottom"
                     >
                         <Checkbox />
                         {unread > 0 && (

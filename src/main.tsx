@@ -8,6 +8,7 @@ import { PrimeReactProvider } from "primereact/api";
 import { StrictMode } from "react";
 import { AuthProvider } from "./context/AuthContext";
 import { NotificationsProvider } from "./context/NotificationsContext";
+import AppTooltip from "./components/Ui/Tooltip/AppTooltip";
 
 import "primereact/resources/themes/saga-green/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <AuthProvider>
           <PrimeReactProvider>
             <NotificationsProvider>
+              <AppTooltip />
               <App />
             </NotificationsProvider>
           </PrimeReactProvider>

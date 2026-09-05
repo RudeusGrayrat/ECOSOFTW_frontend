@@ -20,7 +20,11 @@ const InputArchivoConfig = ({
                     {fileName}
                 </span>
                 <div className="flex items-center gap-2">
-                    <label className={`grid h-10 w-10 cursor-pointer place-items-center rounded-full bg-white text-blue-500 shadow-lg transition-all hover:-translate-y-0.5 ${disabled ? "pointer-events-none opacity-50" : ""}`}>
+                    <label
+                        className={`grid h-10 w-10 cursor-pointer place-items-center rounded-full bg-white text-blue-500 shadow-lg transition-all hover:-translate-y-0.5 ${disabled ? "pointer-events-none opacity-50" : ""}`}
+                        data-pr-tooltip="Seleccionar archivo"
+                        data-pr-position="top"
+                    >
                         <input
                             type="file"
                             accept={accept}
@@ -32,7 +36,8 @@ const InputArchivoConfig = ({
                     </label>
                     <Button
                         icon="pi pi-upload"
-                        title="Actualizar archivo"
+                        data-pr-tooltip="Actualizar archivo"
+                        data-pr-position="top"
                         rounded
                         outlined
                         disabled={disabled || !selectedFile}
@@ -41,7 +46,8 @@ const InputArchivoConfig = ({
                     />
                     <Button
                         icon="pi pi-trash"
-                        title="Eliminar archivo"
+                        data-pr-tooltip="Eliminar archivo"
+                        data-pr-position="top"
                         rounded
                         outlined
                         disabled={disabled || (!currentFile && !selectedFile)}
