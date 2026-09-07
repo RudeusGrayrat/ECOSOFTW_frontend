@@ -26,10 +26,19 @@ const flattenActionChildren = (children) => {
 
 const MoreActions = ({ rowId, actions, openActionsRow, setOpenActionsRow }) => {
     const overlayRef = useRef(null);
-    const isOpen = openActionsRow === rowId;
+    const rowKey = String(rowId);
+    const [localOpen, setLocalOpen] = useState(false);
+    const isOpen = localOpen;
     const hasOverflow = actions.length > 4;
     const visibleActions = hasOverflow ? actions.slice(0, 3) : actions;
     const hiddenActions = hasOverflow ? actions.slice(3) : [];
+
+    useEffect(() => {
+        if (openActionsRow && openActionsRow !== rowKey && localOpen) {
+            overlayRef.current?.hide();
+            setLocalOpen(false);
+        }
+    }, [openActionsRow, rowKey, localOpen]);
 
     return (
         <div className={`list-row-actions ${isOpen ? "is-open" : ""}`}>
@@ -48,7 +57,15 @@ const MoreActions = ({ rowId, actions, openActionsRow, setOpenActionsRow }) => {
                         data-pr-position="top"
                         onClick={(event) => {
                             event.stopPropagation();
-                            overlayRef.current?.toggle(event);
+                            if (localOpen) {
+                                overlayRef.current?.hide();
+                                setLocalOpen(false);
+                                setOpenActionsRow((current) => current === rowKey ? null : current);
+                                return;
+                            }
+                            setOpenActionsRow(rowKey);
+                            setLocalOpen(true);
+                            overlayRef.current?.show(event);
                         }}
                     >
                         <span></span>
@@ -58,14 +75,20 @@ const MoreActions = ({ rowId, actions, openActionsRow, setOpenActionsRow }) => {
                     <OverlayPanel
                         ref={overlayRef}
                         className="list-row-actions__overlay"
-                        onShow={() => setOpenActionsRow(rowId)}
-                        onHide={() => setOpenActionsRow((current) => current === rowId ? null : current)}
+                        dismissable={false}
+                        onShow={() => {
+                            setLocalOpen(true);
+                            setOpenActionsRow(rowKey);
+                        }}
+                        onHide={() => {
+                            setLocalOpen(false);
+                            setOpenActionsRow((current) => current === rowKey ? null : current);
+                        }}
                     >
                         <div
                             className="list-row-actions__menu"
                             onClick={(event) => {
                                 event.stopPropagation();
-                                overlayRef.current?.hide();
                             }}
                         >
                             {hiddenActions.map((action, index) => (

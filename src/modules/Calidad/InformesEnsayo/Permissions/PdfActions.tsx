@@ -1,7 +1,14 @@
 import { Button } from "primereact/button";
 import axios from "../../../../api/axios";
 
-const PdfActionsInformesEnsayo = ({ rowData, permissionRead, permissionReport }) => {
+const PdfActionsInformesEnsayo = ({
+    rowData,
+    permissionRead,
+    permissionReport,
+    showView = true,
+    showConsulta = true,
+    showDownload = true,
+}) => {
     const openConsulta = () => {
         if (!rowData.urlConsulta) return;
         const consultaUrl = new URL(rowData.urlConsulta, window.location.origin);
@@ -30,7 +37,7 @@ const PdfActionsInformesEnsayo = ({ rowData, permissionRead, permissionReport })
 
     return (
         <>
-            {permissionRead && (
+            {showView && permissionRead && (
                 <Button
                     icon="pi pi-file-pdf"
                     data-pr-tooltip="Ver PDF"
@@ -41,18 +48,7 @@ const PdfActionsInformesEnsayo = ({ rowData, permissionRead, permissionReport })
                     onClick={() => openPdf(false)}
                 />
             )}
-            {permissionReport && (
-                <Button
-                    icon="pi pi-download"
-                    data-pr-tooltip="Descargar PDF"
-                    data-pr-position="top"
-                    rounded
-                    outlined
-                    className="text-emerald-600! rounded-full mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out shadow-xl"
-                    onClick={() => openPdf(true)}
-                />
-            )}
-            {rowData.urlConsulta && (
+            {showConsulta && permissionRead && rowData.urlConsulta && (
                 <Button
                     icon="pi pi-external-link"
                     data-pr-tooltip="Abrir consulta pública"
@@ -61,6 +57,17 @@ const PdfActionsInformesEnsayo = ({ rowData, permissionRead, permissionReport })
                     outlined
                     className="text-sky-500! rounded-full mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out shadow-xl"
                     onClick={openConsulta}
+                />
+            )}
+            {showDownload && permissionReport && (
+                <Button
+                    icon="pi pi-download"
+                    data-pr-tooltip="Descargar PDF"
+                    data-pr-position="top"
+                    rounded
+                    outlined
+                    className="text-emerald-600! rounded-full mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out shadow-xl"
+                    onClick={() => openPdf(true)}
                 />
             )}
         </>

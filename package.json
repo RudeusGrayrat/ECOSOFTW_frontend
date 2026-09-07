@@ -17,6 +17,7 @@
     "axios": "^1.13.1",
     "dayjs": "^1.11.19",
     "docxtemplater": "^3.67.6",
+    "pdfjs-dist": "^6.3.289",
     "pizzip": "^3.2.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.8.4",

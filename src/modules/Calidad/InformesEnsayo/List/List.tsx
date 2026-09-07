@@ -9,6 +9,7 @@ import ViewInformesEnsayo from "../Permissions/View";
 import PdfActionsInformesEnsayo from "../Permissions/PdfActions";
 import ReleaseInformesEnsayo from "../Permissions/Release";
 import DeleteInformesEnsayo from "../Permissions/Delete";
+import ReviewInformesEnsayo from "../Permissions/Review";
 import BulkActionsInformesEnsayo from "./BulkActions";
 import { useSearchParams } from "react-router-dom";
 
@@ -74,15 +75,22 @@ const ListInformesEnsayo = ({
         <ListPrincipal
             key={papelera ? "informes-papelera" : "informes-activos"}
             permissionEdit={false}
-            permissionDelete={permissionDelete}
+            permissionDelete={false}
             permissionRead={permissionRead}
-            permissionApprove={permissionApprove}
+            permissionApprove={false}
             permissionDisapprove={false}
             ApproveItem={ApproveInformesEnsayo}
             DeleteItem={DeleteInformesEnsayo}
             DetailItem={ViewInformesEnsayo}
             ExtraActions={(props) => (
                 <>
+                    <PdfActionsInformesEnsayo
+                        {...props}
+                        permissionRead={permissionRead}
+                        permissionReport={permissionReport}
+                        showConsulta={false}
+                        showDownload={false}
+                    />
                     <ReleaseInformesEnsayo
                         {...props}
                         permissionSend={permissionSend}
@@ -91,6 +99,16 @@ const ListInformesEnsayo = ({
                         {...props}
                         permissionRead={permissionRead}
                         permissionReport={permissionReport}
+                        showView={false}
+                    />
+                    <ReviewInformesEnsayo
+                        {...props}
+                        permissionRead={permissionRead}
+                        permissionApprove={permissionApprove}
+                    />
+                    <DeleteInformesEnsayo
+                        {...props}
+                        permissionDelete={permissionDelete}
                     />
                 </>
             )}
@@ -140,6 +158,7 @@ const ListInformesEnsayo = ({
                 maxConstraints={1}
                 filterElement={(options) => selectFilter(options, [
                     { label: "Borrador", value: "BORRADOR" },
+                    { label: "Observado", value: "OBSERVADO" },
                     { label: "Preliminar", value: "PRELIMINAR" },
                     { label: "Liberado", value: "LIBERADO" },
                 ], "Todos")}
@@ -150,7 +169,9 @@ const ListInformesEnsayo = ({
                             ? " text-green-500 "
                             : rowData.estado === "PRELIMINAR"
                                 ? " text-blue-500 "
-                                : " text-orange-500 ";
+                                : rowData.estado === "OBSERVADO"
+                                    ? " text-red-500 "
+                                    : " text-orange-500 ";
                     return (
                         <div className={`text-center bg-linear-to-tr from-white to-gray-100 shadow-inner rounded-xl font-semibold px-5 py-1 ${color}`}>
                             {rowData.papelera ? "PAPELERA" : rowData.estado}
