@@ -32,7 +32,7 @@ type NotificationsContextValue = {
     notifications: NotificationItem[];
     unread: number;
     refreshNotifications: () => Promise<void>;
-    markAsRead: (id: string) => Promise<void>;
+    markAsRead: (id: string) => Promise<NotificationItem | undefined>;
     isRead: (notification: NotificationItem) => boolean;
     showToast: (tone: ToastTone, title: string, message: string) => void;
 };
@@ -90,6 +90,7 @@ export const NotificationsProvider = ({ children }) => {
         const response = await axios.patch(`/herramientas/notificaciones/${id}/leida`);
         setNotifications((current) => current.map((item) => item._id === id ? { ...item, ...response.data.data } : item));
         if (wasUnread) setUnread((current) => Math.max(current - 1, 0));
+        return response.data.data;
     };
 
     useEffect(() => {
