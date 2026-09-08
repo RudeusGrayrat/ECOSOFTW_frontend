@@ -21,6 +21,7 @@ const Notificaciones = () => {
     const [page, setPage] = useState(0);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [undoNotification, setUndoNotification] = useState(null);
 
     const hasMore = notifications.length < total;
 
@@ -58,6 +59,23 @@ const Notificaciones = () => {
         event.stopPropagation();
         await markLocalAsRead(notification);
         if (notification.route) navigate(notification.route);
+    };
+
+    const deleteNotification = async (notification, event) => {
+        event.stopPropagation();
+        await axios.delete(`/herramientas/notificaciones/${notification._id}`);
+        setNotifications((current) => current.filter((item) => item._id !== notification._id));
+        setTotal((current) => Math.max(current - 1, 0));
+        if (selectedId === notification._id) setSelectedId(null);
+        setUndoNotification(notification);
+        await refreshNotifications();
+    };
+
+    const undoDelete = async () => {
+        if (!undoNotification) return;
+        await axios.patch(`/herramientas/notificaciones/${undoNotification._id}/restaurar`);
+        setUndoNotification(null);
+        await refreshPage();
     };
 
     const toggleDetail = async (notification) => {
@@ -104,14 +122,35 @@ const Notificaciones = () => {
                         return (
                             <button
                                 key={notification._id}
-                                className={`w-full rounded-2xl border bg-white px-4 py-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${read
+                                className={`relative w-full rounded-2xl border bg-white px-4 py-3 pr-16 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${read
                                     ? "border-slate-100 opacity-95"
                                     : "border-l-4 border-l-blue-500 border-slate-100 shadow-md"
                                     }`}
                                 onClick={() => toggleDetail(notification)}
                             >
+                                <div className="absolute right-3 top-3 flex flex-col gap-2">
+                                    {notification.route && (
+                                        <span
+                                            className="grid h-8 w-8 place-items-center rounded-full bg-sky-50 text-sky-600 shadow-sm transition hover:bg-sky-100 hover:shadow-md"
+                                            data-pr-tooltip="Abrir módulo"
+                                            data-pr-position="left"
+                                            onClick={(event) => openNotification(notification, event)}
+                                        >
+                                            <i className="pi pi-external-link text-xs" />
+                                        </span>
+                                    )}
+                                    <span
+                                        className="grid h-8 w-8 place-items-center rounded-full bg-red-50 text-red-500 shadow-sm transition hover:bg-red-100 hover:shadow-md"
+                                        data-pr-tooltip="Eliminar notificación"
+                                        data-pr-position="left"
+                                        onClick={(event) => deleteNotification(notification, event)}
+                                    >
+                                        <i className="pi pi-trash text-xs" />
+                                    </span>
+                                </div>
+
                                 <div className="flex flex-wrap items-center justify-between gap-3">
-                                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                                    <div className="flex min-w-0 flex-1 items-center gap-3 pr-2">
                                         <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${read ? "bg-slate-300" : "bg-blue-500 animate-pulse"}`} />
                                         <span className="truncate rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-black text-emerald-700">
                                             {notification.module || "SISTEMA"} / {notification.submodule || notification.type}
@@ -139,14 +178,6 @@ const Notificaciones = () => {
                                             {notification.creatorName && <p className="mt-3"><span className="font-bold">Creado por:</span> {notification.creatorName}</p>}
                                             <p><span className="font-bold">Tipo:</span> {notification.type || "SUBMODULE"}</p>
                                             <p><span className="font-bold">Fecha:</span> {formatDate(notification.createdAt)}</p>
-                                            {notification.route && (
-                                                <span
-                                                    className="mt-3 inline-flex rounded-xl bg-slate-950 px-4 py-2 text-xs font-black text-white shadow-md transition hover:bg-emerald-700"
-                                                    onClick={(event) => openNotification(notification, event)}
-                                                >
-                                                    Abrir módulo
-                                                </span>
-                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -169,6 +200,28 @@ const Notificaciones = () => {
                     )}
                 </div>
             </section>
+
+            {undoNotification && (
+                <div className="fixed bottom-6 right-6 z-[10000] flex max-w-md items-center gap-4 rounded-2xl border border-slate-200 bg-slate-950 px-5 py-4 text-white shadow-2xl">
+                    <div>
+                        <p className="text-sm font-black">Notificación eliminada</p>
+                        <p className="mt-1 text-xs text-slate-300">{undoNotification.title}</p>
+                    </div>
+                    <button
+                        className="rounded-xl bg-white px-4 py-2 text-xs font-black text-slate-900 transition hover:bg-emerald-100"
+                        onClick={undoDelete}
+                    >
+                        Deshacer
+                    </button>
+                    <button
+                        className="grid h-8 w-8 place-items-center rounded-full bg-white/10 text-xs transition hover:bg-white/20"
+                        onClick={() => setUndoNotification(null)}
+                        aria-label="Cerrar deshacer"
+                    >
+                        <i className="pi pi-times" />
+                    </button>
+                </div>
+            )}
         </main>
     );
 };
