@@ -68,7 +68,7 @@ const RegisterInformesEnsayo = () => {
             {pendingReplace && (
                 <div className="mx-8 mt-4 p-4 border border-orange-200 bg-orange-50 rounded-lg flex flex-wrap items-center justify-between gap-4">
                     <span className="font-semibold text-orange-700">
-                        El informe {pendingReplace.codigo} ya existe. Versión actual: {pendingReplace.versionActual}. ¿Deseas reemplazarlo?
+                        El informe {pendingReplace.codigo} ya existe. ¿Deseas reemplazarlo?
                     </span>
                     <div className="flex">
                         <ButtonOk type="ok" onClick={() => registrar(true)} classe="!w-28" children="SI" />
