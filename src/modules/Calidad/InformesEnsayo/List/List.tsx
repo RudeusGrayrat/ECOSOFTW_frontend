@@ -84,32 +84,42 @@ const ListInformesEnsayo = ({
             DetailItem={ViewInformesEnsayo}
             ExtraActions={(props) => (
                 <>
-                    <PdfActionsInformesEnsayo
-                        {...props}
-                        permissionRead={permissionRead}
-                        permissionReport={permissionReport}
-                        showConsulta={false}
-                        showDownload={false}
-                    />
-                    <ReleaseInformesEnsayo
-                        {...props}
-                        permissionSend={permissionSend}
-                    />
-                    <PdfActionsInformesEnsayo
-                        {...props}
-                        permissionRead={permissionRead}
-                        permissionReport={permissionReport}
-                        showView={false}
-                    />
-                    <ReviewInformesEnsayo
-                        {...props}
-                        permissionRead={permissionRead}
-                        permissionApprove={permissionApprove}
-                    />
-                    <DeleteInformesEnsayo
-                        {...props}
-                        permissionDelete={permissionDelete}
-                    />
+                    {permissionRead && (
+                        <PdfActionsInformesEnsayo
+                            {...props}
+                            permissionRead={permissionRead}
+                            permissionReport={permissionReport}
+                            showConsulta={false}
+                            showDownload={false}
+                        />
+                    )}
+                    {permissionSend && (
+                        <ReleaseInformesEnsayo
+                            {...props}
+                            permissionSend={permissionSend}
+                        />
+                    )}
+                    {((permissionRead && props.rowData?.urlConsulta) || permissionReport) && (
+                        <PdfActionsInformesEnsayo
+                            {...props}
+                            permissionRead={permissionRead}
+                            permissionReport={permissionReport}
+                            showView={false}
+                        />
+                    )}
+                    {(permissionRead || permissionApprove) && !props.rowData?.papelera && (
+                        <ReviewInformesEnsayo
+                            {...props}
+                            permissionRead={permissionRead}
+                            permissionApprove={permissionApprove}
+                        />
+                    )}
+                    {permissionDelete && (
+                        <DeleteInformesEnsayo
+                            {...props}
+                            permissionDelete={permissionDelete}
+                        />
+                    )}
                 </>
             )}
             title={"calidad_informes_ensayo"}

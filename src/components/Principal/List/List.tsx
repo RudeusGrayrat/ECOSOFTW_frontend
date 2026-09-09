@@ -23,74 +23,6 @@ const flattenActionChildren = (children) => {
     });
 };
 
-const MoreActions = ({ rowId, actions, openActionsRow, setOpenActionsRow }) => {
-    const rowKey = String(rowId);
-    const [localOpen, setLocalOpen] = useState(false);
-    const isOpen = localOpen;
-    const hasOverflow = actions.length > 4;
-    const visibleActions = hasOverflow ? actions.slice(0, 3) : actions;
-    const hiddenActions = hasOverflow ? actions.slice(3) : [];
-
-    useEffect(() => {
-        if (openActionsRow && openActionsRow !== rowKey && localOpen) {
-            setLocalOpen(false);
-        }
-    }, [openActionsRow, rowKey, localOpen]);
-
-    useEffect(() => {
-        if (openActionsRow === null && localOpen) {
-            setLocalOpen(false);
-        }
-    }, [openActionsRow, localOpen]);
-
-    return (
-        <div className={`list-row-actions ${isOpen ? "is-open" : ""}`}>
-            {visibleActions.map((action, index) => (
-                <React.Fragment key={`visible-action-${rowId}-${index}`}>
-                    {action}
-                </React.Fragment>
-            ))}
-            {hasOverflow && (
-                <>
-                    <button
-                        type="button"
-                        className={`list-action-more ${isOpen ? "is-open" : ""}`}
-                        aria-label={isOpen ? "Cerrar acciones" : "Más acciones"}
-                        data-pr-tooltip={isOpen ? "Cerrar acciones" : "Más acciones"}
-                        data-pr-position="top"
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            if (localOpen) {
-                                setLocalOpen(false);
-                                setOpenActionsRow((current) => current === rowKey ? null : current);
-                                return;
-                            }
-                            setOpenActionsRow(rowKey);
-                            setLocalOpen(true);
-                        }}
-                    >
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                    <div
-                        className={`list-row-actions__menu ${isOpen ? "is-open" : ""}`}
-                        onClick={(event) => {
-                            event.stopPropagation();
-                        }}
-                    >
-                        {hiddenActions.map((action, index) => (
-                            <React.Fragment key={`hidden-action-${rowId}-${index}`}>
-                                {action}
-                            </React.Fragment>
-                        ))}
-                    </div>
-                </>
-            )}
-        </div>
-    );
-};
-
 const ListPrincipal = ({
     permissionEdit,
     permissionDelete,
@@ -136,7 +68,6 @@ const ListPrincipal = ({
     const [filters, setFilters] = useState(() => cloneFilters(tableFilters));
     const [sortField, setSortField] = useState(null);
     const [sortOrder, setSortOrder] = useState(null);
-    const [openActionsRow, setOpenActionsRow] = useState(null);
 
     const [content, setContent] = useState(contenido || []);
     const sendMessage = useSendMessage();
@@ -291,12 +222,17 @@ const ListPrincipal = ({
             ...extraActions,
         ].filter(Boolean);
         return (
-            <MoreActions
-                rowId={rowData._id}
-                actions={actions}
-                openActionsRow={openActionsRow}
-                setOpenActionsRow={setOpenActionsRow}
-            />
+            <div
+                className="list-row-actions"
+                onClick={(event) => event.stopPropagation()}
+                onMouseDown={(event) => event.stopPropagation()}
+            >
+                {actions.map((action, index) => (
+                    <React.Fragment key={`action-${rowData._id}-${index}`}>
+                        {action}
+                    </React.Fragment>
+                ))}
+            </div>
         );
     };
     const [loading, setLoading] = useState(false);

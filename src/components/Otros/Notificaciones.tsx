@@ -15,7 +15,7 @@ const formatDate = (date) => new Intl.DateTimeFormat("es-PE", {
 
 const Notificaciones = () => {
     const navigate = useNavigate();
-    const { unread, markAsRead, refreshNotifications, isRead } = useNotifications();
+    const { unread, markAsRead, refreshNotifications, isRead, showToast } = useNotifications();
     const [notifications, setNotifications] = useState([]);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [page, setPage] = useState(0);
@@ -35,6 +35,8 @@ const Notificaciones = () => {
             setNotifications((current) => append ? [...current, ...nextData] : nextData);
             setTotal(response.data.total || 0);
             setPage(nextPage);
+        } catch (error) {
+            showToast("error", "No se pudieron cargar las notificaciones", error);
         } finally {
             setLoading(false);
         }
@@ -50,9 +52,13 @@ const Notificaciones = () => {
 
     const markLocalAsRead = async (notification) => {
         if (isRead(notification)) return;
-        const updated = await markAsRead(notification._id);
-        if (!updated) return;
-        setNotifications((current) => current.map((item) => item._id === notification._id ? { ...item, ...updated } : item));
+        try {
+            const updated = await markAsRead(notification._id);
+            if (!updated) return;
+            setNotifications((current) => current.map((item) => item._id === notification._id ? { ...item, ...updated } : item));
+        } catch (error) {
+            showToast("error", "No se pudo marcar como leída", error);
+        }
     };
 
     const openNotification = async (notification, event) => {
@@ -63,19 +69,29 @@ const Notificaciones = () => {
 
     const deleteNotification = async (notification, event) => {
         event.stopPropagation();
-        await axios.delete(`/herramientas/notificaciones/${notification._id}`);
-        setNotifications((current) => current.filter((item) => item._id !== notification._id));
-        setTotal((current) => Math.max(current - 1, 0));
-        if (selectedId === notification._id) setSelectedId(null);
-        setUndoNotification(notification);
-        await refreshNotifications();
+        try {
+            await axios.delete(`/herramientas/notificaciones/${notification._id}`);
+            setNotifications((current) => current.filter((item) => item._id !== notification._id));
+            setTotal((current) => Math.max(current - 1, 0));
+            if (selectedId === notification._id) setSelectedId(null);
+            setUndoNotification(notification);
+            showToast("info", "Notificación eliminada", "Puedes deshacer esta acción desde la burbuja inferior.");
+            await refreshNotifications();
+        } catch (error) {
+            showToast("error", "No se pudo eliminar la notificación", error);
+        }
     };
 
     const undoDelete = async () => {
         if (!undoNotification) return;
-        await axios.patch(`/herramientas/notificaciones/${undoNotification._id}/restaurar`);
-        setUndoNotification(null);
-        await refreshPage();
+        try {
+            await axios.patch(`/herramientas/notificaciones/${undoNotification._id}/restaurar`);
+            setUndoNotification(null);
+            showToast("success", "Notificación restaurada", "La notificación volvió a tu bandeja.");
+            await refreshPage();
+        } catch (error) {
+            showToast("error", "No se pudo restaurar la notificación", error);
+        }
     };
 
     const toggleDetail = async (notification) => {
