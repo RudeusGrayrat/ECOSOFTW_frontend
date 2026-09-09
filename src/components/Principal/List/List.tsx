@@ -5,7 +5,6 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { OverlayPanel } from "primereact/overlaypanel";
 import "./stylePrueba.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -25,7 +24,6 @@ const flattenActionChildren = (children) => {
 };
 
 const MoreActions = ({ rowId, actions, openActionsRow, setOpenActionsRow }) => {
-    const overlayRef = useRef(null);
     const rowKey = String(rowId);
     const [localOpen, setLocalOpen] = useState(false);
     const isOpen = localOpen;
@@ -35,10 +33,15 @@ const MoreActions = ({ rowId, actions, openActionsRow, setOpenActionsRow }) => {
 
     useEffect(() => {
         if (openActionsRow && openActionsRow !== rowKey && localOpen) {
-            overlayRef.current?.hide();
             setLocalOpen(false);
         }
     }, [openActionsRow, rowKey, localOpen]);
+
+    useEffect(() => {
+        if (openActionsRow === null && localOpen) {
+            setLocalOpen(false);
+        }
+    }, [openActionsRow, localOpen]);
 
     return (
         <div className={`list-row-actions ${isOpen ? "is-open" : ""}`}>
@@ -58,46 +61,30 @@ const MoreActions = ({ rowId, actions, openActionsRow, setOpenActionsRow }) => {
                         onClick={(event) => {
                             event.stopPropagation();
                             if (localOpen) {
-                                overlayRef.current?.hide();
                                 setLocalOpen(false);
                                 setOpenActionsRow((current) => current === rowKey ? null : current);
                                 return;
                             }
                             setOpenActionsRow(rowKey);
                             setLocalOpen(true);
-                            overlayRef.current?.show(event);
                         }}
                     >
                         <span></span>
                         <span></span>
                         <span></span>
                     </button>
-                    <OverlayPanel
-                        ref={overlayRef}
-                        className="list-row-actions__overlay"
-                        dismissable={false}
-                        onShow={() => {
-                            setLocalOpen(true);
-                            setOpenActionsRow(rowKey);
-                        }}
-                        onHide={() => {
-                            setLocalOpen(false);
-                            setOpenActionsRow((current) => current === rowKey ? null : current);
+                    <div
+                        className={`list-row-actions__menu ${isOpen ? "is-open" : ""}`}
+                        onClick={(event) => {
+                            event.stopPropagation();
                         }}
                     >
-                        <div
-                            className="list-row-actions__menu"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                            }}
-                        >
-                            {hiddenActions.map((action, index) => (
-                                <React.Fragment key={`hidden-action-${rowId}-${index}`}>
-                                    {action}
-                                </React.Fragment>
-                            ))}
-                        </div>
-                    </OverlayPanel>
+                        {hiddenActions.map((action, index) => (
+                            <React.Fragment key={`hidden-action-${rowId}-${index}`}>
+                                {action}
+                            </React.Fragment>
+                        ))}
+                    </div>
                 </>
             )}
         </div>
