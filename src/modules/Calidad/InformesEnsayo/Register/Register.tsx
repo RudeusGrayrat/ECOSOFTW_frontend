@@ -49,7 +49,12 @@ const RegisterInformesEnsayo = () => {
             });
             resetForm();
             const conflicts = response.data.conflicts?.length ? ` (${response.data.conflicts.length} con conflicto)` : "";
+            const conflictDetail = response.data.conflicts
+                ?.map((item) => item.message || `${item.codigo || item.archivo} ya existe`)
+                .filter(Boolean)
+                .join(" | ");
             sendMessage(`${response.data.message}${conflicts}`, "Correcto");
+            if (conflictDetail) sendMessage(conflictDetail, "Advertencia");
         } catch (error) {
             if (error?.response?.status === 409 && error.response.data?.exists) {
                 setPendingReplace(error.response.data.data);
