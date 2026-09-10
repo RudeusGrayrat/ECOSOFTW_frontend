@@ -69,6 +69,7 @@ const ConfiguracionDocumental = () => {
                 currentFile={config?.firma?.filename}
                 selectedFile={firma}
                 disabled={deshabilitar}
+                downloadUrl="/calidad/informes-ensayo/configuracion/firma/archivo"
                 onSelect={setFirma}
                 onUpload={() => uploadFile("/calidad/informes-ensayo/configuracion/firma", firma, "Firma actualizada", () => setFirma(null))}
                 onDelete={() => deleteFile("/calidad/informes-ensayo/configuracion/firma", "Firma eliminada", () => setFirma(null))}
@@ -83,6 +84,7 @@ const ConfiguracionDocumental = () => {
                             currentFile={config?.marcasAgua?.[tipo.value]?.filename}
                             selectedFile={marcas[tipo.value]}
                             disabled={deshabilitar}
+                            downloadUrl={`/calidad/informes-ensayo/configuracion/marca-agua/${tipo.value}/archivo`}
                             onSelect={(file) => setMarcas((prev) => ({ ...prev, [tipo.value]: file }))}
                             onUpload={() => uploadFile(
                                 `/calidad/informes-ensayo/configuracion/marca-agua/${tipo.value}`,
