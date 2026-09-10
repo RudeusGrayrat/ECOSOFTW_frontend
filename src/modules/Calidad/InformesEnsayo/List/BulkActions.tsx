@@ -26,7 +26,7 @@ const BulkActionsInformesEnsayo = ({
     const normalizeEstado = (item) => item?.papelera ? "PAPELERA" : (item?.estado === "DISPONIBLE" ? "LIBERADO" : item?.estado);
     const isBorrador = (item) => normalizeEstado(item) === "BORRADOR" && !item?.vistoBuenoJefatura;
     const isLiberable = (item) => ["PRELIMINAR"].includes(normalizeEstado(item)) || item?.vistoBuenoJefatura;
-    const isLiberado = (item) => ["LIBERADO", "DISPONIBLE"].includes(item?.estado);
+    const isLiberado = (item) => ["LIBERADO", "DISPONIBLE"].includes(item?.estado) && !item?.requiereReprocesarOficial;
     const canApprove = selectedItems.every(isBorrador);
     const canRelease = selectedItems.every((item) => isLiberable(item) && !isLiberado(item) && !item?.papelera);
     const hasOfficial = selectedItems.some(isLiberado);

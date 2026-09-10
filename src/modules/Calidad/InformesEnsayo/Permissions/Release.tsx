@@ -35,17 +35,19 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
     }
 
     if (!permissionSend) return null;
+    const canRelease = !rowData.papelera && (rowData.estado === "PRELIMINAR" || rowData.requiereReprocesarOficial);
+    const actionLabel = rowData.requiereReprocesarOficial ? "Regenerar informe oficial" : "Liberar informe oficial";
 
     return (
         <>
             <Button
                 icon="pi pi-send"
-                data-pr-tooltip="Liberar informe oficial"
+                data-pr-tooltip={actionLabel}
                 data-pr-position="top"
                 rounded
                 outlined
-                disabled={deshabilitar || rowData.estado !== "PRELIMINAR" || rowData.papelera}
-                className={`text-blue-500! rounded-full mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out shadow-xl ${rowData.estado !== "PRELIMINAR" || rowData.papelera ? "cursor-not-allowed opacity-30" : ""}`}
+                disabled={deshabilitar || !canRelease}
+                className={`text-blue-500! rounded-full mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out shadow-xl ${!canRelease ? "cursor-not-allowed opacity-30" : ""}`}
                 onClick={() => setShowPanel(true)}
             />
 
@@ -63,7 +65,7 @@ const ReleaseInformesEnsayo = ({ rowData, reload, permissionSend }) => {
                             </div>
                         )}
                         <div className="mb-5">
-                            <h2 className="text-3xl font-bold text-emerald-700">Liberar informe oficial</h2>
+                            <h2 className="text-3xl font-bold text-emerald-700">{actionLabel}</h2>
                             <p className="mt-2 text-sm font-semibold text-slate-500">
                                 Se aplicará firma, QR, ID y marca de acreditación. El correo saldrá desde Calidad y las respuestas llegarán al correo del usuario que libera.
                             </p>
