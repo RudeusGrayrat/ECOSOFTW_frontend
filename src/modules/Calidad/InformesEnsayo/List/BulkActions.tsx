@@ -123,7 +123,7 @@ const BulkActionsInformesEnsayo = ({
     };
 
     const handleClearSelection = () => {
-        if (papelera && selectedCount > 1 && canPurge) {
+        if (papelera && canPurge) {
             setShowClearConfirmation(true);
             return;
         }
@@ -218,7 +218,7 @@ const BulkActionsInformesEnsayo = ({
                             ¿Seguro que quieres quitar las selecciones?
                         </h2>
                         <p className="mt-3 text-sm font-semibold text-slate-500">
-                            Hay {selectedCount} informes seleccionados en la papelera.
+                            Hay {selectedCount} informe{selectedCount === 1 ? " seleccionado" : "s seleccionados"} en la papelera.
                         </p>
                         <div className="mt-6 flex justify-end gap-3">
                             <ButtonOk type="cancel" onClick={showPurgeConfirmation} classe="!w-32" children="No" />
