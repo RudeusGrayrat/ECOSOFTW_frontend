@@ -47,21 +47,6 @@ const DeleteInformesEnsayo = ({ selected, rowData, setShowDelete, reload, permis
                         setShowInlineDelete(true);
                     }}
                 />
-                {rowData?.papelera && (
-                    <Button
-                        icon="pi pi-times-circle"
-                        data-pr-tooltip="Eliminar definitivamente"
-                        data-pr-position="top"
-                        rounded
-                        outlined
-                        disabled={deshabilitar}
-                        className={`text-red-700! rounded-full mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out shadow-xl ${deshabilitar ? "cursor-not-allowed opacity-30" : ""}`}
-                        onClick={() => {
-                            setActionMode("permanente");
-                            setShowInlineDelete(true);
-                        }}
-                    />
-                )}
                 {showInlineDelete && (
                     <DeleteInformesEnsayo
                         selected={rowData}
@@ -93,6 +78,8 @@ const DeleteInformesEnsayo = ({ selected, rowData, setShowDelete, reload, permis
             title={title}
             message={message}
             confirmText={confirmText}
+            dangerText={selectedInforme?.papelera && !isPermanent ? "Eliminar definitivamente" : undefined}
+            onDanger={selectedInforme?.papelera && !isPermanent ? () => setActionMode("permanente") : undefined}
         />
     );
 }

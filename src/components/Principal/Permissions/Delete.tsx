@@ -2,7 +2,16 @@ import ButtonOk from "../../Ui/Button/Buttons";
 import PopUp from "../../Ui/Messages/PopUp";
 import useref from "../../Otros/useRef";
 
-const Delete = ({ setShowDelete, onclick, deshabilitar, title = "Alerta!", message = "¿Está seguro que desea eliminarlo?", confirmText = "SI" }) => {
+const Delete = ({
+  setShowDelete,
+  onclick,
+  deshabilitar,
+  title = "Alerta!",
+  message = "¿Está seguro que desea eliminarlo?",
+  confirmText = "SI",
+  dangerText,
+  onDanger,
+}) => {
   const ref = useref(setShowDelete);
 
   return (
@@ -35,6 +44,16 @@ const Delete = ({ setShowDelete, onclick, deshabilitar, title = "Alerta!", messa
             children="NO"
           />
         </div>
+        {dangerText && onDanger && (
+          <button
+            type="button"
+            onClick={onDanger}
+            disabled={deshabilitar}
+            className="mx-auto mt-3 rounded-full px-4 py-1 text-xs font-semibold text-slate-400 transition-all hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {dangerText}
+          </button>
+        )}
       </div>
     </div>
   );
