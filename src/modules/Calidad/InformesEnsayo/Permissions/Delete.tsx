@@ -78,8 +78,6 @@ const DeleteInformesEnsayo = ({ selected, rowData, setShowDelete, reload, permis
             title={title}
             message={message}
             confirmText={confirmText}
-            dangerText={selectedInforme?.papelera && !isPermanent ? "Eliminar definitivamente" : undefined}
-            onDanger={selectedInforme?.papelera && !isPermanent ? () => setActionMode("permanente") : undefined}
         />
     );
 }

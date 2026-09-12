@@ -139,13 +139,15 @@ const ListInformesEnsayo = ({
                     }}
                 />
             )}
-            selectable={permissionReport || permissionApprove || permissionSend}
+            selectable={permissionReport || permissionApprove || permissionSend || (papelera && permissionDelete)}
             BulkActions={(props) => (
                 <BulkActionsInformesEnsayo
                     {...props}
+                    papelera={papelera}
                     permissionReport={permissionReport}
                     permissionApprove={permissionApprove}
                     permissionSend={permissionSend}
+                    permissionDelete={permissionDelete}
                 />
             )}
         >

@@ -8,12 +8,15 @@ const BulkActionsInformesEnsayo = ({
     selectedItems,
     clearSelection,
     reload,
+    papelera,
     permissionReport,
     permissionApprove,
     permissionSend,
+    permissionDelete,
 }) => {
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [showRelease, setShowRelease] = useState(false);
+    const [showPurge, setShowPurge] = useState(false);
     const [releaseForm, setReleaseForm] = useState({
         enviarCorreo: false,
         correoCliente: "",
@@ -30,6 +33,7 @@ const BulkActionsInformesEnsayo = ({
     const canApprove = selectedItems.every(isBorrador);
     const canRelease = selectedItems.every((item) => isLiberable(item) && !isLiberado(item) && !item?.papelera);
     const hasOfficial = selectedItems.some(isLiberado);
+    const canPurge = papelera && permissionDelete && selectedItems.every((item) => item?.papelera);
     const disabledClass = "disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0";
     const actionBaseClass = `inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-black shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 ${disabledClass}`;
 
@@ -102,6 +106,21 @@ const BulkActionsInformesEnsayo = ({
         }
     };
 
+    const purgeSelected = async () => {
+        setDeshabilitar(true);
+        try {
+            const response = await axios.post("/calidad/informes-ensayo/bulk/definitivo", { ids: selectedIds });
+            sendMessage(response.data.message, response.data.type || "Correcto");
+            setShowPurge(false);
+            clearSelection();
+            await reload?.();
+        } catch (error) {
+            sendMessage(await requestErrorMessage(error), "Error");
+        } finally {
+            setDeshabilitar(false);
+        }
+    };
+
     return (
         <>
             <PopUp deshabilitar={deshabilitar} />
@@ -156,6 +175,17 @@ const BulkActionsInformesEnsayo = ({
                         Liberar
                     </button>
                 )}
+                {canPurge && (
+                    <button
+                        className={`${actionBaseClass} bg-slate-50 text-slate-400 ring-slate-200/70 hover:bg-slate-100 hover:text-slate-600`}
+                        disabled={deshabilitar}
+                        data-pr-tooltip="Limpieza avanzada"
+                        data-pr-position="top"
+                        onClick={() => setShowPurge(true)}
+                    >
+                        <i className="pi pi-cog text-[0.8rem]" />
+                    </button>
+                )}
                 <button
                     className={`${actionBaseClass} bg-slate-100 text-slate-600`}
                     disabled={deshabilitar}
@@ -169,6 +199,40 @@ const BulkActionsInformesEnsayo = ({
                     </span>
                 )}
             </div>
+
+            {showPurge && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 px-4">
+                    <div className="relative w-[520px] max-w-[94vw] rounded-3xl border border-slate-200 bg-white p-7 shadow-2xl">
+                        {deshabilitar && (
+                            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-3xl bg-white/80 text-center backdrop-blur-sm">
+                                <i className="pi pi-spin pi-spinner text-4xl text-slate-600" />
+                                <p className="mt-4 text-lg font-black text-slate-800">Aplicando limpieza</p>
+                            </div>
+                        )}
+                        <button
+                            className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-slate-100 text-slate-500 shadow-sm transition hover:bg-slate-200"
+                            disabled={deshabilitar}
+                            onClick={() => setShowPurge(false)}
+                        >
+                            <i className="pi pi-times" />
+                        </button>
+                        <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">Limpieza avanzada</p>
+                        <h2 className="mt-2 pr-10 text-2xl font-black text-slate-800">
+                            Eliminar definitivamente {selectedCount} informe{selectedCount === 1 ? "" : "s"}
+                        </h2>
+                        <p className="mt-3 text-sm font-semibold leading-relaxed text-slate-500">
+                            Esta accion borra los registros de Mongo, sus PDFs guardados y notificaciones relacionadas. No se puede deshacer desde el sistema.
+                        </p>
+                        <div className="mt-5 rounded-2xl bg-slate-50 p-4 text-xs font-bold text-slate-500">
+                            Solo se procesaran informes que esten en papelera. Los demas se omitiran automaticamente.
+                        </div>
+                        <div className="mt-6 flex justify-end gap-3">
+                            <ButtonOk type="cancel" onClick={() => setShowPurge(false)} disabled={deshabilitar} classe="!w-32 disabled:opacity-50" children="Cancelar" />
+                            <ButtonOk type="ok" onClick={purgeSelected} disabled={deshabilitar} classe="!w-48 !bg-slate-800 disabled:opacity-60" children="Aplicar limpieza" />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {showRelease && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
