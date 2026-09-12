@@ -16,6 +16,7 @@ const BulkActionsInformesEnsayo = ({
 }) => {
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [showRelease, setShowRelease] = useState(false);
+    const [showClearConfirmation, setShowClearConfirmation] = useState(false);
     const [showPurge, setShowPurge] = useState(false);
     const [releaseForm, setReleaseForm] = useState({
         enviarCorreo: false,
@@ -54,7 +55,7 @@ const BulkActionsInformesEnsayo = ({
             const text = await data.text();
             try {
                 return JSON.parse(text)?.message || text || error.message;
-            } catch (_) {
+            } catch {
                 return text || error.message;
             }
         }
@@ -121,6 +122,24 @@ const BulkActionsInformesEnsayo = ({
         }
     };
 
+    const handleClearSelection = () => {
+        if (papelera && selectedCount > 1 && canPurge) {
+            setShowClearConfirmation(true);
+            return;
+        }
+        clearSelection();
+    };
+
+    const confirmClearSelection = () => {
+        setShowClearConfirmation(false);
+        clearSelection();
+    };
+
+    const showPurgeConfirmation = () => {
+        setShowClearConfirmation(false);
+        setShowPurge(true);
+    };
+
     return (
         <>
             <PopUp deshabilitar={deshabilitar} />
@@ -175,21 +194,13 @@ const BulkActionsInformesEnsayo = ({
                         Liberar
                     </button>
                 )}
-                {canPurge && (
-                    <button
-                        className={`${actionBaseClass} bg-slate-50 text-slate-400 ring-slate-200/70 hover:bg-slate-100 hover:text-slate-600`}
-                        disabled={deshabilitar}
-                        data-pr-tooltip="Limpieza avanzada"
-                        data-pr-position="top"
-                        onClick={() => setShowPurge(true)}
-                    >
-                        <i className="pi pi-cog text-[0.8rem]" />
-                    </button>
-                )}
                 <button
                     className={`${actionBaseClass} bg-slate-100 text-slate-600`}
                     disabled={deshabilitar}
-                    onClick={clearSelection}
+                    data-pr-tooltip="Quitar selecciones"
+                    data-pr-position="top"
+                    aria-label="Quitar selecciones"
+                    onClick={handleClearSelection}
                 >
                     <i className="pi pi-times text-[0.8rem]" />
                 </button>
@@ -200,8 +211,25 @@ const BulkActionsInformesEnsayo = ({
                 )}
             </div>
 
+            {showClearConfirmation && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 px-4" role="dialog" aria-modal="true" aria-labelledby="confirmar-deseleccion-informes">
+                    <div className="w-[440px] max-w-[94vw] rounded-3xl border border-slate-200 bg-white p-7 shadow-2xl">
+                        <h2 id="confirmar-deseleccion-informes" className="text-2xl font-black text-slate-800">
+                            ¿Seguro que quieres quitar las selecciones?
+                        </h2>
+                        <p className="mt-3 text-sm font-semibold text-slate-500">
+                            Hay {selectedCount} informes seleccionados en la papelera.
+                        </p>
+                        <div className="mt-6 flex justify-end gap-3">
+                            <ButtonOk type="cancel" onClick={showPurgeConfirmation} classe="!w-32" children="No" />
+                            <ButtonOk type="ok" onClick={confirmClearSelection} classe="!w-32" children="Sí" />
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {showPurge && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 px-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 px-4" role="dialog" aria-modal="true" aria-labelledby="confirmar-eliminacion-informes">
                     <div className="relative w-[520px] max-w-[94vw] rounded-3xl border border-slate-200 bg-white p-7 shadow-2xl">
                         {deshabilitar && (
                             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-3xl bg-white/80 text-center backdrop-blur-sm">
@@ -216,19 +244,19 @@ const BulkActionsInformesEnsayo = ({
                         >
                             <i className="pi pi-times" />
                         </button>
-                        <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">Limpieza avanzada</p>
-                        <h2 className="mt-2 pr-10 text-2xl font-black text-slate-800">
+                        <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">Papelera</p>
+                        <h2 id="confirmar-eliminacion-informes" className="mt-2 pr-10 text-2xl font-black text-slate-800">
                             Eliminar definitivamente {selectedCount} informe{selectedCount === 1 ? "" : "s"}
                         </h2>
                         <p className="mt-3 text-sm font-semibold leading-relaxed text-slate-500">
-                            Esta accion borra los registros de Mongo, sus PDFs guardados y notificaciones relacionadas. No se puede deshacer desde el sistema.
+                            Esta acción borra los registros, sus PDFs guardados y las notificaciones relacionadas. No se puede deshacer desde el sistema.
                         </p>
                         <div className="mt-5 rounded-2xl bg-slate-50 p-4 text-xs font-bold text-slate-500">
-                            Solo se procesaran informes que esten en papelera. Los demas se omitiran automaticamente.
+                            Solo se procesarán informes que estén en papelera. Los demás se omitirán automáticamente.
                         </div>
                         <div className="mt-6 flex justify-end gap-3">
                             <ButtonOk type="cancel" onClick={() => setShowPurge(false)} disabled={deshabilitar} classe="!w-32 disabled:opacity-50" children="Cancelar" />
-                            <ButtonOk type="ok" onClick={purgeSelected} disabled={deshabilitar} classe="!w-48 !bg-slate-800 disabled:opacity-60" children="Aplicar limpieza" />
+                            <ButtonOk type="ok" onClick={purgeSelected} disabled={deshabilitar} classe="!w-48 !bg-slate-800 disabled:opacity-60" children="Eliminar definitivamente" />
                         </div>
                     </div>
                 </div>
