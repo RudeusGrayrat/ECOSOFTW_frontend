@@ -4,13 +4,15 @@ import Comercial from "../modules/Comercial/Comercial";
 import ProtectedModule from "./ProtectecModule";
 import Calidad from "../modules/Calidad/Calidad";
 import Herramientas from "../modules/Herramientas/Herramientas";
+import Operaciones from "../modules/Operaciones/Operaciones";
 
 type ModulesMap = Record<string, React.ComponentType<any>>;
 
 const componentMap: ModulesMap = {
     "comercial": Comercial,
     "herramientas": Herramientas,
-    "calidad": Calidad
+    "calidad": Calidad,
+    "operaciones": Operaciones
 }
 
 const ModuleRoute: React.FC = () => {

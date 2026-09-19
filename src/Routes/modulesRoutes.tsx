@@ -11,6 +11,9 @@ import Proyectos_Comercial from "../modules/Comercial/Proyectos/Proyectos";
 import TipoDeGatos_Comercial from "../modules/Comercial/TiposDeGastos/TipoDeGastos";
 import InformesEnsayo from "../modules/Calidad/InformesEnsayo/InformesEnsayo";
 import Configuracion_Calidad from "../modules/Calidad/Configuracion/Configuracion";
+import { OrdenesInternas, PlanesTrabajo } from "../modules/Operaciones/DocumentList";
+import Proveedores from "../modules/Comercial/Proveedores/Proveedores";
+import PlantillasDocumentales from "../modules/Herramientas/Plantillas/PlantillasDocumentales";
 
 type ModulesMap = Record<string, Record<string, React.ComponentType<any>>>;
 
@@ -20,16 +23,22 @@ const componentMap: ModulesMap = {
         cotizaciones: Cotizaciones,
         parametros: Parametros_Comercial,
         proyectos: Proyectos_Comercial,
-        "tipos de gastos": TipoDeGatos_Comercial
+        "tipos de gastos": TipoDeGatos_Comercial,
+        proveedores: Proveedores,
     },
     "herramientas": {
         "modulos y submodulos": ModulosYSubmodulos,
         permisos: Permisos_Herramientas,
-        usuarios: Usuarios_Herramientas
+        usuarios: Usuarios_Herramientas,
+        plantillas: PlantillasDocumentales
     },
     "calidad": {
         "informes de ensayo": InformesEnsayo,
         configuracion: Configuracion_Calidad
+    },
+    "operaciones": {
+        "planes de trabajo": PlanesTrabajo,
+        "ordenes internas": OrdenesInternas
     }
 
 }

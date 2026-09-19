@@ -125,13 +125,19 @@ const renderDoc = async (Cotizacion) => {
         total_gastos_generales: formatMoney(calcularTotal(gastosGenerales)),
 
         total_sin_igv: formatMoney(data.totalSinIgv),
-        direccion_legal: data.proyecto_id.cliente_id.direccionLegal,
+        razon_social: data.facturacion?.razonSocial || data.proyecto_id.cliente_id.cliente,
+        ruc: data.facturacion?.ruc || data.proyecto_id.cliente_id.numeroDocumento,
+        direccion_legal: data.facturacion?.direccion || data.proyecto_id.cliente_id.direccionLegal,
+        forma_pago: data.facturacion?.formaPago || "",
         lugar_muestreo: data.proyecto_id.lugarMuestreo,
 
-        colaboradorAsesor: data.actualizadoPor?.colaborador || data.creadoPor.colaborador || "",
-        correoAsesor: data.actualizadoPor?.correoElectronico || data.creadoPor.correoElectronico || "",
-        numeroAsesor: data.actualizadoPor?.telefono || data.creadoPor.telefono || "",
-        puestoAsesor: data.actualizadoPor?.puesto || data.creadoPor.puesto || "",
+        colaboradorAsesor: data.creadoPor?.colaborador || data.actualizadoPor?.colaborador || "",
+        correoAsesor: data.creadoPor?.correoElectronico || data.actualizadoPor?.correoElectronico || "",
+        numeroAsesor: data.creadoPor?.telefono || data.actualizadoPor?.telefono || "",
+        puestoAsesor: data.creadoPor?.puesto || data.actualizadoPor?.puesto || "",
+        aprobador: data.aprobadoPor?.colaborador || "",
+        correoAprobador: data.aprobadoPor?.correoElectronico || "",
+        firmaAprobador: data.firmaAprobador || "",
       };
 
       return formattedData;

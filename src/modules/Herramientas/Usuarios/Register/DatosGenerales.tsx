@@ -8,6 +8,8 @@ const DatosGenerales = ({ form, setForm, editing = false }) => {
             <InputP label="Correo Electrónico" name="correoElectronico" type="text" ancho="w-96!" value={form.correoElectronico} setForm={setForm} />
             <InputP label="Puesto" name="puesto" type="text" ancho="w-80!" value={form.puesto} setForm={setForm} />
             <InputP label="Teléfono" name="telefono" type="text" ancho="w-72!" value={form.telefono} setForm={setForm} />
+            <InputP label="URL de foto" name="photo" type="text" ancho="w-96!" value={form.photo} setForm={setForm} />
+            <InputP label="URL de firma" name="firma" type="text" ancho="w-96!" value={form.firma} setForm={setForm} />
             <InputP label={editing ? "Nueva Contraseña" : "Contraseña"} name="password" type="password" ancho="w-80!" value={form.password} setForm={setForm} />
         </div>
     )

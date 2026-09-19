@@ -35,9 +35,10 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
         sendMessage("Usuario no autenticado", "Error");
         return;
       }
-      const response = await axios.patch(`/comercial/patchCotizacion/${idSelected}`, {
+      const response = await axios.post(`/comercial/cotizaciones/${idSelected}/nueva-version`, {
         ...changes,
         actualizadoPor: user._id,
+        creadoPor: user._id,
       });
       sendMessage(response.data.message, "Correcto");
       await reload();

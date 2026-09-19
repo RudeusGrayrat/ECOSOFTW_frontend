@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import InputP from "../../../../components/Ui/Input/InputP";
+import axios from "../../../../api/axios";
 
 const Analisis = ({ set, initialData }) => {
     console.log("Initial Data in Analisis:", initialData);
@@ -16,6 +17,8 @@ const Analisis = ({ set, initialData }) => {
         parametro: initialData.parametro_id || null,
         precio: initialData.precio || "",
         cantidad: initialData.cantidad || 0,
+        modalidad: initialData.modalidad || "PROPIO",
+        proveedor: initialData.proveedor || "",
     });
 
     // Calcular subtotal directamente en cada render
@@ -25,6 +28,11 @@ const Analisis = ({ set, initialData }) => {
 
     // opciones del autocomplete
     const [parametrosOptions, setParametrosOptions] = useState([]);
+    const [proveedores, setProveedores] = useState([]);
+
+    useEffect(() => {
+        axios.get("/comercial/proveedores").then((response) => setProveedores((response.data.data || []).map((item) => item.nombre))).catch(() => setProveedores([]));
+    }, []);
 
     useEffect(() => {
         const paramPrice = analisisDeCotizacion.parametro?.precio ?? null;
@@ -43,6 +51,8 @@ const Analisis = ({ set, initialData }) => {
             cantidad: analisisDeCotizacion.cantidad,
             precio: analisisDeCotizacion.precio,
             subtotal: subTotal, // Usar el valor calculado directamente
+            modalidad: analisisDeCotizacion.modalidad,
+            proveedor: analisisDeCotizacion.modalidad === "TERCERIZADO" ? analisisDeCotizacion.proveedor : "",
         };
 
         if (!payload.parametro_id || !payload.descripcion || payload.cantidad <= 0) {
@@ -58,6 +68,8 @@ const Analisis = ({ set, initialData }) => {
         analisisDeCotizacion.parametro?._id,
         analisisDeCotizacion.tipoDeAnalisis,
         analisisDeCotizacion.precio,
+        analisisDeCotizacion.modalidad,
+        analisisDeCotizacion.proveedor,
         subTotal // Añadir subTotal como dependencia
     ]);
 
@@ -175,6 +187,26 @@ const Analisis = ({ set, initialData }) => {
                 value={analisisDeCotizacion.cantidad}
                 setForm={setAnalisisDeCotizacion}
             />
+
+            <InputP
+                label="Ejecución"
+                type="select"
+                name="modalidad"
+                options={["PROPIO", "TERCERIZADO"]}
+                value={analisisDeCotizacion.modalidad}
+                setForm={setAnalisisDeCotizacion}
+            />
+
+            {analisisDeCotizacion.modalidad === "TERCERIZADO" && (
+                <InputP
+                    label="Laboratorio / proveedor"
+                    type="select"
+                    name="proveedor"
+                    options={proveedores}
+                    value={analisisDeCotizacion.proveedor}
+                    setForm={setAnalisisDeCotizacion}
+                />
+            )}
 
             <InputP
                 label="Subtotal"

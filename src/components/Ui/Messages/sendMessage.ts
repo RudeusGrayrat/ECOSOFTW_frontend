@@ -1,11 +1,9 @@
-import { useDispatch } from "react-redux";
-import { setMessage } from "../../../redux/actionError";
+import { publishRequestToast, toneFromLegacyType } from "../../../api/requestFeedback";
 
 const useSendMessage = () => {
-  const dispatch = useDispatch();
-
   return (message, type) => {
-    dispatch(setMessage(message, type));
+    if (!message) return;
+    publishRequestToast({ tone: toneFromLegacyType(type), title: type || "Información", message: typeof message === "string" ? message : "Operación completada." });
   };
 };
 

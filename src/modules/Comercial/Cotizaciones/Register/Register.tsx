@@ -59,6 +59,7 @@ const RegisterCotizacionesComercial = ({ }) => {
         totalSinIgv: 0,
         igv: 0,
         totalConIgv: 0,
+        facturacion: { razonSocial: "", ruc: "", direccion: "", formaPago: "" },
     });
     console.log("form", form);
 
@@ -104,6 +105,7 @@ const RegisterCotizacionesComercial = ({ }) => {
             totalSinIgv: 0,
             igv: 0,
             totalConIgv: 0,
+            facturacion: { razonSocial: "", ruc: "", direccion: "", formaPago: "" },
         });
         setHabilitar(false);
     }

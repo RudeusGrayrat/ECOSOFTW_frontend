@@ -58,16 +58,34 @@ const normalizeText = (value: unknown) => {
 };
 
 export const NotificationsProvider = ({ children }) => {
-    const { user, isAuthenticated } = useAuth();
+    const { user, isAuthenticated } = useAuth() as any;
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [unread, setUnread] = useState(0);
     const [toasts, setToasts] = useState<ToastItem[]>([]);
+    const [pendingRequests, setPendingRequests] = useState(0);
 
     const showToast = (tone: ToastTone, title: string, message: unknown) => {
         const id = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
-        setToasts((current) => [{ id, tone, title, message: normalizeText(message) }, ...current].slice(0, 4));
+        const normalizedMessage = normalizeText(message);
+        setToasts((current) => current.some((toast) => toast.message === normalizedMessage)
+            ? current
+            : [{ id, tone, title, message: normalizedMessage }, ...current].slice(0, 4));
         window.setTimeout(() => setToasts((current) => current.filter((toast) => toast.id !== id)), 5200);
     };
+
+    useEffect(() => {
+        const handleRequestState = (event: Event) => setPendingRequests(Number((event as CustomEvent<{ pending?: number }>).detail?.pending || 0));
+        const handleRequestToast = (event: Event) => {
+            const detail = (event as CustomEvent<Partial<ToastItem>>).detail;
+            if (detail?.message) showToast(detail.tone || "info", detail.title || "Información", detail.message);
+        };
+        window.addEventListener("ecosystem:request-state", handleRequestState);
+        window.addEventListener("ecosystem:request-toast", handleRequestToast);
+        return () => {
+            window.removeEventListener("ecosystem:request-state", handleRequestState);
+            window.removeEventListener("ecosystem:request-toast", handleRequestToast);
+        };
+    }, []);
 
     const refreshNotifications = async () => {
         if (!isAuthenticated) return;
@@ -137,6 +155,14 @@ export const NotificationsProvider = ({ children }) => {
     return (
         <NotificationsContext.Provider value={value}>
             {children}
+            {pendingRequests > 0 && (
+                <div className="fixed inset-0 z-[9999] grid place-items-center bg-slate-950/35 p-5 backdrop-blur-[2px]" role="alert" aria-live="assertive" aria-busy="true">
+                    <div className="flex min-w-[280px] items-center gap-4 rounded-3xl border border-white/50 bg-white/90 px-6 py-5 shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
+                        <span className="h-9 w-9 animate-spin rounded-full border-4 border-emerald-100 border-t-emerald-700" />
+                        <div><p className="font-bold text-slate-800">Procesando solicitud</p><p className="mt-1 text-sm text-slate-500">Espera la respuesta del sistema.</p></div>
+                    </div>
+                </div>
+            )}
             <div className="pointer-events-none fixed right-5 top-5 z-[10000] flex w-[min(420px,calc(100vw-2rem))] flex-col gap-3">
                 {toasts.map((toast) => {
                     const style = toneStyles[toast.tone];

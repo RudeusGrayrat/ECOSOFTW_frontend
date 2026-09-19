@@ -1,12 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200.85" role="img" aria-labelledby="quality-title quality-description">
+  <title id="quality-title">Calidad</title>
+  <desc id="quality-description">Control de calidad, verificación y emisión de informes</desc>
   <defs>
-    <linearGradient id="g" x1="35" y1="15" x2="165" y2="185" gradientUnits="userSpaceOnUse">
+    <linearGradient id="quality-gradient" x1="36" y1="6" x2="165" y2="198" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#455a6f"/>
-      <stop offset="0.5" stop-color="#37485a"/>
-      <stop offset="1" stop-color="#263241"/>
+      <stop offset=".49" stop-color="#37485a"/>
+      <stop offset=".99" stop-color="#263241"/>
     </linearGradient>
   </defs>
-  <path fill="url(#g)" d="M57 18h65l31 31v133H57V18Zm59 10v28h28L116 28ZM72 72h56v10H72V72Zm0 28h56v10H72v-10Zm0 28h36v10H72v-10Z"/>
-  <path fill="url(#g)" d="M38 43h13v126h89v13H38V43Z"/>
-  <path fill="#7bcf9e" d="M129 126c18 0 33 15 33 33s-15 33-33 33-33-15-33-33 15-33 33-33Zm-5 47 26-26-8-8-18 18-8-8-8 8 16 16Z"/>
+  <!-- Hoja con doble respaldo: trazabilidad documental de los informes. -->
+  <path fill="url(#quality-gradient)" d="M47 30h73l31 31v108H47V30Zm72 12v25h25l-25-25Zm-52 42h55v9H67v-9Zm0 23h55v9H67v-9Zm0 23h35v9H67v-9Z"/>
+  <path fill="url(#quality-gradient)" d="M32 48h10v136h95v11H32V48Z"/>
+  <!-- Lupa: revisión técnica de resultados. -->
+  <path fill="url(#quality-gradient)" d="M122 104a37 37 0 1 1-25 65l-24 24-12-12 24-24a37 37 0 0 1 37-53Zm0 15a22 22 0 1 0 0 44 22 22 0 0 0 0-44Z"/>
+  <!-- Check dentro de la revisión: resultado validado. -->
+  <path fill="url(#quality-gradient)" d="m109 144-12-12 8-8 4 4 16-16 8 8-24 24Z"/>
 </svg>

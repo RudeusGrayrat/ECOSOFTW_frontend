@@ -1,289 +1,47 @@
-import { useState } from "react";
-import ButtonOk from "../../../components/Ui/Button/Buttons";
-import InputP from "../../../components/Ui/Input/InputP";
-import { Steps } from "primereact/steps";
-import { useValidation } from "./validation";
-import PopUp from "../../../components/Ui/Messages/PopUp";
-import useSendMessage from "../../../components/Ui/Messages/sendMessage";
+import { useMemo, useState } from "react";
+import type { FormEvent, InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 import axios from "../../../api/axios";
-import dayjs from "dayjs";
+import useSendMessage from "../../../components/Ui/Messages/sendMessage";
+
+type Station = { codigo: string; este: string; norte: string; descripcion: string };
+type RequestForm = {
+  tipoCliente: "EMPRESA" | "PERSONA"; cliente: string; numeroDocumento: string; direccionLegal: string; proyecto: string; nombrePlanta: string; lugarEjecucion: string;
+  servicios: string[]; frecuenciaAire: string; cantidadPuntosParametros: string; metodologiaParametros: string; fechaServicio: string; tipoDocumento: string[];
+  condicionesIngreso: string; trabajoAltoRiesgo: string; accesibilidadPuntos: string;
+  destinatarioInforme: { razonSocial: string; ruc: string }; contacto: { nombreCompleto: string; cargo: string; telefono: string; correo: string }; estaciones: Station[];
+};
+const services = ["AIRE", "AGUA", "SUELO", "RUIDO", "SALUD OCUPACIONAL"];
+const documentTypes = ["INFORME DE MONITOREO AMBIENTAL", "INFORME DE ENSAYO"];
+const initialForm = (): RequestForm => ({ tipoCliente: "EMPRESA", cliente: "", numeroDocumento: "", direccionLegal: "", proyecto: "", nombrePlanta: "", lugarEjecucion: "", servicios: [], frecuenciaAire: "", cantidadPuntosParametros: "", metodologiaParametros: "", fechaServicio: "", tipoDocumento: [], condicionesIngreso: "", trabajoAltoRiesgo: "NO", accesibilidadPuntos: "", destinatarioInforme: { razonSocial: "", ruc: "" }, contacto: { nombreCompleto: "", cargo: "", telefono: "", correo: "" }, estaciones: [{ codigo: "", este: "", norte: "", descripcion: "" }] });
+const Label = ({ children }: { children: ReactNode }) => <label className="mb-1.5 block text-xs font-bold uppercase tracking-[0.12em] text-slate-500">{children}</label>;
+const inputClass = "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10";
+const Input = ({ label, ...props }: { label: string } & InputHTMLAttributes<HTMLInputElement>) => <div><Label>{label}</Label><input className={inputClass} {...props} /></div>;
+const Textarea = ({ label, ...props }: { label: string } & TextareaHTMLAttributes<HTMLTextAreaElement>) => <div><Label>{label}</Label><textarea className={`${inputClass} min-h-24 resize-y`} {...props} /></div>;
 
 const FormClientes = () => {
-    const [form, setForm] = useState({
-        tipoCliente: "EMPRESA",
-        cliente: "",
-        numeroDocumento: "",
-        nombreContacto: "",
-        telefono: "",
-        correoElectronico: "",
-        direccionLegal: "",
-
-        servicio: "",
-        proyecto: "",
-        cantidadPuntosParametros: "",
-        lugarMuestreo: "",
-        fechaServicio: "",
-
-    });
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [deshabilitar, setDeshabilitar] = useState(false);
-    const sendMessage = useSendMessage();
-    const itemRenderer = (item, itemIndex) => {
-        const isActiveItem = activeIndex === itemIndex;
-        const backgroundColor = isActiveItem ? 'var(--primary-color)' : 'var(--surface-b)';
-        const textColor = isActiveItem ? 'var(--surface-b)' : 'var(--text-color-secondary)';
-
-        return (
-            <span
-                className="inline-flex align-items-center text-center! justify-center items-center rounded-full border-circle! border-primary border-1 h-16! w-16! z-1 cursor-pointer"
-                style={{ backgroundColor: backgroundColor, color: textColor, marginTop: '-25px' }}
-                onClick={() => setActiveIndex(itemIndex)}
-            >
-                <i className={`${item.icon} text-2xl!`} />
-            </span>
-        );
-    };
-    const items = [
-        {
-            icon: 'pi pi-user',
-            template: (item) => itemRenderer(item, 0)
-        },
-        {
-            icon: 'pi pi-calendar',
-            template: (item) => itemRenderer(item, 1)
-        },
-        {
-            icon: 'pi pi-check',
-            template: (item) => itemRenderer(item, 2)
-        }
-    ];
-    const resetForm = () => {
-        setForm({
-            tipoCliente: "EMPRESA",
-            cliente: "",
-            numeroDocumento: "",
-            nombreContacto: "",
-            telefono: "",
-            correoElectronico: "",
-            direccionLegal: "",
-
-            servicio: "",
-            proyecto: "",
-            cantidadPuntosParametros: "",
-            lugarMuestreo: "",
-            fechaServicio: "",
-        });
-        setActiveIndex(0);
-    };
-    const { validateForm } = useValidation()
-    const enviar = async () => {
-        setDeshabilitar(true);
-        try {
-            const isValid = validateForm(form);
-            if (!isValid) {
-                sendMessage("Rellenar los datos necesarios", "Error");
-                return;
-            }
-
-            const response = await axios.post("/comercial/postFormularioCotizacion", { ...form, fechaServicio: dayjs(form.fechaServicio).format('DD/MM/YYYY') });
-            const data = response.data;
-            sendMessage(data.message, data.type || "Correcto");
-            resetForm();
-            return;
-        } catch (error) {
-            sendMessage(error || error.message, "Error");
-        } finally {
-            setDeshabilitar(false);
-        }
-    }
-
-    return (
-        <div className=" h-screen w-full max-h-screen min-h-screen grid-cols-6 grid items-center justify-center"
-            style={{
-                backgroundImage: "url('/BGFORM.png')",
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-            }}
-        >
-            <PopUp deshabilitar={deshabilitar} />
-            <div className="col-start-2 max-sm:mx-3  p-7!   max-md:col-start-1 max-md:mx-5 h-[90%] max-md:col-end-7 max-md:w-[94%] col-end-6  shadow-2xl max-md:max-h-[90%] w-full max-h-[90%] rounded-4xl overflow-x-hidden grid grid-rows-8 justify-items-center items-center" style={{
-                backgroundColor: "rgba(245, 245, 245, 0.95)",
-                padding: "calc(var(--spacing) * 7) /* 1.75rem = 28px */ !important;"
-            }}
-            >
-
-                <h2 className="text-4xl  ">
-                    Formulario de Cotización
-                </h2>
-                <div className="w-full ">
-                    <Steps model={items} activeIndex={activeIndex} readOnly={false} className=" w-full m-2 pt-4" />
-                </div>
-                <h2 className="w-full  pl-[12%] text-grey-900 text-2xl font-semibold">
-                    {activeIndex === 0 && "Datos del Cliente"}
-                    {activeIndex === 1 && "Detalles del Servicio"}
-                    {activeIndex === 2 && "Confirmar Datos"}
-                </h2>
-                <div className=" row-start-4 row-end-8 max-md:flex max-md:flex-wrap  max-md:max-h-full max-md:p-0 h-full  mb-10 p-7 max-lg:justify-center w-[98%] flex flex-wrap items-center justify-center content-center max-sm:m-0 overflow-y-auto ">
-                    {
-                        activeIndex === 0 && (
-                            <div className="w-full max-sm:p-[0%] h-full flex flex-wrap items-center gap-x-5 justify-start pl-[10%]">
-                                <InputP
-                                    label="Tipo de Cliente"
-                                    name="tipoCliente"
-                                    type="select"
-                                    options={["EMPRESA", "PERSONA"]}
-                                    value={form.tipoCliente}
-                                    ancho="w-96! max-sm:w-64! max-lg:w-80!"
-                                    setForm={setForm}
-                                    errorOnclick={true}
-                                />
-                                <InputP
-                                    label={form.tipoCliente === "PERSONA" ? "DNI" : "RUC"}
-                                    name="numeroDocumento"
-                                    placeholder={form.tipoCliente === "PERSONA" ? "Ejemplo: 87654321" : "Ejemplo: 20379251103"}
-                                    value={form.numeroDocumento}
-                                    setForm={setForm}
-                                />
-                                <InputP
-                                    label={form.tipoCliente === "PERSONA" ? "NOMBRE COMPLETO" : "RAZÓN SOCIAL"}
-                                    name="cliente"
-                                    placeholder={form.tipoCliente === "PERSONA" ? "Nombre y Apellido" : "Ejemplo: Empresa SAC"}
-                                    value={form.cliente}
-                                    setForm={setForm}
-                                />
-                                <InputP
-                                    label="Teléfono"
-                                    name="telefono"
-                                    placeholder={
-                                        form.tipoCliente === "PERSONA"
-                                            ? "Ejemplo: 987654321"
-                                            : "Ejemplo: 01-2345678"
-                                    }
-                                    value={form.telefono}
-                                    setForm={setForm}
-                                />
-                                <InputP
-                                    label="Correo Electrónico"
-                                    name="correoElectronico"
-                                    placeholder="Ejemplo: correo@ejemplo.com"
-                                    value={form.correoElectronico}
-                                    setForm={setForm}
-                                />
-                                <InputP
-                                    label="Dirección Legal"
-                                    name="direccionLegal"
-                                    placeholder="Ejemplo: Av. Siempre Viva 123"
-                                    value={form.direccionLegal}
-                                    setForm={setForm}
-                                    ancho="w-96! max-sm:w-64! max-lg:w-80!"
-                                />
-                                {
-                                    form.tipoCliente === "EMPRESA" && (
-                                        <InputP
-                                            label="Nombre del Contacto"
-                                            name="nombreContacto"
-                                            value={form.nombreContacto}
-                                            setForm={setForm}
-                                            ancho="w-96! max-sm:w-64! max-lg:w-80!"
-                                        />
-                                    )
-                                }
-                            </div>
-                        )
-                    }
-                    {activeIndex === 1 && (<div className="max-sm:p-[0%] w-full flex h-[70%] flex-wrap items-start gap-x-5 justify-start pl-[10%]">
-                        <InputP
-                            label="Servicio"
-                            name="servicio"
-                            type="select"
-                            options={["ANALISIS", "MONITOREO AMBIENTAL"]}
-                            value={form.servicio}
-                            setForm={setForm}
-                        />
-                        <InputP
-                            label="Proyecto"
-                            name="proyecto"
-                            placeholder="Ejemplo: Monitoreo de Calidad de Agua"
-                            value={form.proyecto}
-                            ancho="w-96! max-sm:w-64! max-lg:w-80!"
-                            setForm={setForm}
-
-                        />
-                        <InputP
-                            label="Cantidad de Puntos / Parámetros"
-                            name="cantidadPuntosParametros"
-                            placeholder="Ejemplo: 10"
-                            type="number"
-                            value={form.cantidadPuntosParametros}
-                            setForm={setForm}
-
-                        />
-                        <InputP
-                            label="Lugar de Muestreo"
-                            name="lugarMuestreo"
-                            placeholder="Ejemplo: San Isidro, Lima"
-                            value={form.lugarMuestreo}
-                            setForm={setForm}
-                            ancho="w-96! max-sm:w-64! max-lg:w-80!"
-                        />
-                        <InputP
-                            type="date"
-                            label="Fecha de Servicio"
-                            name="fechaServicio"
-                            value={form.fechaServicio}
-                            setForm={setForm}
-                            ancho="w-60! "
-                        />
-
-                    </div>)
-                    }
-                    {activeIndex === 2 &&
-                        <div className="  w-full h-full flex flex-col gap-6 items-center justify-start pt-2 overflow-x-hidden  border-gray-300  max-sm:p-[0%] max-lg:pl-[8%] pl-[6%] rounded-lg  max-h-[70vh] overflow-y-auto ">
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-[80%] max-w-full">
-                                {Object.entries(form)
-                                    .filter(([key]) => !(key === "nombreContacto" && form.tipoCliente !== "EMPRESA"))
-                                    .map(([key, value]) => (
-                                    <div key={key} className="flex gap-2 text-left">
-                                        <span className="font-medium text-blue-900 capitalize lg:whitespace-nowrap">
-                                            {key.replace(/([A-Z])/g, " $1").toLowerCase()}:
-                                        </span>
-                                        {value ? <span className="wrap-break-word">
-                                            {value}
-                                        </span> : <span className="text-red-500 italic">No proporcionado</span>}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    }
-
-                </div>
-                <div className="flex w-full h-full justify-center items-center ">
-
-                    {
-                        activeIndex > 0 && <ButtonOk
-                            styles={"max-lg:m-0! max-lg:mx-2!  max-lg:px-0! m-4 mx-4 px-8"}
-                            classe="w-60 max-lg:w-40 max-lg:px-0! max-md:w-28! max-lg:m-0! !p-3 mb-12 !rounded-2xl font-medium text-lg" type="ok" onClick={() => setActiveIndex(activeIndex - 1)}>
-                            Anterior
-                        </ButtonOk>
-                    }
-                    {activeIndex < 2 && <ButtonOk
-                        styles={"max-lg:m-0! max-lg:mx-2!  max-lg:px-0! m-4 mx-4 px-8"}
-                        classe="w-60 max-lg:w-40 max-lg:px-0! max-md:w-28! max-lg:m-0! !p-3 mb-12 !rounded-2xl font-medium text-lg" type="ok" onClick={() => setActiveIndex(activeIndex + 1)}>
-                        Siguiente
-                    </ButtonOk>}
-                    {
-                        activeIndex === 2 &&
-                        <ButtonOk
-                            styles={"max-lg:m-0! max-lg:mx-2!  max-lg:px-0! m-4 mx-4 px-8"}
-                            classe="w-60 max-lg:w-40 max-lg:px-0! max-md:w-28! max-lg:m-0! !p-3 mb-12 !rounded-2xl font-medium text-lg" type="ok" onClick={enviar}>
-                            Confirmar
-                        </ButtonOk>
-                    }
-                </div>
-
-            </div>
-        </div >);
+  const [form, setForm] = useState<RequestForm>(initialForm);
+  const [sending, setSending] = useState(false);
+  const sendMessage = useSendMessage();
+  const includesAir = form.servicios.includes("AIRE");
+  const completion = useMemo(() => { const required = [form.cliente, form.numeroDocumento, form.proyecto, form.lugarEjecucion, form.fechaServicio, form.contacto.nombreCompleto, form.contacto.telefono, form.contacto.correo]; return Math.round((required.filter(Boolean).length / required.length) * 100); }, [form]);
+  const toggle = (key: "servicios" | "tipoDocumento", value: string) => setForm((current) => ({ ...current, [key]: current[key].includes(value) ? current[key].filter((item) => item !== value) : [...current[key], value] }));
+  const updateStation = (index: number, key: keyof Station, value: string) => setForm((current) => ({ ...current, estaciones: current.estaciones.map((station, i) => i === index ? { ...station, [key]: value } : station) }));
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!form.cliente || !form.numeroDocumento || !form.proyecto || !form.lugarEjecucion || !form.fechaServicio || !form.servicios.length || !form.contacto.nombreCompleto || !form.contacto.telefono || !form.contacto.correo) { sendMessage("Completa los campos obligatorios antes de enviar la solicitud.", "Advertencia"); return; }
+    setSending(true);
+    try { const response = await axios.post("/comercial/postFormularioCotizacion", form); sendMessage(response.data.message, response.data.type || "Correcto"); setForm(initialForm()); }
+    catch (error: any) { sendMessage(error?.response?.data?.message || "No pudimos enviar la solicitud.", "Error"); } finally { setSending(false); }
+  };
+  return <main className="min-h-screen bg-[#f5f8f7] px-4 py-8 sm:px-8 lg:py-12"><div className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-emerald-950/10 bg-white shadow-[0_24px_80px_rgba(15,49,42,0.12)]">
+    <header className="relative overflow-hidden bg-[#103f37] px-6 py-9 text-white sm:px-10"><div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-emerald-400/15" /><div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between"><div><p className="mb-3 text-xs font-bold uppercase tracking-[0.24em] text-emerald-200">Ecology · atención comercial</p><h1 className="text-3xl font-semibold sm:text-4xl">Cuéntanos sobre tu monitoreo</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-emerald-50/80">Usaremos esta información para preparar tu cotización y, cuando corresponda, el plan de trabajo.</p></div><div className="min-w-40 rounded-2xl bg-white/10 p-4 backdrop-blur"><div className="flex justify-between text-xs text-emerald-100"><span>Avance</span><span>{completion}%</span></div><div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/20"><div className="h-full rounded-full bg-emerald-300 transition-all" style={{ width: `${completion}%` }} /></div></div></div></header>
+    <form onSubmit={submit} className="space-y-8 p-5 sm:p-8 lg:p-10">
+      <section className="grid gap-5 rounded-2xl bg-slate-50 p-5 sm:grid-cols-2 lg:grid-cols-3"><div className="sm:col-span-2 lg:col-span-3"><p className="text-lg font-semibold text-slate-800">1. Datos de la empresa y proyecto</p><p className="mt-1 text-sm text-slate-500">Identificamos al solicitante y el servicio requerido.</p></div><div><Label>Tipo de cliente</Label><select className={inputClass} value={form.tipoCliente} onChange={(e) => setForm({ ...form, tipoCliente: e.target.value as RequestForm["tipoCliente"] })}><option value="EMPRESA">Empresa</option><option value="PERSONA">Persona</option></select></div><Input label={form.tipoCliente === "EMPRESA" ? "Razón social *" : "Nombre completo *"} value={form.cliente} onChange={(e) => setForm({ ...form, cliente: e.target.value })} /><Input label={form.tipoCliente === "EMPRESA" ? "RUC *" : "DNI *"} inputMode="numeric" value={form.numeroDocumento} onChange={(e) => setForm({ ...form, numeroDocumento: e.target.value })} /><Input label="Nombre del proyecto *" value={form.proyecto} onChange={(e) => setForm({ ...form, proyecto: e.target.value })} /><Input label="Nombre de la planta" value={form.nombrePlanta} onChange={(e) => setForm({ ...form, nombrePlanta: e.target.value })} /><Input label="Lugar de ejecución *" value={form.lugarEjecucion} onChange={(e) => setForm({ ...form, lugarEjecucion: e.target.value })} /><div className="sm:col-span-2"><Input label="Dirección legal" value={form.direccionLegal} onChange={(e) => setForm({ ...form, direccionLegal: e.target.value })} /></div></section>
+      <section className="rounded-2xl border border-slate-100 p-5"><p className="text-lg font-semibold text-slate-800">2. Servicio solicitado</p><p className="mt-1 text-sm text-slate-500">Puedes seleccionar una o varias matrices.</p><div className="mt-5 flex flex-wrap gap-3">{services.map((service) => <button key={service} type="button" onClick={() => toggle("servicios", service)} className={`rounded-xl border px-4 py-3 text-sm font-semibold transition ${form.servicios.includes(service) ? "border-emerald-600 bg-emerald-50 text-emerald-800" : "border-slate-200 text-slate-600 hover:border-emerald-300"}`}>{service}</button>)}</div><div className="mt-6 grid gap-5 md:grid-cols-2"><Input label="Fecha prevista del servicio *" type="date" value={form.fechaServicio} onChange={(e) => setForm({ ...form, fechaServicio: e.target.value })} />{includesAir && <div><Label>Frecuencia para aire *</Label><select className={inputClass} value={form.frecuenciaAire} onChange={(e) => setForm({ ...form, frecuenciaAire: e.target.value })}><option value="">Selecciona una frecuencia</option><option value="24 HORAS">24 horas</option><option value="5 DIAS">5 días</option></select></div>}<Textarea label="Cantidad de puntos y parámetros" placeholder="Ej.: 3 puntos, PM10, PM2.5 y SO₂" value={form.cantidadPuntosParametros} onChange={(e) => setForm({ ...form, cantidadPuntosParametros: e.target.value })} /><Textarea label="Metodología solicitada o consideraciones técnicas" value={form.metodologiaParametros} onChange={(e) => setForm({ ...form, metodologiaParametros: e.target.value })} /></div><div className="mt-5"><Label>Documento requerido</Label><div className="flex flex-wrap gap-3">{documentTypes.map((type) => <button key={type} type="button" onClick={() => toggle("tipoDocumento", type)} className={`rounded-xl border px-4 py-3 text-sm font-medium ${form.tipoDocumento.includes(type) ? "border-emerald-600 bg-emerald-50 text-emerald-800" : "border-slate-200 text-slate-600"}`}>{type}</button>)}</div></div></section>
+      <section className="grid gap-5 rounded-2xl bg-amber-50/60 p-5 md:grid-cols-2"><div className="md:col-span-2"><p className="text-lg font-semibold text-slate-800">3. Condiciones de ingreso y seguridad</p></div><Textarea label="Condiciones de ingreso" placeholder="Inducciones, permisos, EPP, documentos de seguridad u otros requisitos." value={form.condicionesIngreso} onChange={(e) => setForm({ ...form, condicionesIngreso: e.target.value })} /><div><Label>¿Existe trabajo de alto riesgo?</Label><select className={inputClass} value={form.trabajoAltoRiesgo} onChange={(e) => setForm({ ...form, trabajoAltoRiesgo: e.target.value })}><option value="NO">No</option><option value="SI">Sí</option><option value="POR CONFIRMAR">Por confirmar</option></select><p className="mt-2 text-xs leading-5 text-slate-500">Indica si las labores serán en altura o en una zona de riesgo especial.</p></div><div className="md:col-span-2"><Textarea label="Accesibilidad de los puntos" placeholder="Terreno, rutas de acceso, restricciones horarias, cableado eléctrico requerido u otros factores." value={form.accesibilidadPuntos} onChange={(e) => setForm({ ...form, accesibilidadPuntos: e.target.value })} /></div></section>
+      <section className="rounded-2xl border border-slate-100 p-5"><div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-lg font-semibold text-slate-800">4. Estaciones de monitoreo</p><p className="text-sm text-slate-500">Incluye las coordenadas disponibles en formato UTM.</p></div><button type="button" className="rounded-xl border border-emerald-600 px-4 py-2 text-sm font-semibold text-emerald-700" onClick={() => setForm({ ...form, estaciones: [...form.estaciones, { codigo: "", este: "", norte: "", descripcion: "" }] })}>+ Agregar estación</button></div><div className="mt-5 space-y-4">{form.estaciones.map((station, index) => <div key={index} className="grid gap-3 rounded-xl bg-slate-50 p-4 md:grid-cols-[1fr_1fr_1fr_2fr_auto]"><Input label="Código" value={station.codigo} onChange={(e) => updateStation(index, "codigo", e.target.value)} /><Input label="Este" value={station.este} onChange={(e) => updateStation(index, "este", e.target.value)} /><Input label="Norte" value={station.norte} onChange={(e) => updateStation(index, "norte", e.target.value)} /><Input label="Descripción" value={station.descripcion} onChange={(e) => updateStation(index, "descripcion", e.target.value)} />{form.estaciones.length > 1 && <button type="button" className="self-end rounded-lg px-3 py-3 text-sm font-semibold text-rose-600" onClick={() => setForm({ ...form, estaciones: form.estaciones.filter((_, i) => i !== index) })}>Quitar</button>}</div>)}</div></section>
+      <section className="grid gap-5 rounded-2xl bg-slate-50 p-5 md:grid-cols-2"><div className="md:col-span-2"><p className="text-lg font-semibold text-slate-800">5. Contacto y destinatario del informe</p></div><Input label="Nombre completo del contacto *" value={form.contacto.nombreCompleto} onChange={(e) => setForm({ ...form, contacto: { ...form.contacto, nombreCompleto: e.target.value } })} /><Input label="Cargo" value={form.contacto.cargo} onChange={(e) => setForm({ ...form, contacto: { ...form.contacto, cargo: e.target.value } })} /><Input label="Teléfono *" value={form.contacto.telefono} onChange={(e) => setForm({ ...form, contacto: { ...form.contacto, telefono: e.target.value } })} /><Input label="Correo electrónico *" type="email" value={form.contacto.correo} onChange={(e) => setForm({ ...form, contacto: { ...form.contacto, correo: e.target.value } })} /><Input label="Razón social destinataria del informe" value={form.destinatarioInforme.razonSocial} onChange={(e) => setForm({ ...form, destinatarioInforme: { ...form.destinatarioInforme, razonSocial: e.target.value } })} /><Input label="RUC destinatario del informe" value={form.destinatarioInforme.ruc} onChange={(e) => setForm({ ...form, destinatarioInforme: { ...form.destinatarioInforme, ruc: e.target.value } })} /></section>
+      <footer className="flex flex-col gap-4 border-t border-slate-100 pt-7 sm:flex-row sm:items-center sm:justify-between"><p className="max-w-xl text-xs leading-5 text-slate-500">Al enviar, Ecology registrará tu solicitud para revisarla y elaborar la cotización. Los campos con <strong>*</strong> son obligatorios.</p><button disabled={sending} className="rounded-xl bg-[#103f37] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-950/20 transition hover:bg-[#0b302a] disabled:cursor-not-allowed disabled:opacity-60">{sending ? "Enviando solicitud…" : "Enviar solicitud"}</button></footer>
+    </form></div></main>;
 };
-
 export default FormClientes;

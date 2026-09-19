@@ -1,107 +1,60 @@
 import { useEffect, useState } from "react";
 import Details from "../../../../components/Principal/Permissions/View";
-import { useDispatch } from "react-redux";
 import useSendMessage from "../../../../components/Ui/Messages/sendMessage";
-import renderDoc from "./renderDoc";
-import documentoCloudinary from "../../../../api/cloudinaryDocument";
 import axios from "../../../../api/axios";
 import ButtonOk from "../../../../components/Ui/Button/Buttons";
+import { useAuth } from "../../../../context/AuthContext";
 
 const ViewCotizacion = ({ selected, setShowDetail }) => {
-    const [showDoc, setShowDoc] = useState(false);
-    const [docxContent, setDocxContent] = useState("");
+    const [pdfUrl, setPdfUrl] = useState("");
+    const [loadingPdf, setLoadingPdf] = useState(true);
     const sendMessage = useSendMessage();
-    console.log("selected cotizacion view", selected);
-
+    const { user } = useAuth();
+    const [planId, setPlanId] = useState("");
+    const tieneTercerizados = selected?.analisis?.some((item) => item.modalidad === "TERCERIZADO");
     useEffect(() => {
-        const renderDocx = async () => {
+        let url = "";
+        const generarPdf = async () => {
+            setLoadingPdf(true);
             try {
-                if (!selected || !selected.proyecto_id || !selected.proyecto_id.cliente_id) return sendMessage("Datos incompletos para generar el documento", "Error");
-                const file = await renderDoc(selected);
-                if (!file) {
-                    sendMessage("Error al cargar el archivo", "Error");
-                    return;
-                }
-                const codigo = selected.correlativaVisible;
-                const cliente = selected.proyecto_id.cliente_id.cliente;
-                //separaar el nombre del cliente y coger solo la primera palabra para el nombre del documento, ya que a veces el nombre del cliente es muy largo y puede causar problemas en la generación del documento en cloudinary
-                const clientName = cliente.split(" ")[0];
-                const namedoc = `Cotizacion_${codigo}_${clientName}`;
-                function sanitizePublicId(filename) {
-                    return filename
-                        .replace(/[^a-zA-Z0-9._-]/g, '_') // Reemplaza caracteres no permitidos por _
-                        .replace(/\.+/g, '.')              // Evita puntos múltiples
-                        .replace(/_{2,}/g, '_');           // Evita underscores múltiples
-                }
-                const newNamedoc = sanitizePublicId(namedoc);
-                const pathCloudinary = await documentoCloudinary(
-                    file,
-                    newNamedoc
-                );
-                setDocxContent(pathCloudinary.secure_url);
-                setShowDoc(true);
-                await axios.delete("herramientas/deleteDocumentCloudinary", {
-                    data: { public_id: pathCloudinary.public_id },
-                });
-            } catch (error) {
-                console.error("Error al renderizar el documento:", error);
-                sendMessage(error, "Error");
-            }
+                const response = await axios.post(`/comercial/cotizaciones/${selected._id}/pdf`, {}, { responseType: "blob" });
+                url = URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+                setPdfUrl(url);
+            } catch (error: any) { sendMessage(error?.response?.data?.message || "No se pudo generar el PDF. Verifica que exista una plantilla activa.", "Error"); }
+            finally { setLoadingPdf(false); }
         };
-        renderDocx();
-    }, [selected]);
-
-
-    const officeViewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(
-        docxContent
-    )}`;
+        if (selected?._id) generarPdf();
+        return () => { if (url) URL.revokeObjectURL(url); };
+    }, [selected?._id]);
+    const crearPlan = async () => {
+        try {
+            const response = await axios.post(`/operaciones/planes-trabajo/desde-cotizacion/${selected._id}`, { creadoPor: user?._id });
+            setPlanId(response.data.data?._id || "");
+            sendMessage(response.data.message, response.data.type || "Correcto");
+        } catch (error: any) { sendMessage(error?.response?.data?.message || "No se pudo crear el Plan de Trabajo", "Error"); }
+    };
+    const crearOrden = async () => {
+        try {
+            const response = await axios.post(`/operaciones/ordenes-internas/desde-plan/${planId}`, { creadoPor: user?._id });
+            sendMessage(response.data.message, response.data.type || "Correcto");
+        } catch (error: any) { sendMessage(error?.response?.data?.message || "No se pudo crear la Orden Interna", "Error"); }
+    };
     return (
         <Details setShowDetail={setShowDetail} title="Detalle de Cotización">
-            {showDoc ? (
                 <div className="flex flex-col gap-4 p-[2%]">
+                    {selected.estado === "APROBADO" && (
+                        <div className="flex flex-wrap gap-3 rounded-xl bg-emerald-50 p-4">
+                            <ButtonOk type="ok" onClick={crearPlan} classe="!w-56">Generar Plan de Trabajo</ButtonOk>
+                            {planId && tieneTercerizados && <ButtonOk type="ok" onClick={crearOrden} classe="!w-56">Generar Orden Interna</ButtonOk>}
+                        </div>
+                    )}
                     <div>
-                        <h2 className="text-2xl font-semibold mb-4">Documento generado de la Cotización {selected.correlativa}</h2>
+                        <h2 className="text-2xl font-semibold mb-1">Cotización {selected.correlativaVisible || selected.correlativa}</h2>
+                        <p className="text-sm text-slate-500">Generada desde la plantilla documental activa.</p>
                     </div>
-                    <div className="flex gap-7">
-                        <div className="flex flex-col items-center gap-2 ">
-                            <span className="text-xl font-medium text-gray-600">Ver Archivo</span>
-                            <ButtonOk type="ok" onClick={() => window.open(officeViewerUrl, '_blank')}>
-                                <div className="flex gap-2 items-center">
-
-                                    <span>Visor Office</span>
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                                    </svg>
-                                </div>
-                            </ButtonOk>
-                        </div>
-                        <div className="flex flex-col items-center gap-2">
-                            <span className="text-xl font-medium text-gray-600">Descargar Archivo</span>
-                            <ButtonOk type="ok"
-                                onClick={() => {
-                                    const link = document.createElement('a');
-                                    link.href = docxContent;
-                                    link.download = `Cotizacion_${selected.correlativaVisible}.docx`;
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-
-                                }}
-                            >
-                                <div className="flex gap-2 items-center">
-                                    <span>Guardar</span>
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-                                    </svg>
-                                </div>
-                            </ButtonOk>
-                        </div>
-                    </div>
+                    {loadingPdf && <p className="text-slate-500">Generando PDF…</p>}
+                    {!loadingPdf && pdfUrl && <><div className="flex gap-3"><ButtonOk type="ok" onClick={() => window.open(pdfUrl, "_blank")}>Ver PDF</ButtonOk><ButtonOk type="ok" onClick={() => { const link = document.createElement("a"); link.href = pdfUrl; link.download = `Cotizacion_${selected.correlativaVisible || "documento"}.pdf`; link.click(); }}>Descargar PDF</ButtonOk></div><iframe className="min-h-[520px] w-full rounded-lg border" title="Vista previa de cotización" src={pdfUrl} /></>}
                 </div>
-            ) : (
-                <p>Cargando...</p>
-            )}
 
         </Details>
     )
