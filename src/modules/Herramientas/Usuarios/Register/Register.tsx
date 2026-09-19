@@ -29,7 +29,14 @@ const RegisterUsuarios = () => {
     const registrar = async () => {
         setDeshabilitar(true);
         try {
-            const response = await axios.post("/herramientas/postUsuariosEcosoft", form)
+            const payload = new FormData();
+            Object.entries(form).forEach(([key, value]) => {
+                if (key === "modules") payload.append(key, JSON.stringify(value));
+                else if (key === "photoFile" && value) payload.append("photo", value as File);
+                else if (key === "firmaFile" && value) payload.append("firma", value as File);
+                else if (!["photoFile", "firmaFile", "photo", "firma", "photoArchivo", "firmaArchivo"].includes(key) && value !== undefined && value !== null) payload.append(key, String(value));
+            });
+            const response = await axios.post("/herramientas/postUsuariosEcosoft", payload)
             if (response.status > 200 && response.status < 300) {
                 resetForm();
                 return sendMessage("Usuario registrado con éxito", "Correcto");

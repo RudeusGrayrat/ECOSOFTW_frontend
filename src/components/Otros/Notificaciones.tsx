@@ -22,6 +22,7 @@ const Notificaciones = () => {
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
     const [undoNotification, setUndoNotification] = useState(null);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const hasMore = notifications.length < total;
 
@@ -44,6 +45,7 @@ const Notificaciones = () => {
 
     const refreshPage = async () => {
         setSelectedId(null);
+        setSelectedIds([]);
         await Promise.all([
             loadNotifications(0, false),
             refreshNotifications(),
@@ -72,6 +74,7 @@ const Notificaciones = () => {
         try {
             await axios.delete(`/herramientas/notificaciones/${notification._id}`);
             setNotifications((current) => current.filter((item) => item._id !== notification._id));
+            setSelectedIds((current) => current.filter((id) => id !== notification._id));
             setTotal((current) => Math.max(current - 1, 0));
             if (selectedId === notification._id) setSelectedId(null);
             setUndoNotification(notification);
@@ -80,6 +83,23 @@ const Notificaciones = () => {
         } catch (error) {
             showToast("error", "No se pudo eliminar la notificación", error);
         }
+    };
+
+    const toggleSelected = (id) => setSelectedIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
+    const toggleSelectAllLoaded = () => setSelectedIds((current) => current.length === notifications.length ? [] : notifications.map((item) => item._id));
+
+    const deleteMany = async (all = false) => {
+        const count = all ? total : selectedIds.length;
+        if (!count) return;
+        const message = all ? "¿Vaciar todas las notificaciones de tu bandeja?" : `¿Eliminar ${count} notificación${count === 1 ? "" : "es"} seleccionada${count === 1 ? "" : "s"}?`;
+        if (!window.confirm(message)) return;
+        try {
+            const response = await axios.delete("/herramientas/notificaciones", { data: all ? { all: true } : { ids: selectedIds } });
+            if (all) { setNotifications([]); setTotal(0); } else { setNotifications((current) => current.filter((item) => !selectedIds.includes(item._id))); setTotal((current) => Math.max(current - Number(response.data.count || 0), 0)); }
+            setSelectedIds([]);
+            showToast("success", response.data.message, "Esta eliminación solo afecta tu bandeja.");
+            await refreshNotifications();
+        } catch (error) { showToast("error", "No se pudieron eliminar las notificaciones", error); }
     };
 
     const undoDelete = async () => {
@@ -112,17 +132,15 @@ const Notificaciones = () => {
                         <h1 className="mt-3 text-4xl font-black tracking-tight">Notificaciones</h1>
                         <p className="mt-2 text-slate-300">{unread} notificaciones sin leer de acciones realizadas por otros colaboradores.</p>
                     </div>
-                    <button
-                        className="w-fit rounded-2xl bg-white px-5 py-3 font-black text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
-                        disabled={loading}
-                        onClick={refreshPage}
-                    >
-                        {loading ? "Actualizando..." : "Actualizar"}
-                    </button>
+                    <div className="flex flex-wrap gap-3">
+                        <button className="w-fit rounded-2xl bg-white px-5 py-3 font-black text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60" disabled={loading} onClick={refreshPage}>{loading ? "Actualizando..." : "Actualizar"}</button>
+                        {total > 0 && <button className="w-fit rounded-2xl border border-white/30 px-5 py-3 font-black text-white transition hover:bg-white/10 disabled:opacity-50" disabled={loading} onClick={() => deleteMany(true)}>Vaciar bandeja</button>}
+                    </div>
                 </div>
             </section>
 
             <section className="mt-6 rounded-3xl border border-slate-100 bg-white p-4 shadow-lg shadow-slate-200/70">
+                {notifications.length > 0 && <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3"><label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-slate-600"><input type="checkbox" checked={notifications.length > 0 && selectedIds.length === notifications.length} onChange={toggleSelectAllLoaded} /> Seleccionar visibles</label><button disabled={!selectedIds.length || loading} onClick={() => deleteMany(false)} className="rounded-xl bg-red-600 px-4 py-2 text-sm font-black text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50">Eliminar seleccionadas{selectedIds.length ? ` (${selectedIds.length})` : ""}</button></div>}
                 <div className="space-y-2">
                     {notifications.length === 0 && !loading && (
                         <div className="rounded-3xl bg-slate-50 p-8 text-center">
@@ -136,7 +154,7 @@ const Notificaciones = () => {
                         const read = isRead(notification);
 
                         return (
-                            <button
+                            <article
                                 key={notification._id}
                                 className={`relative w-full rounded-2xl border bg-white px-4 py-3 pr-16 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${read
                                     ? "border-slate-100 opacity-95"
@@ -167,6 +185,7 @@ const Notificaciones = () => {
 
                                 <div className="flex flex-wrap items-center justify-between gap-3">
                                     <div className="flex min-w-0 flex-1 items-center gap-3 pr-2">
+                                        <input type="checkbox" checked={selectedIds.includes(notification._id)} onClick={(event) => event.stopPropagation()} onChange={() => toggleSelected(notification._id)} aria-label={`Seleccionar ${notification.title}`} />
                                         <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${read ? "bg-slate-300" : "bg-blue-500 animate-pulse"}`} />
                                         <span className="truncate rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-black text-emerald-700">
                                             {notification.module || "SISTEMA"} / {notification.submodule || notification.type}
@@ -197,7 +216,7 @@ const Notificaciones = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </button>
+                            </article>
                         );
                     })}
                 </div>

@@ -37,6 +37,7 @@ const EditUsuarios = ({ selected, setShowEdit, reload }) => {
             }
             const payload = { ...form };
             if (!payload.password) delete payload.password;
+            delete payload.photoFile; delete payload.firmaFile; delete payload.photoArchivo; delete payload.firmaArchivo;
             const response = await axios.patch(`/herramientas/patchUser/${idSelected}`, payload);
             const data = response.data;
             sendMessage(data.message, data.type);
@@ -47,12 +48,32 @@ const EditUsuarios = ({ selected, setShowEdit, reload }) => {
             setDeshabilitar(false);
         }
     }
+    const uploadAsset = async (type, file) => {
+        if (!file) return sendMessage("Selecciona una imagen PNG o JPG", "Advertencia");
+        setDeshabilitar(true);
+        try {
+            const data = new FormData(); data.append("archivo", file);
+            const response = await axios.post(`/herramientas/usuarios/${idSelected}/archivo/${type}`, data);
+            setForm((current) => ({ ...current, ...response.data.data, photoFile: type === "foto" ? null : current.photoFile, firmaFile: type === "firma" ? null : current.firmaFile }));
+            sendMessage(response.data.message, response.data.type);
+            await reload();
+        } catch (error) { sendMessage(error, "Error"); } finally { setDeshabilitar(false); }
+    };
+    const deleteAsset = async (type) => {
+        setDeshabilitar(true);
+        try {
+            const response = await axios.delete(`/herramientas/usuarios/${idSelected}/archivo/${type}`);
+            setForm((current) => ({ ...current, ...response.data.data, photoFile: type === "foto" ? null : current.photoFile, firmaFile: type === "firma" ? null : current.firmaFile }));
+            sendMessage(response.data.message, response.data.type);
+            await reload();
+        } catch (error) { sendMessage(error, "Error"); } finally { setDeshabilitar(false); }
+    };
     return (
         <Edit setShowEdit={setShowEdit} upDate={actualizar} deshabilitar={deshabilitar}>
             <div className="p-4 ">
                 <span className="text-3xl ml-6 font-semibold text-blue-500">Editar Usuario</span>
                 <CardPlegable title="Datos Generales">
-                    <DatosGenerales form={form} setForm={setForm} editing />
+                    <DatosGenerales form={form} setForm={setForm} editing disabled={deshabilitar} onUploadAsset={uploadAsset} onDeleteAsset={deleteAsset} />
                 </CardPlegable>
                 <CardPlegable title="Accesos">
                     <Accesos form={form} setForm={setForm} catalogo={catalogo} />

@@ -16,7 +16,7 @@ const ApproveCotizacion = ({ selected, setShowApprove, reload }) => {
             if (!idSelected) return;
             if (estadoSelected === "APROBADO")
                 return sendMessage("La cotización ya está aprobada", "Error");
-            const response = await axios.patch(`/comercial/patchCotizacion/${idSelected}`, { estado: "APROBADO", aprobadoPor: user?._id, firmaAprobador: user?.firma || "" });
+            const response = await axios.patch(`/comercial/patchCotizacion/${idSelected}`, { estado: "APROBADO", aprobadoPor: user?._id });
             sendMessage(response.data.message, "Correcto");
             await reload();
         } catch (error) {

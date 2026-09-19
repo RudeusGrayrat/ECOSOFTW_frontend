@@ -11,6 +11,7 @@ const InputArchivoConfig = ({
     onSelect,
     onUpload,
     onDelete,
+    showUpload = true,
 }) => {
     const fileName = selectedFile?.name || currentFile || "Sin archivo configurado";
     const hasCurrentFile = Boolean(currentFile);
@@ -36,7 +37,7 @@ const InputArchivoConfig = ({
                     <span className={`block max-w-72 truncate text-sm font-semibold ${currentFile || selectedFile ? "text-slate-700" : "text-slate-400"}`}>
                         {fileName}
                     </span>
-                    {selectedFile && (
+                    {selectedFile && showUpload && (
                         <span className="mt-1 block text-[0.68rem] font-bold uppercase tracking-[0.22em] text-emerald-600">
                             Pendiente de guardar
                         </span>
