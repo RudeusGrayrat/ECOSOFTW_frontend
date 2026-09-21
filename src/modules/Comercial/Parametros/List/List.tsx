@@ -3,6 +3,7 @@ import ListPrincipal from "../../../../components/Principal/List/List";
 import axios from "../../../../api/axios";
 import EditParametros from "../Permissions/Edit";
 import ViewParametros from "../Permissions/View";
+import DeleteParametros from "../Permissions/Delete";
 
 const ListParametrosComercial = ({
     permissionEdit,
@@ -14,7 +15,8 @@ const ListParametrosComercial = ({
             params: {
                 page,
                 limit,
-                search
+                search,
+                includeInactive: true,
             }
         });
         return {
@@ -30,6 +32,7 @@ const ListParametrosComercial = ({
             permissionRead={permissionRead}
             DetailItem={ViewParametros}
             EditItem={EditParametros}
+            DeleteItem={DeleteParametros}
             fetchData={fetchData}
             title={"parametros_cliente"}
         >
@@ -38,6 +41,7 @@ const ListParametrosComercial = ({
             <Column field="metodo" header="Método" ></Column>
             <Column field="unidadDeMedida" header="Unidad de Medida" ></Column>
             <Column field="precio" header="Precio Soles" ></Column>
+            <Column field="estado" header="Estado" ></Column>
         </ListPrincipal>
     )
 }

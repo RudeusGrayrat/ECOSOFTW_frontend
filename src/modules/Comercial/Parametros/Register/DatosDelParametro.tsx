@@ -136,6 +136,7 @@ const DatosDelParametro = ({ form, setForm }) => {
                 value={form.precio}
                 setForm={setForm}
             />
+            {form._id && <InputP label="Estado" name="estado" type="select" editable={false} options={["ACTIVO", "INACTIVO"]} value={form.estado || "ACTIVO"} setForm={setForm} />}
         </div>
     )
 }
