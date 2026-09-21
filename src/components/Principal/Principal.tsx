@@ -88,11 +88,14 @@ const ReadOrCreate = ({ ItemRegister, ItemList, ItemReporte, submodule }) => {
         });
     };
 
+    // Renderiza una vista válida desde el primer frame. El efecto de arriba solo
+    // normaliza la URL; no debe ser el único mecanismo que determine el contenido.
+    const resolvedView = options.includes(selectedView) ? selectedView : defaultView();
     let children;
 
-    if (selectedView === "Crear") {
+    if (resolvedView === "Crear") {
         children = <ItemRegister />;
-    } else if (selectedView === "Listar") {
+    } else if (resolvedView === "Listar") {
         children = <ItemList
             permissionRead={permissionRead}
             permissionEdit={permissionEdit}
@@ -103,7 +106,7 @@ const ReadOrCreate = ({ ItemRegister, ItemList, ItemReporte, submodule }) => {
             permissionDisapprove={permissionDisapprove}
         />
     }
-    else if (selectedView === "Reporte") {
+    else if (resolvedView === "Reporte") {
         children = ItemReporte ? <ItemReporte permissionReport={permissionReport} /> : null;
     }
 
@@ -112,7 +115,7 @@ const ReadOrCreate = ({ ItemRegister, ItemList, ItemReporte, submodule }) => {
             <div className="flex justify-center items-center p-5">
                 <RadioOption
                     opciones={options}
-                    selectedOption={selectedView}
+                    selectedOption={resolvedView}
                     onChange={handleOptionClick}
                 />
 

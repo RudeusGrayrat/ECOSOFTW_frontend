@@ -25,7 +25,9 @@ const LeftSideBar = ({ options, handleSubmit, show }) => {
                 return (
                     <Link
                         key={i}
-                        to={`/${options.module.toLowerCase()}/${op.toLowerCase()}`}
+                        // Todo submódulo ReadOrCreate tiene una vista inicial. El enlace
+                        // canónico evita que el usuario llegue a una ruta sin contenido.
+                        to={`/${options.module.toLowerCase()}/${op.toLowerCase()}?select=Listar`}
                         onClick={handleSubmit}
                         className="p-3 transition-all  text-base font-semibold pl-8 flex items-start w-full justify-start
   text-white hover:bg-slate-200 hover:text-black rounded-lg  "
