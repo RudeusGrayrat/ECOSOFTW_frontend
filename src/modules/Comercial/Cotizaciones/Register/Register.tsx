@@ -21,6 +21,7 @@ const RegisterCotizacionesComercial = ({ }) => {
     const [form, setForm] = useState({
         tiempoDeEntrega: [],
         tipoDeServicio: "",
+        estado: "PENDIENTE",
         proyecto_id: "",
         analisis: [
             {
@@ -67,6 +68,7 @@ const RegisterCotizacionesComercial = ({ }) => {
         setForm({
             tiempoDeEntrega: [],
             tipoDeServicio: "",
+            estado: "PENDIENTE",
             proyecto_id: "",
             analisis: [
                 {
