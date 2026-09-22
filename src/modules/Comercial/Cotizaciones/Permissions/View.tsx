@@ -5,6 +5,15 @@ import axios from "../../../../api/axios";
 import ButtonOk from "../../../../components/Ui/Button/Buttons";
 import { useAuth } from "../../../../context/AuthContext";
 
+const pdfErrorMessage = async (error: any, endpoint: string) => {
+    let payload = error?.response?.data;
+    if (payload instanceof Blob) {
+        try { payload = JSON.parse(await payload.text()); } catch { payload = null; }
+    }
+    console.error("[PDF] Falló la cotización", { endpoint, status: error?.response?.status, payload });
+    return payload?.traceId ? `${payload.message} (Diagnóstico: ${payload.traceId})` : payload?.message || "No se pudo generar el PDF. Verifica que exista una plantilla activa.";
+};
+
 const ViewCotizacion = ({ selected, setShowDetail }) => {
     const [pdfUrl, setPdfUrl] = useState("");
     const [loadingPdf, setLoadingPdf] = useState(true);
@@ -17,10 +26,13 @@ const ViewCotizacion = ({ selected, setShowDetail }) => {
         const generarPdf = async () => {
             setLoadingPdf(true);
             try {
-                const response = await axios.post(`/comercial/cotizaciones/${selected._id}/pdf`, {}, { responseType: "blob" });
+                const endpoint = `/comercial/cotizaciones/${selected._id}/pdf`;
+                console.info("[PDF] Solicitando cotización", { endpoint, quoteId: selected._id });
+                const response = await axios.post(endpoint, {}, { responseType: "blob" });
                 url = URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
                 setPdfUrl(url);
-            } catch (error: any) { sendMessage(error?.response?.data?.message || "No se pudo generar el PDF. Verifica que exista una plantilla activa.", "Error"); }
+                console.info("[PDF] Cotización generada", { quoteId: selected._id, bytes: response.data?.size });
+            } catch (error: any) { sendMessage(await pdfErrorMessage(error, `/comercial/cotizaciones/${selected._id}/pdf`), "Error"); }
             finally { setLoadingPdf(false); }
         };
         if (selected?._id) generarPdf();

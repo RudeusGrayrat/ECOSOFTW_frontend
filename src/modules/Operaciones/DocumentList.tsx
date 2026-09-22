@@ -11,6 +11,14 @@ const field = "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm";
 const Principal = ReadOrCreate as any;
 const PrincipalList = ListPrincipal as any;
 const updateArray = (items: any[], index: number, key: string, value: string) => items.map((item, i) => i === index ? { ...item, [key]: key === "cantidad" ? Number(value) : value } : item);
+const pdfErrorMessage = async (error: any, endpoint: string) => {
+  let payload = error?.response?.data;
+  if (payload instanceof Blob) {
+    try { payload = JSON.parse(await payload.text()); } catch { payload = null; }
+  }
+  console.error("[PDF] Falló el documento operativo", { endpoint, status: error?.response?.status, payload });
+  return payload?.traceId ? `${payload.message} (Diagnóstico: ${payload.traceId})` : payload?.message || "No se pudo generar el PDF. Verifica la plantilla activa.";
+};
 
 const Contexto = ({ form, setForm }: any) => <>
   <div className="mb-6 grid gap-4 md:grid-cols-2">
@@ -38,7 +46,7 @@ const Editor = ({ item, kind, onClose, onSaved }: any) => {
 
 const ViewDocumento = ({ selected, setShowDetail, kind }: any) => {
   const [pdfUrl, setPdfUrl] = useState(""); const [loading, setLoading] = useState(false); const sendMessage = useSendMessage();
-  const generarPdf = async () => { setLoading(true); try { const endpoint = kind === "plan" ? `/operaciones/planes-trabajo/${selected._id}/pdf` : `/operaciones/ordenes-internas/${selected._id}/pdf`; const response = await axios.post(endpoint, {}, { responseType: "blob" }); const url = URL.createObjectURL(new Blob([response.data], { type: "application/pdf" })); setPdfUrl((previous) => { if (previous) URL.revokeObjectURL(previous); return url; }); } catch (error: any) { sendMessage(error?.response?.data?.message || "No se pudo generar el PDF. Verifica la plantilla activa.", "Error"); } finally { setLoading(false); } };
+  const generarPdf = async () => { setLoading(true); const endpoint = kind === "plan" ? `/operaciones/planes-trabajo/${selected._id}/pdf` : `/operaciones/ordenes-internas/${selected._id}/pdf`; try { console.info("[PDF] Solicitando documento operativo", { endpoint, kind, documentId: selected._id }); const response = await axios.post(endpoint, {}, { responseType: "blob" }); const url = URL.createObjectURL(new Blob([response.data], { type: "application/pdf" })); setPdfUrl((previous) => { if (previous) URL.revokeObjectURL(previous); return url; }); console.info("[PDF] Documento operativo generado", { kind, documentId: selected._id, bytes: response.data?.size }); } catch (error: any) { sendMessage(await pdfErrorMessage(error, endpoint), "Error"); } finally { setLoading(false); } };
   useEffect(() => () => { if (pdfUrl) URL.revokeObjectURL(pdfUrl); }, [pdfUrl]);
   return <Details setShowDetail={setShowDetail}><h2 className="text-2xl font-semibold">{kind === "plan" ? "Plan de Trabajo" : "Orden Interna"}</h2><div className="mt-5 grid gap-3 md:grid-cols-2"><p><strong>Código:</strong> {selected?.codigo}</p><p><strong>Estado:</strong> {selected?.estado}</p><p><strong>Proyecto:</strong> {selected?.proyecto?.nombre}</p><p><strong>Planta:</strong> {selected?.proyecto?.planta || "—"}</p><p className="md:col-span-2"><strong>Ítems:</strong> {selected?.items?.length || 0}</p></div><div className="mt-6 flex gap-3"><button disabled={loading} onClick={generarPdf} className="rounded-lg bg-emerald-700 px-4 py-2 font-semibold text-white disabled:opacity-60">{loading ? "Generando PDF…" : "Generar PDF"}</button>{pdfUrl && <><button onClick={() => window.open(pdfUrl, "_blank")} className="rounded-lg border border-emerald-700 px-4 py-2 font-semibold text-emerald-800">Ver PDF</button><a href={pdfUrl} download={`${selected?.codigo || "documento"}.pdf`} className="rounded-lg border border-emerald-700 px-4 py-2 font-semibold text-emerald-800">Descargar PDF</a></>}</div></Details>;
 };
