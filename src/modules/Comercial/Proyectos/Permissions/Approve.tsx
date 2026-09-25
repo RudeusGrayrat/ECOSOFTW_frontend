@@ -10,8 +10,8 @@ const ApproveProyectos = ({ selected, setShowApprove, reload }) => {
     const aprobar = async () => {
         setDeshabilitar(true);
         try {
-            const response = await axios.patch(`comercial/patchProyecto/${idSelected}`, {
-                estado: 'APROBADO'
+            const response = await axios.patch(`/comercial/patchProyecto/${idSelected}`, {
+                estado: 'ACTIVO'
             });
             sendMessage(response.data.message, response.data.type);
             await reload()

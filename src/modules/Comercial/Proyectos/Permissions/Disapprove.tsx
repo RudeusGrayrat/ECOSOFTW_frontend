@@ -10,8 +10,8 @@ const DisapproveProyecto = ({ selected, setShowDisapprove, reload }) => {
     const desaprobar = async () => {
         setDeshabilitar(true);
         try {
-            const response = await axios.patch(`comercial/patchProyecto/${idSelected}`, {
-                estado: 'ANULADO'
+            const response = await axios.patch(`/comercial/patchProyecto/${idSelected}`, {
+                estado: 'INACTIVO'
             });
             sendMessage(response.data.message, response.data.type);
             await reload()

@@ -35,7 +35,9 @@ const Proyecto = ({ form, setForm }) => {
         setForm((prev) => ({ ...prev, solicitud_id: solicitud._id, proyecto_id: proyecto?._id || "", tipoDeServicio: (solicitud.servicios || []).join(", "), facturacion: { razonSocial: cliente?.cliente || "", ruc: cliente?.numeroDocumento || "", direccion: cliente?.direccionLegal || "", formaPago: prev.facturacion?.formaPago || "" } }));
     };
     useEffect(() => {
-        if (localForm.nombre && localForm.cliente) {
+        // Una solicitud trae su propio detalle. No lo sobrescribimos con el
+        // resumen histórico del proyecto (que puede ser anterior o vacío).
+        if (!solicitudSeleccionada && localForm.nombre && localForm.cliente) {
             const proyectoSeleccionado = localForm.nombre
             setLocalForm({
                 ...localForm,
@@ -47,7 +49,7 @@ const Proyecto = ({ form, setForm }) => {
             });
         }
 
-    }, [localForm.nombre]);
+    }, [localForm.nombre, solicitudSeleccionada]);
     useEffect(() => {
         if (localForm.cliente && !solicitudSeleccionada) {
             setForm((prev) => ({
@@ -98,11 +100,16 @@ const Proyecto = ({ form, setForm }) => {
     return (
         <div className="flex flex-wrap ">
             <div className="mb-5 w-full rounded-xl border border-emerald-100 bg-emerald-50 p-4">
-                <label className="mb-2 block text-sm font-semibold text-emerald-900">Solicitud de cotización recibida</label>
+                <label className="mb-2 block text-sm font-semibold text-emerald-900">Solicitud del cliente</label>
                 <select className="w-full rounded-lg border border-emerald-200 bg-white p-3" value={solicitudSeleccionada} onChange={(e) => cargarSolicitud(e.target.value)}>
                     <option value="">Seleccionar una solicitud o cotizar manualmente</option>
                     {solicitudes.map((item) => <option key={item._id} value={item._id}>{item.cliente_id?.cliente} — {item.proyecto_id?.nombre} — {new Date(item.createdAt).toLocaleDateString()}</option>)}
                 </select>
+                {solicitudSeleccionada && (
+                    <p className="mt-3 whitespace-pre-wrap break-words text-sm text-emerald-800">
+                        Se usará el detalle enviado por el cliente: {localForm.cantidadDeMuestreo || "sin detalle de puntos o parámetros"}.
+                    </p>
+                )}
             </div>
             <InputP
                 label="Cliente"
