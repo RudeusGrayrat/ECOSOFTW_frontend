@@ -14,7 +14,7 @@ const Proyecto = ({ form, setForm }) => {
         cliente: "",
         servicio: "",
         fechaServicio: "",
-        cantidadDeMuestreo: 0,
+        cantidadDeMuestreo: "",
         lugarMuestreo: "",
     });
     const [tiempoDeEntrega, setTiempoDeEntrega] = useState([]);
@@ -31,7 +31,7 @@ const Proyecto = ({ form, setForm }) => {
         if (!solicitud) return;
         const cliente = solicitud.cliente_id;
         const proyecto = solicitud.proyecto_id;
-        setLocalForm({ _id: proyecto?._id || "", nombre: proyecto || "", cliente: cliente || "", servicio: (solicitud.servicios || []).join(", "), fechaServicio: solicitud.fechaServicio ? dayjs(solicitud.fechaServicio).format("YYYY-MM-DD") : "", cantidadDeMuestreo: Number(solicitud.cantidadPuntosParametros) || 0, lugarMuestreo: solicitud.lugarEjecucion || "" });
+        setLocalForm({ _id: proyecto?._id || "", nombre: proyecto || "", cliente: cliente || "", servicio: (solicitud.servicios || []).join(", "), fechaServicio: solicitud.fechaServicio ? dayjs(solicitud.fechaServicio).format("YYYY-MM-DD") : "", cantidadDeMuestreo: solicitud.cantidadPuntosParametros || proyecto?.cantidadPuntosParametros || "", lugarMuestreo: solicitud.lugarEjecucion || "" });
         setForm((prev) => ({ ...prev, solicitud_id: solicitud._id, proyecto_id: proyecto?._id || "", tipoDeServicio: (solicitud.servicios || []).join(", "), facturacion: { razonSocial: cliente?.cliente || "", ruc: cliente?.numeroDocumento || "", direccion: cliente?.direccionLegal || "", formaPago: prev.facturacion?.formaPago || "" } }));
     };
     useEffect(() => {
@@ -41,7 +41,7 @@ const Proyecto = ({ form, setForm }) => {
                 ...localForm,
                 servicio: proyectoSeleccionado.servicio,
                 fechaServicio: dayjs(proyectoSeleccionado.fechaServicio, "DD/MM/YYYY").format("YYYY-MM-DD"),
-                cantidadDeMuestreo: Number(proyectoSeleccionado.cantidadPuntosParametros),
+                cantidadDeMuestreo: proyectoSeleccionado.cantidadPuntosParametros || "",
                 lugarMuestreo: proyectoSeleccionado.lugarMuestreo,
                 _id: proyectoSeleccionado._id
             });
@@ -64,7 +64,7 @@ const Proyecto = ({ form, setForm }) => {
                 nombre: "",
                 servicio: "",
                 fechaServicio: "",
-                cantidadDeMuestreo: 0,
+                cantidadDeMuestreo: "",
                 lugarMuestreo: "",
                 tipoDeServicio: "",
                 _id: ""
@@ -154,9 +154,9 @@ const Proyecto = ({ form, setForm }) => {
                 setForm={setLocalForm}
             />
             <InputNormal
-                label="Cantidad de Muestreo"
+                label="Puntos / Parámetros solicitados"
                 name="cantidadDeMuestreo"
-                type="number"
+                type="text"
                 value={localForm.cantidadDeMuestreo}
                 setForm={setLocalForm}
             />

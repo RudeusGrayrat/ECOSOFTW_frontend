@@ -33,11 +33,13 @@ const ProyectosRegister = ({ form, setForm }) => {
                 ancho={"w-96!"}
             />
             <InputP
-                label="Cantidad de Puntos / Parámetros"
+                label="Cantidad de Puntos / Parámetros Solicitados"
                 name="cantidadPuntosParametros"
-                type="number"
+                type="textarea"
                 value={form.cantidadPuntosParametros}
                 setForm={setForm}
+                ancho="w-96!"
+                placeholder="Ej.: 3 puntos, PM10, PM2.5 y SO₂"
             />
             <InputP
                 label="Lugar de Muestreo"

@@ -14,7 +14,7 @@ const ViewProyectos = ({ setShowDetail, selected }) => {
                 <PDetail content="SERVICIO" value={selected?.servicio} />
                 <PDetail content="FECHA DE SERVICIO" value={selected?.fechaServicio} />
                 <PDetail content="LUGAR DE MUESTREO" value={selected?.lugarMuestreo} />
-                <PDetail content="CANTIDAD DE PUNTOs / PARAMETROS" value={selected?.cantidadPuntosParametros} />
+                <PDetail content="CANTIDAD DE PUNTOS / PARÁMETROS" value={selected?.cantidadPuntosParametros || "—"} />
                 <PDetail content="ESTADO" value={selected?.estado} />
             </div>
         </Details>

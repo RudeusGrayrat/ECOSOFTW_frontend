@@ -246,6 +246,20 @@ const InputP = ({
                 />
             );
             break;
+        case "textarea":
+            content = (
+                <textarea
+                    name={name}
+                    value={value || ""}
+                    autoComplete="off"
+                    placeholder={error ? "Este campo es obligatorio" : label}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    {...inputProps}
+                    className={`${estilo} min-h-24 resize-y`}
+                />
+            );
+            break;
         default:
             content = (
                 <input
@@ -264,7 +278,7 @@ const InputP = ({
 
     return (
         <div
-            className="flex flex-col mx-3 F h-20"
+            className={`flex flex-col mx-3 F ${type === "textarea" ? "min-h-34" : "h-20"}`}
             data-pr-tooltip={tooltipTitle || undefined}
             data-pr-position="top"
         >

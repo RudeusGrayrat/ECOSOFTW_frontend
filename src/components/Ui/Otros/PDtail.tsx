@@ -1,6 +1,6 @@
 const PDetail = ({ content, value }) => {
   return (
-    <p className="text-xl  text-gray-700 my-2">
+    <p className="text-xl text-gray-700 my-2 whitespace-pre-wrap break-words">
       <strong className="text-sky-600 mr-2">{content + " : "}</strong>
       {value}
     </p>
