@@ -55,17 +55,21 @@ const ListProyectos = ({
                     justifyItems: "center",
                 }}
                 body={(rowData) => {
-                    let color = "text-gray-500";
-                    if (rowData.estado === "ACTIVO") {
-                        color = "text-green-500";
-                    } else if (rowData.estado === "INACTIVO") {
-                        color = "text-red-500";
-                    }
+                    const statusStyle: Record<string, string> = {
+                        ACTIVO: "border-emerald-200 bg-emerald-50 text-emerald-700",
+                        INACTIVO: "border-red-200 bg-red-50 text-red-700",
+                        // Visibles durante la migración para que ningún valor
+                        // histórico parezca un estado válido o quede gris.
+                        PENDIENTE: "border-amber-200 bg-amber-50 text-amber-700",
+                        COTIZADO: "border-sky-200 bg-sky-50 text-sky-700",
+                        APROBADO: "border-emerald-200 bg-emerald-50 text-emerald-700",
+                        ANULADO: "border-red-200 bg-red-50 text-red-700",
+                    };
+                    const color = statusStyle[rowData.estado] || "border-slate-200 bg-slate-50 text-slate-600";
 
                     return (
                         <div
-                            className={`text-center bg-linear-to-tr from-white to-gray-100 
-                shadow-inner rounded-xl font-semibold  px-5 py-1  ${color} `}
+                            className={`rounded-xl border px-5 py-1 text-center font-semibold shadow-inner ${color}`}
                         >
                             {rowData.estado}
                         </div>

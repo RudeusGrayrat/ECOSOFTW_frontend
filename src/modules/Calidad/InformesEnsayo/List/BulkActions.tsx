@@ -10,6 +10,7 @@ const BulkActionsInformesEnsayo = ({
     reload,
     papelera,
     permissionReport,
+    permissionEdit,
     permissionApprove,
     permissionSend,
     permissionDelete,
@@ -18,6 +19,8 @@ const BulkActionsInformesEnsayo = ({
     const [showRelease, setShowRelease] = useState(false);
     const [showClearConfirmation, setShowClearConfirmation] = useState(false);
     const [showPurge, setShowPurge] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
+    const [editRows, setEditRows] = useState([]);
     const [releaseForm, setReleaseForm] = useState({
         enviarCorreo: false,
         correoCliente: "",
@@ -35,6 +38,7 @@ const BulkActionsInformesEnsayo = ({
     const canRelease = selectedItems.every((item) => isLiberable(item) && !isLiberado(item) && !item?.papelera);
     const hasOfficial = selectedItems.some(isLiberado);
     const canPurge = papelera && permissionDelete && selectedItems.every((item) => item?.papelera);
+    const canEdit = selectedItems.every((item) => !item?.papelera && !["LIBERADO", "DISPONIBLE"].includes(item?.estado));
     const disabledClass = "disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0";
     const actionBaseClass = `inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-black shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 ${disabledClass}`;
 
@@ -122,6 +126,38 @@ const BulkActionsInformesEnsayo = ({
         }
     };
 
+    const openBulkEdit = () => {
+        setEditRows(selectedItems.map((item) => ({
+            id: item._id,
+            archivo: item.archivoOriginal || item.codigo,
+            codigo: item.codigo || "",
+            planMonitoreo: item.planMonitoreo || "",
+            cliente: item.cliente || "",
+            matriz: item.matriz || "",
+            acreditacion: item.acreditacion || "SIN_ACREDITACION",
+        })));
+        setShowEdit(true);
+    };
+
+    const updateEditRow = (index, field, value) => {
+        setEditRows((rows) => rows.map((row, rowIndex) => rowIndex === index ? { ...row, [field]: value } : row));
+    };
+
+    const saveBulkEdit = async () => {
+        setDeshabilitar(true);
+        try {
+            const response = await axios.patch("/calidad/informes-ensayo/bulk/metadatos", { informes: editRows });
+            sendMessage(response.data.message, response.data.type || "Correcto");
+            setShowEdit(false);
+            clearSelection();
+            await reload?.();
+        } catch (error) {
+            sendMessage(await requestErrorMessage(error), "Error");
+        } finally {
+            setDeshabilitar(false);
+        }
+    };
+
     const handleClearSelection = () => {
         if (papelera && canPurge) {
             setShowClearConfirmation(true);
@@ -180,6 +216,18 @@ const BulkActionsInformesEnsayo = ({
                     >
                         <i className="pi pi-check text-[0.8rem]" />
                         Aprobar
+                    </button>
+                )}
+                {permissionEdit && (
+                    <button
+                        className={`${actionBaseClass} bg-indigo-50 text-indigo-700`}
+                        disabled={deshabilitar || !canEdit}
+                        data-pr-tooltip={canEdit ? "Corregir datos de los informes seleccionados" : "Solo se pueden editar informes no liberados y fuera de papelera"}
+                        data-pr-position="top"
+                        onClick={openBulkEdit}
+                    >
+                        <i className="pi pi-pencil text-[0.8rem]" />
+                        Editar datos
                     </button>
                 )}
                 {permissionSend && (
@@ -323,6 +371,27 @@ const BulkActionsInformesEnsayo = ({
                             <ButtonOk type="cancel" onClick={() => setShowRelease(false)} disabled={deshabilitar} classe="!w-32 disabled:opacity-50" children="Cancelar" />
                             <ButtonOk type="ok" onClick={releaseSelected} disabled={deshabilitar} classe="!w-52 disabled:opacity-60" children={releaseForm.enviarCorreo ? "Liberar y enviar" : "Liberar"} />
                         </div>
+                    </div>
+                </div>
+            )}
+            {showEdit && (
+                <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/30 p-4" role="dialog" aria-modal="true" aria-labelledby="editar-informes-seleccionados">
+                    <div className="relative mx-auto my-6 w-full max-w-[1500px] rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl">
+                        {deshabilitar && (
+                            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-3xl bg-white/85 backdrop-blur-sm">
+                                <i className="pi pi-spin pi-spinner text-4xl text-indigo-600" />
+                                <p className="mt-3 text-lg font-black text-slate-800">Guardando correcciones</p>
+                            </div>
+                        )}
+                        <h2 id="editar-informes-seleccionados" className="text-2xl font-black text-slate-800">Editar informes seleccionados</h2>
+                        <p className="mt-2 text-sm font-semibold text-slate-500">Corrige cada fila antes de guardar. No se reemplazan PDFs ni se modifican los ID de acceso.</p>
+                        <div className="mt-5 overflow-x-auto rounded-2xl border border-slate-200">
+                            <table className="w-full min-w-[1180px] text-sm">
+                                <thead className="bg-slate-50 text-left text-xs font-black uppercase tracking-wide text-slate-600"><tr><th className="px-3 py-3">Archivo</th><th className="px-3 py-3">Código</th><th className="px-3 py-3">Plan de monitoreo</th><th className="px-3 py-3">Cliente</th><th className="px-3 py-3">Matriz</th><th className="px-3 py-3">Acreditación</th></tr></thead>
+                                <tbody>{editRows.map((row, index) => <tr key={row.id} className="border-t border-slate-100"><td className="max-w-56 truncate px-3 py-3 font-semibold text-slate-600" title={row.archivo}>{row.archivo}</td><td className="px-3 py-3"><input className="w-full rounded-lg border border-slate-200 px-2 py-2" value={row.codigo} onChange={(event) => updateEditRow(index, "codigo", event.target.value)} /></td><td className="px-3 py-3"><input className="w-full rounded-lg border border-slate-200 px-2 py-2" value={row.planMonitoreo} onChange={(event) => updateEditRow(index, "planMonitoreo", event.target.value)} /></td><td className="px-3 py-3"><input className="w-full rounded-lg border border-slate-200 px-2 py-2" value={row.cliente} onChange={(event) => updateEditRow(index, "cliente", event.target.value)} /></td><td className="px-3 py-3"><input className="w-full rounded-lg border border-slate-200 px-2 py-2" value={row.matriz} onChange={(event) => updateEditRow(index, "matriz", event.target.value)} /></td><td className="px-3 py-3"><select className="w-full rounded-lg border border-slate-200 px-2 py-2" value={row.acreditacion} onChange={(event) => updateEditRow(index, "acreditacion", event.target.value)}><option value="INACAL">INACAL</option><option value="NAC">NAC</option><option value="SIN_ACREDITACION">Sin acreditación</option></select></td></tr>)}</tbody>
+                            </table>
+                        </div>
+                        <div className="mt-6 flex justify-end gap-3"><ButtonOk type="cancel" onClick={() => setShowEdit(false)} disabled={deshabilitar} classe="!w-32" children="Cancelar" /><ButtonOk type="ok" onClick={saveBulkEdit} disabled={deshabilitar} classe="!w-40" children="Guardar cambios" /></div>
                     </div>
                 </div>
             )}

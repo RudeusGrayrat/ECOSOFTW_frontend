@@ -10,11 +10,13 @@ import PdfActionsInformesEnsayo from "../Permissions/PdfActions";
 import ReleaseInformesEnsayo from "../Permissions/Release";
 import DeleteInformesEnsayo from "../Permissions/Delete";
 import ReviewInformesEnsayo from "../Permissions/Review";
+import EditInformesEnsayo from "../Permissions/Edit";
 import BulkActionsInformesEnsayo from "./BulkActions";
 import { useSearchParams } from "react-router-dom";
 
 const ListInformesEnsayo = ({
     permissionRead,
+    permissionEdit,
     permissionReport,
     permissionSend,
     permissionApprove,
@@ -74,7 +76,7 @@ const ListInformesEnsayo = ({
         <div className="w-full">
         <ListPrincipal
             key={papelera ? "informes-papelera" : "informes-activos"}
-            permissionEdit={false}
+            permissionEdit={permissionEdit}
             permissionDelete={false}
             permissionRead={permissionRead}
             permissionApprove={false}
@@ -82,6 +84,7 @@ const ListInformesEnsayo = ({
             ApproveItem={ApproveInformesEnsayo}
             DeleteItem={DeleteInformesEnsayo}
             DetailItem={ViewInformesEnsayo}
+            EditItem={EditInformesEnsayo}
             ExtraActions={(props) => (
                 <>
                     {permissionRead && (
@@ -139,12 +142,13 @@ const ListInformesEnsayo = ({
                     }}
                 />
             )}
-            selectable={permissionReport || permissionApprove || permissionSend || (papelera && permissionDelete)}
+            selectable={permissionReport || permissionEdit || permissionApprove || permissionSend || (papelera && permissionDelete)}
             BulkActions={(props) => (
                 <BulkActionsInformesEnsayo
                     {...props}
                     papelera={papelera}
                     permissionReport={permissionReport}
+                    permissionEdit={permissionEdit}
                     permissionApprove={permissionApprove}
                     permissionSend={permissionSend}
                     permissionDelete={permissionDelete}
