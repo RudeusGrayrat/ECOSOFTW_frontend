@@ -27,9 +27,8 @@ const EditProveedor = ({ selected, setShowEdit, reload }: any) => {
 
 const ListProveedores = ({ permissionEdit, permissionRead }: any) => {
   const fetchData = async (page = 0, limit = 10, search = "") => {
-    const response = await axios.get("/comercial/proveedores", { params: { todos: true } });
-    const needle = search.toLowerCase(); const filtered = (response.data.data || []).filter((item: any) => `${item.nombre} ${item.estado}`.toLowerCase().includes(needle));
-    return { data: filtered.slice(page * limit, (page + 1) * limit), total: filtered.length };
+    const response = await axios.get("/comercial/proveedores", { params: { todos: true, page, limit, search } });
+    return { data: response.data.data || [], total: response.data.total || 0 };
   };
   return <PrincipalList permissionEdit={permissionEdit} permissionRead={permissionRead} EditItem={EditProveedor} DetailItem={ViewProveedor} fetchData={fetchData} title="comercial_proveedores"><Column field="nombre" header="Proveedor" style={{ paddingLeft: "60px" }} /><Column field="estado" header="Estado" /></PrincipalList>;
 };

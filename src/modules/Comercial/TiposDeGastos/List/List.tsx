@@ -12,7 +12,7 @@ const ListTiposDeGastos = ({
     permissionApprove,
     permissionDisapprove
 }) => {
-    const fetchData = async (limit, page, search) => {
+    const fetchData = async (page, limit, search) => {
         const response = await axios.get("/comercial/getTiposDeGastosPaginacion", {
             params: {
                 limit,

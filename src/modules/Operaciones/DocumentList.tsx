@@ -61,7 +61,7 @@ const Creator = ({ kind }: { kind: "plan" | "orden" }) => {
 
 const ListDocumentos = ({ kind, permissionEdit, permissionRead }: any) => {
   const endpoint = kind === "plan" ? "/operaciones/planes-trabajo" : "/operaciones/ordenes-internas";
-  const fetchData = async (page = 0, limit = 10, search = "") => { const response = await axios.get(endpoint); const needle = search.toLowerCase(); const filtered = (response.data.data || []).filter((item: any) => `${item.codigo} ${item.estado} ${item.proyecto?.nombre || ""}`.toLowerCase().includes(needle)); return { data: filtered.slice(page * limit, (page + 1) * limit), total: filtered.length }; };
+  const fetchData = async (page = 0, limit = 10, search = "") => { const response = await axios.get(endpoint, { params: { page, limit, search } }); return { data: response.data.data || [], total: response.data.total || 0 }; };
   const EditItem = (props: any) => <Editor item={props.selected} kind={kind} onClose={() => props.setShowEdit(false)} onSaved={props.reload} />;
   const DetailItem = (props: any) => <ViewDocumento {...props} kind={kind} />;
   return <PrincipalList permissionEdit={permissionEdit} permissionRead={permissionRead} EditItem={EditItem} DetailItem={DetailItem} fetchData={fetchData} title={`operaciones_${kind}`}><Column field="codigo" header="Código" style={{ paddingLeft: "60px" }} /><Column field="proyecto.nombre" header="Proyecto" /><Column field="estado" header="Estado" /><Column body={(row: any) => row.items?.length || 0} header="Ítems" /></PrincipalList>;

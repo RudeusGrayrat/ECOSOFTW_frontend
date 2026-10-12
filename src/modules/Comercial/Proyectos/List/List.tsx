@@ -14,7 +14,7 @@ const ListProyectos = ({
     permissionApprove,
     permissionDisapprove
 }) => {
-    const fetchData = async (limit: Number, page: Number, search: String) => {
+    const fetchData = async (page: Number, limit: Number, search: String) => {
         const response = await axios.get("/comercial/getProyectosPaginacion", {
             params: {
                 limit,

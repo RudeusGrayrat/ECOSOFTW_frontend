@@ -21,7 +21,7 @@ const ListParametrosComercial = ({
         });
         return {
             data: response.data.data,
-            totalRecords: response.data.total
+            total: response.data.total
         }
     }
 

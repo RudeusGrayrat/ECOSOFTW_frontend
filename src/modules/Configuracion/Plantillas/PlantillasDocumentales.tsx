@@ -39,7 +39,7 @@ const EditPlantilla = ({ selected, setShowEdit, reload }: any) => {
 };
 
 const ListPlantillas = ({ permissionEdit, permissionRead }: any) => {
-  const fetchData = async (page = 0, limit = 10, search = "") => { const response = await axios.get("/herramientas/plantillas-documentales"); const needle = search.toLowerCase(); const filtered = (response.data.data || []).filter((row: any) => `${row.nombre} ${row.tipo} ${row.version} ${row.estado}`.toLowerCase().includes(needle)); return { data: filtered.slice(page * limit, (page + 1) * limit), total: filtered.length }; };
+  const fetchData = async (page = 0, limit = 10, search = "") => { const response = await axios.get("/herramientas/plantillas-documentales", { params: { page, limit, search } }); return { data: response.data.data || [], total: response.data.total || 0 }; };
   return <PrincipalList permissionEdit={permissionEdit} permissionRead={permissionRead} EditItem={EditPlantilla} DetailItem={ViewPlantilla} fetchData={fetchData} title="configuracion_plantillas"><Column body={(row: any) => tipos[row.tipo] || row.tipo} header="Documento" style={{ paddingLeft: "60px" }} /><Column field="nombre" header="Nombre" /><Column field="version" header="Version" /><Column field="estado" header="Estado" /></PrincipalList>;
 };
 
