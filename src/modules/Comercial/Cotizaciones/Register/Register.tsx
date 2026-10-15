@@ -20,6 +20,7 @@ const RegisterCotizacionesComercial = ({ }) => {
     const [habilitar, setHabilitar] = useState(false);
     const [form, setForm] = useState({
         tiempoDeEntrega: [],
+        fechaElaboracion: new Date().toISOString().slice(0, 10),
         tipoDeServicio: "",
         estado: "PENDIENTE",
         proyecto_id: "",
@@ -67,6 +68,7 @@ const RegisterCotizacionesComercial = ({ }) => {
     const resetForm = () => {
         setForm({
             tiempoDeEntrega: [],
+            fechaElaboracion: new Date().toISOString().slice(0, 10),
             tipoDeServicio: "",
             estado: "PENDIENTE",
             proyecto_id: "",
@@ -195,6 +197,7 @@ const RegisterCotizacionesComercial = ({ }) => {
             </CardPlegable>
             <CardPlegable title="Análisis de Cotización">
                 <Directorio
+                    key={`analisis-${form.solicitud_id || "manual"}`}
                     estilos="flex justify-center items-center"
                     ItemComponent={Analisis}
                     data="analisis"

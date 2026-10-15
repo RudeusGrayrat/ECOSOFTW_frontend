@@ -9,7 +9,11 @@ const ViewParametros = ({ selected, setShowDetail }) => {
             <div className="flex flex-col flex-wrap overflow-y-hidden mt-4 ml-2">
                 <PDetail content="TIPO DE PARAMETRO" value={selected?.tipoDeAnalisis} />
                 {selected.tipoDeAnalisis === "AGUA" && <PDetail content="CATEGORÍA" value={selected?.categoria} />}
-                <PDetail content="PARÁMETRO" value={selected?.parametro} />
+                <PDetail content="NOMBRE CORTO PARA COTIZAR" value={selected?.nombreCorto || "Sin clasificar"} />
+                <PDetail content="ALCANCE TÉCNICO / PARÁMETRO" value={selected?.parametro} />
+                <PDetail content="COMPONENTES INCLUIDOS" value={(selected?.componentes || []).join(", ") || "-"} />
+                <PDetail content="TIPO DE ÍTEM" value={selected?.tipoItem || "LEGADO"} />
+                <PDetail content="UNIDAD DE COBRO" value={selected?.unidadCobro || "POR_UNIDAD"} />
                 <PDetail content="MÉTODO" value={selected?.metodo} />
                 <PDetail content="TIPO DE ACREDITACION" value={selected?.tipoDeAcreditacion} />
                 <PDetail content="ACREDITADO POR" value={selected?.acreditadoPor} />
@@ -17,6 +21,7 @@ const ViewParametros = ({ selected, setShowDetail }) => {
                 <PDetail content="LÍMITE DE CUANTIFICACIÓN DEL MÉTODO (L.C.M.)" value={selected?.limiteDeCuantificacionDelMetodo} />
                 <PDetail content="UNIDAD DE MEDIDA" value={selected?.unidadDeMedida} />
                 <PDetail content="PRECIO (SOLES)" value={selected?.precio} />
+                <PDetail content="VIGENCIA" value={`${selected?.vigenciaDesde ? new Date(selected.vigenciaDesde).toLocaleDateString() : "Sin fecha"}${selected?.vigenciaHasta ? ` al ${new Date(selected.vigenciaHasta).toLocaleDateString()}` : ""}`} />
                 <PDetail content="ESTADO" value={selected?.estado} />
             </div>
         </Details>

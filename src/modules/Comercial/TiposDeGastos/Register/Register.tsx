@@ -7,11 +7,15 @@ import axios from "../../../../api/axios";
 import PopUp from "../../../../components/Ui/Messages/PopUp";
 
 const RegisterTiposDeGastos = () => {
-    const [form, setForm] = useState({});
+    const initialForm = () => ({
+        categoria: "OPERATIVO", tipoDeGasto: "GASTOS OPERATIVOS", codigo: "", descripcion: "", precio: 0,
+        origen: "MANUAL", unidadReferencia: "FIJO", vigenciaDesde: new Date().toISOString().slice(0, 10), vigenciaHasta: "",
+    });
+    const [form, setForm] = useState(initialForm);
     const [deshabilitar, setDeshabilitar] = useState(false);
     const sendMessage = useSendMessage();
     const resetForm = () => {
-        setForm({});
+        setForm(initialForm());
     }
     const registrar = async () => {
         setDeshabilitar(true);

@@ -174,7 +174,7 @@ const InputP = ({
                                         limit: 10,
                                         search: e.query,
                                     }
-                                    if (inputProps.extraParams) {
+                                    if (Object.keys(extraParams).length > 0) {
                                         allParams = {
                                             ...allParams,
                                             ...extraParams

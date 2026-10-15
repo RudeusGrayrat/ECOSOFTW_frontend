@@ -2,13 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import InputP from "../../../../components/Ui/Input/InputP";
 import InputNormal from "../../../../components/Ui/Input/Normal";
 
-const GastosOperativos = ({ initialData, set }) => {
+const GastosOperativos = ({ initialData = {}, set }) => {
     const [gastosOperativos, setGastosOperativos] = useState({
-        descripcion: null,
-        precio: 0,
-        cantidad: 0,
-        dias: 0,
-        subtotal: 0,
+        descripcion: initialData.tipoDeGasto_id || initialData.descripcion || null,
+        precio: initialData.precio ?? initialData.tipoDeGasto_id?.precio ?? 0,
+        cantidad: initialData.cantidad ?? 0,
+        dias: initialData.dias ?? 0,
+        subtotal: initialData.subtotal ?? 0,
     });
 
     const [gastosOperativosOptions, setGastosOperativosOptions] = useState([]);
@@ -79,6 +79,7 @@ const GastosOperativos = ({ initialData, set }) => {
                 name="descripcion"
                 ancho={"w-96"}
                 fetchData={"/comercial/getTiposDeGastosPaginacion"}
+                extraParams={{ categoria: "OPERATIVO" }}
                 setOptions={setGastosOperativosOptions}
                 value={gastosOperativos.descripcion}
                 setForm={setGastosOperativos}

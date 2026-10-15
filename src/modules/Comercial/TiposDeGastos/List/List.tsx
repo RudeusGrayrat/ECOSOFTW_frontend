@@ -17,7 +17,8 @@ const ListTiposDeGastos = ({
             params: {
                 limit,
                 page,
-                search
+                search,
+                incluirInactivos: "true"
             }
         });
         return {
@@ -40,6 +41,10 @@ const ListTiposDeGastos = ({
             fetchData={fetchData}
         >
             <Column field="tipoDeGasto" header="Tipo de Gasto" style={{ paddingLeft: "60px" }} />
+            <Column field="codigo" header="Código" body={(rowData) => rowData.codigo || "LEGADO"} />
+            <Column field="categoria" header="Categoría" />
+            <Column field="origen" header="Origen" body={(rowData) => rowData.origen || "MANUAL"} />
+            <Column field="unidadReferencia" header="Referencia" body={(rowData) => rowData.unidadReferencia || "FIJO"} />
             <Column field="descripcion" header="Descripción" />
             <Column field="precio" header="Precio Soles" />
             <Column field="estado" header="Estado"

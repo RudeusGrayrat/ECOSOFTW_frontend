@@ -19,6 +19,8 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
   const idSelected = selected._id;
   const { user } = useAuth();
   const [form, setForm] = useState({ ...selected });
+  const [codigoManual, setCodigoManual] = useState("");
+  const [motivoCambioCodigo, setMotivoCambioCodigo] = useState("");
   const changes = deepDiff(form, selected);
   console.log("Detected Changes in EditCotizacion:", changes);
   const [deshabilitar, setDeshabilitar] = useState(false);
@@ -27,7 +29,7 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
     setDeshabilitar(true);
     try {
       if (!idSelected) return;
-      if (Object.keys(changes).length === 0) {
+      if (Object.keys(changes).length === 0 && !codigoManual.trim()) {
         sendMessage("No hay cambios para guardar", "Error");
         return;
       }
@@ -39,6 +41,8 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
         ...changes,
         actualizadoPor: user._id,
         creadoPor: user._id,
+        codigoManual: codigoManual.trim(),
+        motivoCambioCodigo: motivoCambioCodigo.trim(),
       });
       sendMessage(response.data.message, "Correcto");
       await reload();
@@ -57,6 +61,27 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
         <span className="text-3xl ml-6 font-semibold text-blue-500">Editar Cotización</span>
         <CardPlegable title="Proyecto">
           <Proyecto form={form} setForm={setForm} />
+        </CardPlegable>
+        <CardPlegable title="Control documental">
+          <div className="flex flex-wrap gap-4 p-4">
+            <label className="flex min-w-56 flex-col gap-1 text-sm font-semibold text-slate-700">
+              Fecha de elaboración
+              <input className="rounded-lg border border-slate-300 px-3 py-2 font-normal" type="date" value={form.fechaElaboracion ? String(form.fechaElaboracion).slice(0, 10) : ""} onChange={(event) => setForm((current) => ({ ...current, fechaElaboracion: event.target.value }))} />
+            </label>
+            <div className="min-w-72 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-600">
+              <p className="font-semibold text-slate-800">Código actual</p>
+              <p>{selected.correlativaVisible}</p>
+              <p className="mt-1 text-xs">Al guardar se crea automáticamente la siguiente versión.</p>
+            </div>
+            <label className="flex min-w-72 flex-col gap-1 text-sm font-semibold text-slate-700">
+              Personalizar código (opcional)
+              <input className="rounded-lg border border-slate-300 px-3 py-2 font-normal uppercase" value={codigoManual} maxLength={100} placeholder="ECO26-0001-CT-VR00-CLIENTE" onChange={(event) => setCodigoManual(event.target.value.toUpperCase())} />
+            </label>
+            {codigoManual.trim() && <label className="flex min-w-72 flex-1 flex-col gap-1 text-sm font-semibold text-slate-700">
+              Motivo del cambio de código *
+              <textarea className="min-h-20 rounded-lg border border-slate-300 px-3 py-2 font-normal" value={motivoCambioCodigo} onChange={(event) => setMotivoCambioCodigo(event.target.value)} />
+            </label>}
+          </div>
         </CardPlegable>
         <CardPlegable title="Gastos Operativos">
           <Directorio

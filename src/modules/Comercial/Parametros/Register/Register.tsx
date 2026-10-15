@@ -11,26 +11,38 @@ const RegisterParametrosComercial = () => {
     const [form, setForm] = useState({
         tipoDeAnalisis: "",
         categoria: "",
+        nombreCorto: "",
         parametro: "",
+        componentes: [],
+        tipoItem: "INDIVIDUAL",
+        unidadCobro: "POR_UNIDAD",
         metodo: "",
         acreditadoPor: "",
         limiteDeCuantificacionDelMetodo: "",
         limiteDeDeteccionDelMetodo: "",
         unidadDeMedida: "",
         precio: 0,
+        vigenciaDesde: new Date().toISOString().slice(0, 10),
+        vigenciaHasta: "",
     });
     const sendMessage = useSendMessage();
     const resetForm = () => {
         setForm({
             tipoDeAnalisis: "",
             categoria: "",
+            nombreCorto: "",
             parametro: "",
+            componentes: [],
+            tipoItem: "INDIVIDUAL",
+            unidadCobro: "POR_UNIDAD",
             metodo: "",
             acreditadoPor: "-",
             limiteDeCuantificacionDelMetodo: "",
             limiteDeDeteccionDelMetodo: "",
             unidadDeMedida: "",
             precio: 0,
+            vigenciaDesde: new Date().toISOString().slice(0, 10),
+            vigenciaHasta: "",
         });
         setHabilitar(false);
     }

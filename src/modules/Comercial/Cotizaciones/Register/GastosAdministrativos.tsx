@@ -2,12 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import InputP from "../../../../components/Ui/Input/InputP";
 import InputNormal from "../../../../components/Ui/Input/Normal";
 
-const GastosAdministrativos = ({ set, initialData }) => {
+const GastosAdministrativos = ({ set, initialData = {} }) => {
     const [gastosAdministrativos, setGastosAdministrativos] = useState({
-        descripcion: null,
-        precio: 0,
-        cantidad: 0,
-        subtotal: 0,
+        descripcion: initialData.tipoDeGasto_id || initialData.descripcion || null,
+        precio: initialData.precio ?? initialData.tipoDeGasto_id?.precio ?? 0,
+        cantidad: initialData.cantidad ?? 0,
+        subtotal: initialData.subtotal ?? 0,
     });
 
     const [gastosAdministrativosOptions, setGastosAdministrativosOptions] = useState([]);
@@ -74,6 +74,7 @@ const GastosAdministrativos = ({ set, initialData }) => {
                 name="descripcion"
                 ancho={"w-96"}
                 fetchData={"/comercial/getTiposDeGastosPaginacion"}
+                extraParams={{ categoria: "ADMINISTRATIVO" }}
                 setOptions={setGastosAdministrativosOptions}
                 value={gastosAdministrativos.descripcion}
                 setForm={setGastosAdministrativos}

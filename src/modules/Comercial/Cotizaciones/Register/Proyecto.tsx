@@ -31,8 +31,33 @@ const Proyecto = ({ form, setForm }) => {
         if (!solicitud) return;
         const cliente = solicitud.cliente_id;
         const proyecto = solicitud.proyecto_id;
+        const analisisSolicitados = (solicitud.parametrosSolicitados || [])
+            .filter((item) => item.parametro_id?._id)
+            .map((item) => ({
+                descripcion: item.parametro_id.tipoDeAnalisis || "",
+                parametro_id: item.parametro_id,
+                precio: Number(item.parametro_id.precio || 0),
+                cantidad: Math.max(1, Number(item.cantidadPuntos || 1)),
+                subtotal: Number(item.parametro_id.precio || 0) * Math.max(1, Number(item.cantidadPuntos || 1)),
+                modalidad: "PROPIO",
+                proveedor: "",
+            }));
         setLocalForm({ _id: proyecto?._id || "", nombre: proyecto || "", cliente: cliente || "", servicio: (solicitud.servicios || []).join(", "), fechaServicio: solicitud.fechaServicio ? dayjs(solicitud.fechaServicio).format("YYYY-MM-DD") : "", cantidadDeMuestreo: solicitud.cantidadPuntosParametros || proyecto?.cantidadPuntosParametros || "", lugarMuestreo: solicitud.lugarEjecucion || "" });
-        setForm((prev) => ({ ...prev, solicitud_id: solicitud._id, proyecto_id: proyecto?._id || "", tipoDeServicio: (solicitud.servicios || []).join(", "), facturacion: { razonSocial: cliente?.cliente || "", ruc: cliente?.numeroDocumento || "", direccion: cliente?.direccionLegal || "", formaPago: prev.facturacion?.formaPago || "" } }));
+        setForm((prev) => ({
+            ...prev,
+            solicitud_id: solicitud._id,
+            proyecto_id: proyecto?._id || "",
+            tipoDeServicio: (solicitud.servicios || []).join(", "),
+            // La solicitud es la fuente de la propuesta inicial. Comercial aún
+            // puede ajustar las líneas antes de registrar la cotización.
+            analisis: analisisSolicitados.length ? analisisSolicitados : prev.analisis,
+            facturacion: {
+                razonSocial: solicitud.destinatarioInforme?.razonSocial || cliente?.cliente || "",
+                ruc: solicitud.destinatarioInforme?.ruc || cliente?.numeroDocumento || "",
+                direccion: cliente?.direccionLegal || "",
+                formaPago: prev.facturacion?.formaPago || ""
+            }
+        }));
     };
     useEffect(() => {
         // Una solicitud trae su propio detalle. No lo sobrescribimos con el
@@ -106,9 +131,14 @@ const Proyecto = ({ form, setForm }) => {
                     {solicitudes.map((item) => <option key={item._id} value={item._id}>{item.cliente_id?.cliente} — {item.proyecto_id?.nombre} — {new Date(item.createdAt).toLocaleDateString()}</option>)}
                 </select>
                 {solicitudSeleccionada && (
-                    <p className="mt-3 whitespace-pre-wrap break-words text-sm text-emerald-800">
-                        Se usará el detalle enviado por el cliente: {localForm.cantidadDeMuestreo || "sin detalle de puntos o parámetros"}.
-                    </p>
+                    <div className="mt-3 grid gap-2 rounded-lg border border-emerald-100 bg-white p-3 text-sm text-emerald-900 md:grid-cols-2">
+                        <p><strong>Cliente:</strong> {localForm.cliente?.cliente || "-"}</p>
+                        <p><strong>Proyecto:</strong> {localForm.nombre?.nombre || "Según cadena de custodia"}</p>
+                        <p><strong>Servicio:</strong> {localForm.servicio || "-"}</p>
+                        <p><strong>Fecha prevista:</strong> {localForm.fechaServicio || "-"}</p>
+                        <p className="md:col-span-2"><strong>Detalle técnico:</strong> {localForm.cantidadDeMuestreo || "Sin parámetros seleccionados; agrega las líneas necesarias."}</p>
+                        <p className="md:col-span-2 text-xs text-emerald-700">Los parámetros seleccionados se cargaron como análisis iniciales. Puedes ajustar alcance, precio o ejecución antes de registrar.</p>
+                    </div>
                 )}
             </div>
             <InputP
@@ -122,6 +152,14 @@ const Proyecto = ({ form, setForm }) => {
                 otro={false}
                 value={localForm.cliente}
                 setForm={setLocalForm}
+            />
+            <InputNormal
+                label="Fecha de elaboración"
+                name="fechaElaboracion"
+                type="date"
+                ancho="w-60"
+                value={form.fechaElaboracion || ""}
+                setForm={setForm}
             />
             <div className="mt-5 w-full border-t border-slate-200 pt-5">
                 <h3 className="mb-4 text-lg font-semibold text-slate-700">Informe y facturación</h3>

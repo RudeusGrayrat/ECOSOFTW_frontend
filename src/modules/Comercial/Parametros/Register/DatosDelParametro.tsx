@@ -24,6 +24,8 @@ const unidadesDeMedida = [
     "NMP/100 mL",
     "°C"
 ];
+const tiposDeItem = ["INDIVIDUAL", "PAQUETE", "CAMPO"];
+const unidadesDeCobro = ["POR_UNIDAD", "POR_PUNTO", "POR_MUESTRA", "POR_DIA", "POR_CAMPANA", "POR_EQUIPO"];
 
 const DatosDelParametro = ({ form, setForm }) => {
     useEffect(() => {
@@ -60,11 +62,45 @@ const DatosDelParametro = ({ form, setForm }) => {
                 />
             }
             <InputP
-                label="Parametro"
+                label="Nombre corto para cotizar"
+                name="nombreCorto"
+                value={form.nombreCorto || ""}
+                setForm={setForm}
+            />
+            <InputP
+                label="Tipo de ítem"
+                name="tipoItem"
+                type="select"
+                editable={false}
+                options={tiposDeItem}
+                value={form.tipoItem || "INDIVIDUAL"}
+                setForm={setForm}
+            />
+            <InputP
+                label="Unidad de cobro"
+                name="unidadCobro"
+                type="select"
+                editable={false}
+                options={unidadesDeCobro}
+                value={form.unidadCobro || "POR_UNIDAD"}
+                setForm={setForm}
+            />
+            <InputP
+                label="Alcance técnico / parámetro"
                 name="parametro"
                 value={form.parametro}
                 setForm={setForm}
             />
+            <div className="flex flex-col mx-3 F h-20">
+                <label className="text-base font-medium text-gray-700">Componentes incluidos</label>
+                <input
+                    className="mt-1 px-3 py-2 border-gray-300 bg-white border min-w-56 text-base! rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                    placeholder="Ej.: PM10, PM2.5, SO2"
+                    value={Array.isArray(form.componentes) ? form.componentes.join(", ") : form.componentes || ""}
+                    onChange={(event) => setForm((prev) => ({ ...prev, componentes: event.target.value.split(",").map((item) => item.trim()).filter(Boolean) }))}
+                />
+                <span className="mt-1 text-xs text-gray-500">Sepáralos por comas. No modifica el precio individual del ensayo.</span>
+            </div>
             <InputP
                 label="Método"
                 name="metodo"
@@ -134,6 +170,22 @@ const DatosDelParametro = ({ form, setForm }) => {
                     }
                 }}
                 value={form.precio}
+                setForm={setForm}
+            />
+            <InputP
+                label="Vigente desde"
+                name="vigenciaDesde"
+                type="date"
+                mayus={false}
+                value={form.vigenciaDesde ? String(form.vigenciaDesde).slice(0, 10) : ""}
+                setForm={setForm}
+            />
+            <InputP
+                label="Vigente hasta (opcional)"
+                name="vigenciaHasta"
+                type="date"
+                mayus={false}
+                value={form.vigenciaHasta ? String(form.vigenciaHasta).slice(0, 10) : ""}
                 setForm={setForm}
             />
             {form._id && <InputP label="Estado" name="estado" type="select" editable={false} options={["ACTIVO", "INACTIVO"]} value={form.estado || "ACTIVO"} setForm={setForm} />}
