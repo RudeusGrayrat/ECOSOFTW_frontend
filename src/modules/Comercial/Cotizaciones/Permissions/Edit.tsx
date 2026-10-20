@@ -83,7 +83,7 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
             </label>}
           </div>
         </CardPlegable>
-        <CardPlegable title="Gastos Operativos">
+        <CardPlegable title="Gastos Operativos (opcional)">
           <Directorio
             estilos="flex justify-center items-center"
             ItemComponent={GastosOperativos}
@@ -92,7 +92,7 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
             setForm={setForm}
           />
         </CardPlegable>
-        <CardPlegable title="Gastos Administrativos">
+        <CardPlegable title="Gastos Administrativos (opcional)">
           <Directorio
             estilos="flex justify-center items-center"
             ItemComponent={GastosAdministrativos}

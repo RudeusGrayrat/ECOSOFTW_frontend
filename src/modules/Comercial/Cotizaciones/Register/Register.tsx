@@ -18,6 +18,7 @@ const RegisterCotizacionesComercial = ({ }) => {
     const sendMessage = useSendMessage()
     const { user } = useAuth()
     const [habilitar, setHabilitar] = useState(false);
+    const [formVersion, setFormVersion] = useState(0);
     const [form, setForm] = useState({
         tiempoDeEntrega: [],
         fechaElaboracion: new Date().toISOString().slice(0, 10),
@@ -33,25 +34,8 @@ const RegisterCotizacionesComercial = ({ }) => {
                 subtotal: 0,
             }
         ],
-        gastosOperativos: [
-            {
-                descripcion: "",
-                tipoDeGasto_id: "",
-                precio: 0,
-                cantidad: 0,
-                dias: 0,
-                subtotal: 0,
-            }
-        ],
-        gastosAdministrativos: [
-            {
-                descripcion: "",
-                tipoDeGasto_id: "",
-                precio: 0,
-                cantidad: 0,
-                subtotal: 0,
-            }
-        ],
+        gastosOperativos: [],
+        gastosAdministrativos: [],
         gastosGenerales: [
             {
                 descripcion: "",
@@ -81,25 +65,8 @@ const RegisterCotizacionesComercial = ({ }) => {
                     subtotal: 0,
                 }
             ],
-            gastosOperativos: [
-                {
-                    descripcion: "",
-                    tipoDeGasto_id: "",
-                    precio: 0,
-                    cantidad: 0,
-                    dias: 0,
-                    subtotal: 0,
-                }
-            ],
-            gastosAdministrativos: [
-                {
-                    descripcion: "",
-                    tipoDeGasto_id: "",
-                    precio: 0,
-                    cantidad: 0,
-                    subtotal: 0,
-                }
-            ],
+            gastosOperativos: [],
+            gastosAdministrativos: [],
             gastosGenerales: [
                 {
                     descripcion: "",
@@ -111,6 +78,7 @@ const RegisterCotizacionesComercial = ({ }) => {
             totalConIgv: 0,
             facturacion: { razonSocial: "", ruc: "", direccion: "", formaPago: "" },
         });
+        setFormVersion((version) => version + 1);
         setHabilitar(false);
     }
     const round2 = (n) => Math.round(n * 100) / 100;
@@ -177,8 +145,10 @@ const RegisterCotizacionesComercial = ({ }) => {
             <CardPlegable title="Datos de Proyecto">
                 <Proyecto form={form} setForm={setForm} />
             </CardPlegable>
-            <CardPlegable title="Gastos Operativos">
+            <CardPlegable title="Gastos Operativos (opcional)">
+                <p className="px-4 pt-3 text-sm text-slate-500">Añade gastos solo cuando correspondan a la cotización.</p>
                 <Directorio
+                    key={`operativos-${formVersion}`}
                     estilos="flex justify-center items-center"
                     ItemComponent={GastosOperativos}
                     directory={form?.gastosOperativos}
@@ -186,8 +156,10 @@ const RegisterCotizacionesComercial = ({ }) => {
                     setForm={setForm}
                 />
             </CardPlegable>
-            <CardPlegable title="Gastos Administrativos">
+            <CardPlegable title="Gastos Administrativos (opcional)">
+                <p className="px-4 pt-3 text-sm text-slate-500">Puedes dejar esta sección vacía.</p>
                 <Directorio
+                    key={`administrativos-${formVersion}`}
                     estilos="flex justify-center items-center"
                     ItemComponent={GastosAdministrativos}
                     directory={form?.gastosAdministrativos}
@@ -197,7 +169,7 @@ const RegisterCotizacionesComercial = ({ }) => {
             </CardPlegable>
             <CardPlegable title="Análisis de Cotización">
                 <Directorio
-                    key={`analisis-${form.solicitud_id || "manual"}`}
+                    key={`analisis-${formVersion}-${form.solicitud_id || "manual"}`}
                     estilos="flex justify-center items-center"
                     ItemComponent={Analisis}
                     data="analisis"

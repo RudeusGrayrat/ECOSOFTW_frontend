@@ -12,6 +12,7 @@ import TipoDeGatos_Comercial from "../modules/Comercial/TiposDeGastos/TipoDeGast
 import InformesEnsayo from "../modules/Calidad/InformesEnsayo/InformesEnsayo";
 import Configuracion_Calidad from "../modules/Calidad/Configuracion/Configuracion";
 import { OrdenesInternas, PlanesTrabajo } from "../modules/Operaciones/DocumentList";
+import { CronogramaOperativo, RecursosOperativos } from "../modules/Operaciones/Cronograma";
 import Proveedores from "../modules/Comercial/Proveedores/Proveedores";
 import PlantillasDocumentales from "../modules/Herramientas/Plantillas/PlantillasDocumentales";
 
@@ -38,7 +39,9 @@ const componentMap: ModulesMap = {
     },
     "operaciones": {
         "planes de trabajo": PlanesTrabajo,
-        "ordenes internas": OrdenesInternas
+        "ordenes internas": OrdenesInternas,
+        "cronograma operativo": CronogramaOperativo,
+        "recursos operativos": RecursosOperativos
     }
 
 }
