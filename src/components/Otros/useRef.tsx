@@ -6,7 +6,9 @@ const useref = (setShow) => {
         const handleClickOutside = (e) => {
             if (ref.current && !ref.current.contains(e.target)) {
                 const excludeElements = document.querySelectorAll(
-                    '.p-dropdown-panel, .p-multiselect-panel, .MuiPickersPopper-root'
+                    // PrimeReact monta AutoComplete y algunos paneles en un portal
+                    // fuera del modal. Esos clics siguen siendo parte de la edición.
+                    '.p-dropdown-panel, .p-multiselect-panel, .p-autocomplete-panel, .p-datepicker, .MuiPickersPopper-root'
                 );
 
                 let clickedInsideExclusion = false;

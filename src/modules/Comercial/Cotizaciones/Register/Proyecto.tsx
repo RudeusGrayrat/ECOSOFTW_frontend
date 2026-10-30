@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InputP from "../../../../components/Ui/Input/InputP";
 import InputNormal from "../../../../components/Ui/Input/Normal";
 import dayjs from "dayjs";
@@ -22,9 +22,31 @@ const Proyecto = ({ form, setForm }) => {
     const [proyectosForAutoComplete, setProyectosForAutoComplete] = useState([]);
     const [solicitudes, setSolicitudes] = useState([]);
     const [solicitudSeleccionada, setSolicitudSeleccionada] = useState("");
+    const clienteInicializadoRef = useRef<string | null>(null);
+    const proyectoHidratadoRef = useRef<string | null>(null);
     useEffect(() => {
         axios.get("/comercial/solicitudes-cotizacion").then((response) => setSolicitudes(response.data.data || [])).catch(() => setSolicitudes([]));
     }, []);
+    useEffect(() => {
+        // Al editar, la cotización llega con proyecto_id poblado desde el
+        // listado. Hidratamos el formulario local una sola vez, sin tratarlo
+        // como si fuera una nueva selección de cliente.
+        const proyecto = typeof form.proyecto_id === "object" ? form.proyecto_id : null;
+        if (!proyecto?._id || proyectoHidratadoRef.current === proyecto._id || solicitudSeleccionada) return;
+
+        proyectoHidratadoRef.current = proyecto._id;
+        clienteInicializadoRef.current = proyecto.cliente_id?._id || null;
+        setLocalForm({
+            _id: proyecto._id,
+            nombre: proyecto,
+            cliente: proyecto.cliente_id || "",
+            servicio: proyecto.servicio || form.tipoDeServicio || "",
+            fechaServicio: proyecto.fechaServicio ? dayjs(proyecto.fechaServicio).format("YYYY-MM-DD") : "",
+            cantidadDeMuestreo: proyecto.cantidadPuntosParametros || "",
+            lugarMuestreo: proyecto.lugarMuestreo || "",
+        });
+        setTiempoDeEntrega(Array.isArray(form.tiempoDeEntrega) ? form.tiempoDeEntrega : []);
+    }, [form.proyecto_id, form.tipoDeServicio, form.tiempoDeEntrega, solicitudSeleccionada]);
     const cargarSolicitud = (id) => {
         setSolicitudSeleccionada(id);
         const solicitud = solicitudes.find((item) => item._id === id);
@@ -64,19 +86,22 @@ const Proyecto = ({ form, setForm }) => {
         // resumen histórico del proyecto (que puede ser anterior o vacío).
         if (!solicitudSeleccionada && localForm.nombre && localForm.cliente) {
             const proyectoSeleccionado = localForm.nombre
-            setLocalForm({
-                ...localForm,
+            setLocalForm((prev) => ({
+                ...prev,
                 servicio: proyectoSeleccionado.servicio,
                 fechaServicio: dayjs(proyectoSeleccionado.fechaServicio, "DD/MM/YYYY").format("YYYY-MM-DD"),
                 cantidadDeMuestreo: proyectoSeleccionado.cantidadPuntosParametros || "",
                 lugarMuestreo: proyectoSeleccionado.lugarMuestreo,
                 _id: proyectoSeleccionado._id
-            });
+            }));
         }
 
     }, [localForm.nombre, solicitudSeleccionada]);
     useEffect(() => {
         if (localForm.cliente && !solicitudSeleccionada) {
+            const clienteId = localForm.cliente._id || null;
+            const cambioCliente = clienteInicializadoRef.current !== null && clienteInicializadoRef.current !== clienteId;
+            clienteInicializadoRef.current = clienteId;
             setForm((prev) => ({
                 ...prev,
                 facturacion: {
@@ -86,6 +111,10 @@ const Proyecto = ({ form, setForm }) => {
                     formaPago: prev.facturacion?.formaPago || "",
                 }
             }));
+            // Solo una selección posterior de otro cliente invalida el
+            // proyecto previo. La hidratación de una cotización en edición y
+            // la primera selección deben conservarlo.
+            if (!cambioCliente) return;
             setLocalForm(prev => ({
                 ...prev,
                 nombre: "",
@@ -93,25 +122,18 @@ const Proyecto = ({ form, setForm }) => {
                 fechaServicio: "",
                 cantidadDeMuestreo: "",
                 lugarMuestreo: "",
-                tipoDeServicio: "",
                 _id: ""
             }));
         }
     }, [localForm.cliente, solicitudSeleccionada]);
     useEffect(() => {
-        if (localForm.cliente && localForm.nombre
-            && localForm.servicio
-            && localForm.fechaServicio
-            && localForm.cantidadDeMuestreo
-            && localForm.lugarMuestreo
-            && tiempoDeEntrega.length > 0
-        ) {
-            setForm({
-                ...form,
+        if (localForm.cliente && localForm.nombre && localForm.servicio) {
+            setForm((prev) => ({
+                ...prev,
                 proyecto_id: localForm._id,
                 tiempoDeEntrega: tiempoDeEntrega,
                 tipoDeServicio: localForm.servicio
-            });
+            }));
         }
     }, [
         localForm.cliente,
@@ -199,13 +221,6 @@ const Proyecto = ({ form, setForm }) => {
                 setForm={setLocalForm}
             />
             <InputNormal
-                label="Puntos / Parámetros solicitados"
-                name="cantidadDeMuestreo"
-                type="text"
-                value={localForm.cantidadDeMuestreo}
-                setForm={setLocalForm}
-            />
-            <InputNormal
                 label="Lugar de Muestreo"
                 name="lugarMuestreo"
                 ancho="w-96"
@@ -213,12 +228,12 @@ const Proyecto = ({ form, setForm }) => {
                 setForm={setLocalForm}
             />
             <InputP
-                label="Tiempo de Entrega"
+                label="Detalles del Servicio"
                 name="tiempoDeEntrega"
                 type="multiSelect"
                 options={[
-                    "EQUIPOS DE COMPUTO", "TRANSPORTE",
-                    "INFORME DE ENSAYO", "PERONAL DE CAMPO",
+                    "EQUIPOS DE CAMPO", "TRANSPORTE",
+                    "INFORME DE ENSAYO", "PERSONAL DE CAMPO",
                     "INFORME DE MONITOREO"]}
                 ancho="max-w-[1200px]"
                 max={5}

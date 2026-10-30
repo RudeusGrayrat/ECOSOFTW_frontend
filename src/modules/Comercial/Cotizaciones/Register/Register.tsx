@@ -4,7 +4,6 @@ import PopUp from "../../../../components/Ui/Messages/PopUp";
 import CardPlegable from "../../../../components/Ui/Otros/CardPlegable";
 import GastosOperativos from "./GastosOperativos";
 import GastosAdministrativos from "./GastosAdministrativos";
-import GastosGenerales from "./GastosGenerales";
 import Analisis from "./Analisis";
 import Directorio from "../../../../components/Principal/AddRemove/AddRemove";
 import Totales from "./totales";
@@ -36,12 +35,6 @@ const RegisterCotizacionesComercial = ({ }) => {
         ],
         gastosOperativos: [],
         gastosAdministrativos: [],
-        gastosGenerales: [
-            {
-                descripcion: "",
-                subtotal: 0,
-            },
-        ],
         totalSinIgv: 0,
         igv: 0,
         totalConIgv: 0,
@@ -67,12 +60,6 @@ const RegisterCotizacionesComercial = ({ }) => {
             ],
             gastosOperativos: [],
             gastosAdministrativos: [],
-            gastosGenerales: [
-                {
-                    descripcion: "",
-                    subtotal: 0,
-                },
-            ],
             totalSinIgv: 0,
             igv: 0,
             totalConIgv: 0,
@@ -91,23 +78,8 @@ const RegisterCotizacionesComercial = ({ }) => {
             let totalSinIgv = round2(totalAnalisis + totalGastosOperativos + totalGastosAdministrativos);
             let igv = round2(totalSinIgv * 0.18);
             let totalConIgv = round2(totalSinIgv + igv);
-            let analisis = form.analisis.map(analisis => ({
-                descripcion: form.tipoDeServicio + " " + analisis.descripcion,
-                subtotal: Number(analisis.subtotal) || 0
-            }));
-            let gastosOperativos = {
-                descripcion: "GASTOS OPERATIVOS",
-                subtotal: totalGastosOperativos
-            };
-            let gastosAdministrativos = {
-                descripcion: "GASTOS ADMINISTRATIVOS",
-                subtotal: totalGastosAdministrativos
-            };
-
-            let a = [...analisis, gastosOperativos, gastosAdministrativos];
             setForm(prevForm => ({
                 ...prevForm,
-                gastosGenerales: a,
                 totalSinIgv,
                 igv,
                 totalConIgv
@@ -175,15 +147,6 @@ const RegisterCotizacionesComercial = ({ }) => {
                     data="analisis"
                     setForm={setForm}
                 />
-            </CardPlegable>
-            <CardPlegable title="Gastos Generales">
-                {form.gastosGenerales.length > 0 && (
-                    form.gastosGenerales.map((item, index) => (
-                        <GastosGenerales
-                            form={item}
-                        />
-                    ))
-                )}
             </CardPlegable>
             <CardPlegable title="Totales">
                 <Totales form={form} setForm={setForm} />

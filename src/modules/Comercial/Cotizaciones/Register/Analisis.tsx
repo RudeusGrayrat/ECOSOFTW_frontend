@@ -3,8 +3,8 @@ import InputP from "../../../../components/Ui/Input/InputP";
 import axios from "../../../../api/axios";
 
 const quantityLabel = (unidadCobro) => ({
-    POR_PUNTO: "Puntos", POR_MUESTRA: "Muestras", POR_DIA: "Días", POR_CAMPANA: "Campañas", POR_EQUIPO: "Equipos", POR_UNIDAD: "Unidades",
-}[unidadCobro || "POR_UNIDAD"] || "Unidades");
+    POR_PUNTO: "Puntos", POR_MUESTRA: "Muestras", POR_DIA: "Días", POR_CAMPANA: "Campañas", POR_EQUIPO: "Equipos", POR_UNIDAD: "Puntos",
+}[unidadCobro || "POR_UNIDAD"] || "Puntos");
 
 const Analisis = ({ set, initialData }) => {
     console.log("Initial Data in Analisis:", initialData);

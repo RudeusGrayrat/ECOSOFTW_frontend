@@ -10,7 +10,6 @@ import Directorio from "../../../../components/Principal/AddRemove/AddRemove";
 import GastosOperativos from "../Register/GastosOperativos";
 import GastosAdministrativos from "../Register/GastosAdministrativos";
 import Analisis from "../Register/Analisis";
-import GastosGenerales from "../Register/GastosGenerales";
 import Totales from "../Register/totales";
 import { useAuth } from "../../../../context/AuthContext";
 
@@ -109,15 +108,6 @@ const EditCotizacion = ({ selected, setShowEdit, reload }) => {
             data="analisis"
             setForm={setForm}
           />
-        </CardPlegable>
-        <CardPlegable title="Gastos Generales">
-          {form.gastosGenerales.length > 0 && (
-            form.gastosGenerales.map((item, index) => (
-              <GastosGenerales
-                form={item}
-              />
-            ))
-          )}
         </CardPlegable>
         <CardPlegable title="Totales">
           <Totales form={form} setForm={setForm} />

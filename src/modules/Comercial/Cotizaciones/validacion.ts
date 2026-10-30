@@ -9,7 +9,6 @@ const REQUIRED_FIELDS = [
     "tipoDeServicio",
     "proyecto_id",
     "analisis",
-    "gastosGenerales",
     "totalSinIgv",
     "igv",
     "totalConIgv",
