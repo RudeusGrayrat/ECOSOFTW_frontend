@@ -10,7 +10,9 @@ import useSendMessage from "../../../components/Ui/Messages/sendMessage";
 const field = "mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm";
 const Principal = ReadOrCreate as any;
 const PrincipalList = ListPrincipal as any;
-const tipos: Record<string, string> = { COTIZACION: "Cotizacion", PLAN_TRABAJO: "Plan de Trabajo", ORDEN_INTERNA: "Orden Interna" };
+// PLAN_TRABAJO se conserva como clave técnica para no invalidar la plantilla
+// activa ni los documentos ya generados. Comercialmente es el Plan de Monitoreo.
+const tipos: Record<string, string> = { COTIZACION: "Cotizacion", PLAN_TRABAJO: "Plan de Monitoreo", ORDEN_INTERNA: "Orden Interna" };
 
 const dataFor = (form: any) => {
   const data = new FormData();

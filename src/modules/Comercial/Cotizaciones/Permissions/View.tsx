@@ -43,7 +43,7 @@ const ViewCotizacion = ({ selected, setShowDetail }) => {
             const response = await axios.post(`/operaciones/planes-trabajo/desde-cotizacion/${selected._id}`, { creadoPor: user?._id });
             setPlanId(response.data.data?._id || "");
             sendMessage(response.data.message, response.data.type || "Correcto");
-        } catch (error: any) { sendMessage(error?.response?.data?.message || "No se pudo crear el Plan de Trabajo", "Error"); }
+        } catch (error: any) { sendMessage(error?.response?.data?.message || "No se pudo crear el Plan de Monitoreo", "Error"); }
     };
     const crearOrden = async () => {
         try {
@@ -56,7 +56,7 @@ const ViewCotizacion = ({ selected, setShowDetail }) => {
                 <div className="flex flex-col gap-4 p-[2%]">
                     {selected.estado === "APROBADO" && (
                         <div className="flex flex-wrap gap-3 rounded-xl bg-emerald-50 p-4">
-                            <ButtonOk type="ok" onClick={crearPlan} classe="!w-56">Generar Plan de Trabajo</ButtonOk>
+                            <ButtonOk type="ok" onClick={crearPlan} classe="!w-56">Generar Plan de Monitoreo</ButtonOk>
                             {planId && tieneTercerizados && <ButtonOk type="ok" onClick={crearOrden} classe="!w-56">Generar Orden Interna</ButtonOk>}
                         </div>
                     )}
