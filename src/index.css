@@ -35,6 +35,13 @@ button {
   cursor: pointer;
 }
 
+/* Evita que los menús nativos hereden colores del sistema/navegador y dejen
+   ilegible el catálogo de parámetros. */
+select option {
+  color: #1e293b;
+  background-color: #ffffff;
+}
+
 .ecosoft-tooltip {
   position: fixed;
   z-index: 100000;

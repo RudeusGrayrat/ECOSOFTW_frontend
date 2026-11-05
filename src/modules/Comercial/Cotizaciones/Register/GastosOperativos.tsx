@@ -49,6 +49,7 @@ const GastosOperativos = ({ initialData = {}, set }) => {
         const same =
             last &&
             last.tipoDeGasto_id === payload.tipoDeGasto_id &&
+            last.descripcion === payload.descripcion &&
             String(last.precio) === String(payload.precio) &&
             String(last.cantidad) === String(payload.cantidad) &&
             String(last.dias) === String(payload.dias) &&
@@ -63,6 +64,7 @@ const GastosOperativos = ({ initialData = {}, set }) => {
         }
     }, [
         gastosOperativos.descripcion?._id,
+        gastosOperativos.descripcion,
         gastosOperativos.precio,
         gastosOperativos.cantidad,
         gastosOperativos.dias,
